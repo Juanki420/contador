@@ -59,7 +59,11 @@ if (loginButton) {
         // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
         var provider = new firebase.auth.EmailAuthProvider();
 
-        firebase.auth().signInWithPopup(provider)
+        // Cambiar signInWithPopup a signInWithRedirect para Firebase 8.x
+        firebase.auth().signInWithRedirect(provider)
+            .then(function() {
+                return firebase.auth().getRedirectResult();
+            })
             .then(function(result) {
                 // El usuario ha iniciado sesión correctamente
                 alert('¡Has iniciado sesión correctamente!');
@@ -69,7 +73,6 @@ if (loginButton) {
                 alert('Error al iniciar sesión: ' + error.message);
             });
     });
-}
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
