@@ -3,7 +3,7 @@
 var firebaseConfig = {
     apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
   authDomain: "contador-c6528.firebaseapp.com",
-  databaseURL: "https://console.firebase.google.com/u/0/project/contador-c6528/database/contador-c6528-default-rtdb/data/~2F",
+  databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "contador-c6528",
   storageBucket: "contador-c6528.appspot.com",
   messagingSenderId: "575749501934",
