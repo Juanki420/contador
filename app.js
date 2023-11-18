@@ -1,5 +1,7 @@
+// app.js
+
 var firebaseConfig = {
-  apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
+    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
   authDomain: "contador-c6528.firebaseapp.com",
   databaseURL: "https://contador-c6528.firebaseio.com",
   projectId: "contador-c6528",
@@ -11,19 +13,32 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 document.getElementById('nameForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  var name = document.getElementById('nameInput').value;
-  firebase.database().ref('names').push({
-    name: name
-  });
-  document.getElementById('nameInput').value = '';
+    e.preventDefault();
 });
+
+function submitForm() {
+    var name = document.getElementById('nameInput').value;
+    if (name.trim() !== '') {
+        firebase.database().ref('names').push(name);
+        document.getElementById('nameInput').value = '';
+    }
+}
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
-nameRef.on('child_added', function(snapshot) {
-  var name = snapshot.val().name;
-  var li = document.createElement('li');
-  li.innerText = name;
-  nameList.appendChild(li);
+
+// Usar 'once' para cargar nombres existentes al inicio
+nameRef.once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+        var li = document.createElement('li');
+        li.innerText = childSnapshot.val();
+        nameList.appendChild(li);
+    });
+});
+
+// Usar 'child_added' para agregar nombres en tiempo real
+nameRef.on('child_added', function(data) {
+    var li = document.createElement('li');
+    li.innerText = data.val();
+    nameList.appendChild(li);
 });
