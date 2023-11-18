@@ -57,13 +57,10 @@ var loginButton = document.getElementById('loginButton');
 if (loginButton) {
     loginButton.addEventListener('click', function() {
         // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
-        var provider = new firebase.auth.EmailAuthProvider();
+        var provider = new firebase.auth.GoogleAuthProvider(); // Cambiado a GoogleAuthProvider
 
-        // Cambiar signInWithPopup a signInWithRedirect para Firebase 8.x
-        firebase.auth().signInWithRedirect(provider)
-            .then(function() {
-                return firebase.auth().getRedirectResult();
-            })
+        // Cambiar signInWithRedirect a signInWithPopup para Firebase 8.x
+        firebase.auth().signInWithPopup(provider)
             .then(function(result) {
                 // El usuario ha iniciado sesión correctamente
                 alert('¡Has iniciado sesión correctamente!');
