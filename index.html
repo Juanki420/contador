@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contador de Clicks</title>
+</head>
+<body>
+    <h1 id="contador">0</h1>
+    <button onclick="incrementarContador()">Haz clic aquí</button>
+
+    <script>
+        const contadorElement = document.getElementById('contador');
+
+        function actualizarContador(contador) {
+            contadorElement.innerHTML = contador;
+        }
+
+        async function incrementarContador() {
+            const response = await fetch('/.netlify/functions/incrementar');
+            const data = await response.json();
+            actualizarContador(data.contador);
+        }
+    </script>
+</body>
+</html>
