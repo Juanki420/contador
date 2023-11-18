@@ -17,9 +17,9 @@ var nameRef = firebase.database().ref('names');
 var canSubmitNames = true;
 
 function handleFormSubmission() {
-    // Verificar si ya se ha enviado un nombre
-    if (hasSubmittedName) {
-        alert('Solo puedes enviar un nombre.');
+    // Verificar si se pueden enviar nombres
+    if (!canSubmitNames) {
+        alert('Los envíos de nombres están deshabilitados en este momento.');
         return;
     }
 
@@ -32,9 +32,8 @@ function handleFormSubmission() {
         return;
     }
 
-    // Marcar que se ha enviado un nombre
-    hasSubmittedName = true;
-    localStorage.setItem('hasSubmittedName', 'true');
+    // Deshabilitar envíos de nombres después de enviar uno
+    canSubmitNames = false;
 
     // Enviar el nombre a Firebase
     firebase.database().ref('names').push(name);
@@ -51,18 +50,22 @@ function resetNameSubmissions() {
     }
 }
 
+// Verificar si el botón existe antes de agregar el evento
+var loginButton = document.getElementById('loginButton');
+if (loginButton) {
+    loginButton.addEventListener('click', function() {
+        // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
+        firebase.auth().signInWithEmailAndPassword('tu@email.com', 'tuContraseña')
+            .then(function(userCredential) {
+                // El usuario ha iniciado sesión correctamente
+                alert('¡Has iniciado sesión correctamente!');
+            })
+            .catch(function(error) {
+                // Manejar errores de inicio de sesión
+                alert('Error al iniciar sesión: ' + error.message);
+            });
+    });
+}
+
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
-
-document.getElementById('loginButton').addEventListener('click', function() {
-    // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
-    firebase.auth().signInWithEmailAndPassword('tu@email.com', 'tuContraseña')
-        .then(function(userCredential) {
-            // El usuario ha iniciado sesión correctamente
-            alert('¡Has iniciado sesión correctamente!');
-        })
-        .catch(function(error) {
-            // Manejar errores de inicio de sesión
-            alert('Error al iniciar sesión: ' + error.message);
-        });
-});
