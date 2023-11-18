@@ -24,9 +24,7 @@ nameRef.on('child_added', function(data) {
 
 var hasSubmittedName = false; // Variable para rastrear si se ha enviado un nombre
 
-document.getElementById('nameForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
+function handleFormSubmission() {
     // Verificar si ya se ha enviado un nombre
     if (hasSubmittedName) {
         alert('Solo puedes enviar un nombre.');
@@ -48,4 +46,6 @@ document.getElementById('nameForm').addEventListener('submit', function(e) {
     // Enviar el nombre a Firebase
     firebase.database().ref('names').push(name);
     nameInput.value = '';
-});
+}
+
+document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
