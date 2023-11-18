@@ -14,20 +14,17 @@ firebase.initializeApp(firebaseConfig);
 
 document.getElementById('nameForm').addEventListener('submit', function(e) {
     e.preventDefault();
-});
-
-function submitForm() {
     var name = document.getElementById('nameInput').value;
     if (name.trim() !== '') {
         firebase.database().ref('names').push(name);
         document.getElementById('nameInput').value = '';
     }
-}
+});
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 
-// Usar 'once' para cargar nombres existentes al inicio
+// Usar 'value' para cargar nombres existentes al inicio
 nameRef.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
         var li = document.createElement('li');
