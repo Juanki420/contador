@@ -12,15 +12,6 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-// Definir la función submitForm
-function submitForm() {
-    var name = document.getElementById('nameInput').value;
-    if (name.trim() !== '') {
-        firebase.database().ref('names').push(name);
-        document.getElementById('nameInput').value = '';
-    }
-}
-
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 
@@ -31,7 +22,30 @@ nameRef.on('child_added', function(data) {
     nameList.appendChild(li);
 });
 
+var hasSubmittedName = false; // Variable para rastrear si se ha enviado un nombre
+
 document.getElementById('nameForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    submitForm();  // Llamar directamente a submitForm aquí
+
+    // Verificar si ya se ha enviado un nombre
+    if (hasSubmittedName) {
+        alert('Solo puedes enviar un nombre.');
+        return;
+    }
+
+    var nameInput = document.getElementById('nameInput');
+    var name = nameInput.value.trim();
+
+    // Validar la longitud del nombre
+    if (name.length === 0 || name.length > 30) {
+        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
+        return;
+    }
+
+    // Marcar que se ha enviado un nombre
+    hasSubmittedName = true;
+
+    // Enviar el nombre a Firebase
+    firebase.database().ref('names').push(name);
+    nameInput.value = '';
 });
