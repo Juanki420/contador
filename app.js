@@ -30,7 +30,7 @@ function handleNameChange(data) {
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
     // Aquí deberías reemplazar 'TU_ID_DE_GOOGLE' con tu propio ID de Google
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'TU_ID_DE_GOOGLE';
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
 function handleFormSubmission() {
