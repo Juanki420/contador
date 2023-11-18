@@ -41,7 +41,9 @@ function handleFormSubmission() {
 }
 
 function resetNameSubmissions() {
-    if (firebase.auth().currentUser) {
+    var user = firebase.auth().currentUser;
+
+    if (user) {
         // Solo permitir el restablecimiento si hay un usuario autenticado
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
@@ -55,8 +57,10 @@ var loginButton = document.getElementById('loginButton');
 if (loginButton) {
     loginButton.addEventListener('click', function() {
         // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
-        firebase.auth().signInWithEmailAndPassword('tu@email.com', 'tuContraseña')
-            .then(function(userCredential) {
+        var provider = new firebase.auth.EmailAuthProvider();
+
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
                 // El usuario ha iniciado sesión correctamente
                 alert('¡Has iniciado sesión correctamente!');
             })
