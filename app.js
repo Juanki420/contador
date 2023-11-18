@@ -15,13 +15,11 @@ firebase.initializeApp(firebaseConfig);
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 
-// Usar 'value' para cargar nombres existentes al inicio
-nameRef.once('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-        var li = document.createElement('li');
-        li.innerText = childSnapshot.val();
-        nameList.appendChild(li);
-    });
+// Usar 'child_added' para cargar nombres existentes al inicio y en tiempo real
+nameRef.on('child_added', function(data) {
+    var li = document.createElement('li');
+    li.innerText = data.val();
+    nameList.appendChild(li);
 });
 
 document.getElementById('nameForm').addEventListener('submit', function(e) {
@@ -32,12 +30,3 @@ document.getElementById('nameForm').addEventListener('submit', function(e) {
         document.getElementById('nameInput').value = '';
     }
 });
-
-// Definir la función submitForm
-function submitForm() {
-    var name = document.getElementById('nameInput').value;
-    if (name.trim() !== '') {
-        firebase.database().ref('names').push(name);
-        document.getElementById('nameInput').value = '';
-    }
-}
