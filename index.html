@@ -1,17 +1,25 @@
 <!-- index.html -->
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Página Web</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Bienvenido a mi página web!</h1>
-    <form id="nameForm">
-        <input type="text" id="nameInput" placeholder="Escribe tu nombre">
-        <button type="button" onclick="submitForm()">Enviar</button>
-    </form>
-    <ul id="nameList"></ul>
+    <header>
+        <h1>Bienvenido a mi página web!</h1>
+    </header>
+    <main>
+        <form id="nameForm">
+            <label for="nameInput">Escribe tu nombre:</label>
+            <input type="text" id="nameInput" placeholder="Tu nombre">
+            <button type="button" onclick="submitForm()">Enviar</button>
+        </form>
+        <ul id="nameList"></ul>
+    </main>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
     <script src="app.js"></script>
