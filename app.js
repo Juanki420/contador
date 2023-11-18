@@ -1,13 +1,7 @@
 // app.js
 
 var firebaseConfig = {
-    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
-  authDomain: "contador-c6528.firebaseapp.com",
-  databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "contador-c6528",
-  storageBucket: "contador-c6528.appspot.com",
-  messagingSenderId: "575749501934",
-  appId: "1:575749501934:web:4b48ebab36b25e925914ff"
+    // Tu configuración de Firebase aquí
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -22,7 +16,8 @@ nameRef.on('child_added', function(data) {
     nameList.appendChild(li);
 });
 
-var hasSubmittedName = false; // Variable para rastrear si se ha enviado un nombre
+// Verificar si se ha enviado un nombre almacenado en el localStorage
+var hasSubmittedName = localStorage.getItem('hasSubmittedName') === 'true';
 
 function handleFormSubmission() {
     // Verificar si ya se ha enviado un nombre
@@ -42,6 +37,7 @@ function handleFormSubmission() {
 
     // Marcar que se ha enviado un nombre
     hasSubmittedName = true;
+    localStorage.setItem('hasSubmittedName', 'true');
 
     // Enviar el nombre a Firebase
     firebase.database().ref('names').push(name);
