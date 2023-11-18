@@ -12,15 +12,6 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-document.getElementById('nameForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    var name = document.getElementById('nameInput').value;
-    if (name.trim() !== '') {
-        firebase.database().ref('names').push(name);
-        document.getElementById('nameInput').value = '';
-    }
-});
-
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 
@@ -33,9 +24,20 @@ nameRef.once('value', function(snapshot) {
     });
 });
 
-// Usar 'child_added' para agregar nombres en tiempo real
-nameRef.on('child_added', function(data) {
-    var li = document.createElement('li');
-    li.innerText = data.val();
-    nameList.appendChild(li);
+document.getElementById('nameForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = document.getElementById('nameInput').value;
+    if (name.trim() !== '') {
+        firebase.database().ref('names').push(name);
+        document.getElementById('nameInput').value = '';
+    }
 });
+
+// Definir la función submitForm
+function submitForm() {
+    var name = document.getElementById('nameInput').value;
+    if (name.trim() !== '') {
+        firebase.database().ref('names').push(name);
+        document.getElementById('nameInput').value = '';
+    }
+}
