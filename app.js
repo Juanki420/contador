@@ -73,6 +73,7 @@ if (loginButton) {
                 alert('Error al iniciar sesión: ' + error.message);
             });
     });
+}
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
