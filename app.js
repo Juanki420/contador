@@ -85,10 +85,14 @@ function handleFormSubmission(e) {
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
     if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Eliminar la restricción de envío de nombres en todos los dispositivos
-        usersRef.remove();
-        canSubmitNames = true;
-        alert('Ahora puedes enviar nombres nuevamente.');
+        if (!canSubmitNames) {
+            // Eliminar la restricción de envío de nombres en todos los dispositivos
+            usersRef.remove();
+            canSubmitNames = true;
+            alert('Ahora puedes enviar nombres nuevamente.');
+        } else {
+            alert('No hay restricciones para restablecer.');
+        }
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres. Asegúrate de haber iniciado sesión con la cuenta correcta.');
     }
