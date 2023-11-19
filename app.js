@@ -46,6 +46,20 @@ function displayUserInfo(user) {
 function handleFormSubmission(e) {
     e.preventDefault();
 
+    // Verificar si el usuario ha iniciado sesión
+    var user = firebase.auth().currentUser;
+    if (!user) {
+        var confirmLogin = confirm('Debes iniciar sesión o registrarte para enviar un nombre. ¿Quieres iniciar sesión ahora?');
+        if (confirmLogin) {
+            // Puedes redirigir a la página de inicio de sesión o mostrar el cuadro de diálogo de inicio de sesión aquí
+            // Ejemplo: window.location.href = 'pagina-de-inicio-de-sesion.html';
+            return;
+        } else {
+            alert('Envío de nombre cancelado. Inicia sesión o regístrate para enviar un nombre.');
+            return;
+        }
+    }
+
     if (hasSubmittedName()) {
         alert('Solo puedes enviar un nombre.');
         return;
@@ -55,6 +69,23 @@ function handleFormSubmission(e) {
         alert('Los envíos de nombres están deshabilitados en este momento.');
         return;
     }
+
+    var nameInput = document.getElementById('nameInput');
+    var name = nameInput.value.trim();
+
+    if (name.length === 0 || name.length > 30) {
+        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
+        return;
+    }
+
+    canSubmitNames = false;
+
+    firebase.database().ref('names').push(name);
+    nameInput.value = '';
+
+    setSubmittedName();
+}
+
 
     var nameInput = document.getElementById('nameInput');
     var name = nameInput.value.trim();
