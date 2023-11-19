@@ -14,7 +14,7 @@ firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
-var userMessagesRef = firebase.database().ref('userMessages'); // Nueva referencia para mensajes de usuario
+var userMessagesRef = firebase.database().ref('userMessages');
 var canSubmitNames = true;
 
 nameRef.on('child_added', handleNameChange);
@@ -39,12 +39,12 @@ function isAllowedUser() {
 
 function hasUserSubmittedMessage(userId) {
     return userMessagesRef.child(userId).once('value').then(function(snapshot) {
-        return snapshot.exists(); // Verificar si el usuario ha enviado un mensaje
+        return snapshot.exists();
     });
 }
 
 function markUserAsSubmitted(userId) {
-    userMessagesRef.child(userId).push(true); // Marcar que el usuario ha enviado un mensaje
+    userMessagesRef.child(userId).push(true);
 }
 
 function handleFormSubmission(e) {
@@ -83,10 +83,8 @@ function handleFormSubmission(e) {
                 userEmail: user.email,
             };
 
-            // Enviar el objeto a la base de datos
             var newMessageRef = nameRef.push(messageObject);
 
-            // Marcar que el usuario ha enviado un mensaje
             markUserAsSubmitted(user.uid);
 
             nameInput.value = '';
@@ -105,10 +103,45 @@ function resetNameSubmissions() {
     }
 }
 
+function displayUserInfo(user) {
+    var userInfoElement = document.getElementById('userInfo');
+    if (userInfoElement) {
+        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
+    }
+}
+
+function handleLoginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            alert('¡Has iniciado sesión correctamente!');
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión: ' + error.message);
+        });
+}
+
+function handleEmailLogin() {
+    // Implementa la lógica de inicio de sesión con correo y contraseña aquí
+}
+
+function handleRegister() {
+    // Implementa la lógica de registro aquí
+}
+
+function handleLogout() {
+    firebase.auth().signOut().then(function() {
+        alert('Has cerrado sesión correctamente.');
+    }).catch(function(error) {
+        alert('Error al cerrar sesión: ' + error.message);
+    });
+}
+
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
-    var loginButton = document.getElementById('googleLoginButton');
+    var loginButton = document.getElementById('loginButton');
     var emailLoginButton = document.getElementById('emailLoginButton');
     var registerButton = document.getElementById('registerButton');
     var logoutButton = document.getElementById('logoutButton');
@@ -128,3 +161,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
+document.getElementById('loginButton').addEventListener('click', handleLoginWithGoogle);
+document.getElementById('emailLoginButton').addEventListener('click', handleEmailLogin);
+document.getElementById('registerButton').addEventListener('click', handleRegister);
+document.getElementById('logoutButton').addEventListener('click', handleLogout);
