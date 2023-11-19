@@ -14,8 +14,6 @@ firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
-var canSubmitNamesRef = firebase.database().ref('canSubmitNames'); // Añadido
-var submittedNamesRef = firebase.database().ref('submittedNames'); // Añadido
 var canSubmitNames = true;
 
 // Manejar tanto nuevos nombres como cambios en los nombres existentes
@@ -24,7 +22,8 @@ nameRef.on('child_changed', handleNameChange);
 
 function handleNameChange(data) {
     var li = document.createElement('li');
-    li.innerText = data.val();
+    var nameWithIP = `${data.val().name} (IP: ${data.val().ip})`;
+    li.innerText = nameWithIP;
     nameList.appendChild(li);
 }
 
@@ -81,28 +80,40 @@ function handleFormSubmission(e) {
     // Deshabilitar envíos de nombres después de enviar uno
     canSubmitNames = false;
 
-    // Enviar el nombre a Firebase
-    firebase.database().ref('names').push(name);
+    // Obtener la dirección IP del usuario
+    fetch('https://ipinfo.io/json')
+        .then(response => response.json())
+        .then(data => {
+            // Agregar la dirección IP al objeto que se enviará a Firebase
+            var submissionData = {
+                name: name,
+                ip: data.ip
+            };
+
+            // Enviar el objeto a Firebase
+            firebase.database().ref('names').push(submissionData);
+
+            // Resto del código...
+        })
+        .catch(error => {
+            console.error('Error al obtener la dirección IP: ', error);
+        });
+
     nameInput.value = '';
 
     // Almacenar que el usuario ha enviado un nombre
     setSubmittedName();
-
-    // Añadir el nombre y la clave del usuario a la base de datos
-    var user = firebase.auth().currentUser;
-    if (user) {
-        var userId = user.uid;
-        submittedNamesRef.child(userId).set(name);
-    }
 }
 
 function resetNameSubmissions() {
     if (isAllowedUser()) {
-        // Establecer el valor de canSubmitNames a true
-        canSubmitNamesRef.set(true);
+        canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
-        // Eliminar todos los nombres enviados
-        submittedNamesRef.remove();
+
+        // Eliminar todas las entradas de nombres en Firebase
+        firebase.database().ref('names').remove();
+
+        // Resto del código...
         // Eliminar la marca de que el usuario ha enviado un nombre
         localStorage.removeItem('submittedName');
     } else {
@@ -121,35 +132,41 @@ if (loginButton) {
         firebase.auth().signInWithPopup(provider)
             .then(function(result) {
                 // El usuario ha iniciado sesión correctamente
-                displayUserInfo(result.user);
+                alert('¡Has iniciado sesión correctamente!');
             })
             .catch(function(error) {
-                // Ha ocurrido un error al iniciar sesión
-                console.error(error);
+                // Manejar errores de inicio de sesión
+                alert('Error al iniciar sesión: ' + error.message);
             });
     });
 }
 
-// Leer el valor inicial de canSubmitNames desde la base de datos
-canSubmitNamesRef.once('value', function(snapshot) {
-    canSubmitNames = snapshot.val();
-});
+document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 
-// Escuchar cambios en el valor de canSubmitNames
-canSubmitNamesRef.on('value', function(snapshot) {
-    canSubmitNames = snapshot.val();
-    // Aquí puedes actualizar la interfaz de usuario según el valor de canSubmitNames
-});
+var logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        firebase.auth().signOut().then(function() {
+            // Cierre de sesión exitoso
+            alert('Has cerrado sesión correctamente.');
+        }).catch(function(error) {
+            // Manejar errores de cierre de sesión
+            alert('Error al cerrar sesión: ' + error.message);
+        });
+    });
+}
 
-// Leer los nombres enviados desde la base de datos
-submittedNamesRef.once('value', function(snapshot) {
-    var submittedNames = snapshot.val();
-    // Aquí puedes usar la variable submittedNames para mostrar los nombres enviados en la interfaz de usuario
-});
+// Actualizar la información del usuario al iniciar o cerrar sesión
+firebase.auth().onAuthStateChanged(function(user) {
+    displayUserInfo(user);
 
-// Escuchar cambios en los nombres enviados
-submittedNamesRef.on('child_added', function(data) {
-    var name = data.val();
-    var key = data.key;
-    // Aquí puedes usar la variable name y key para actualizar la interfaz de usuario con el nuevo nombre enviado
+    // Mostrar o ocultar botones según el estado de inicio de sesión
+    if (user) {
+        loginButton.style.display = 'none';
+        logoutButton.style.display = 'block';
+    } else {
+        loginButton.style.display = 'block';
+        logoutButton.style.display = 'none';
+    }
 });
