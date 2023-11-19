@@ -93,6 +93,20 @@ function resetNameSubmissions() {
         alert('Ahora puedes enviar nombres nuevamente.');
         // Eliminar la marca de que el usuario ha enviado un nombre
         localStorage.removeItem('submittedName');
+
+        // Obtener referencia a la lista de nombres en Firebase
+        var namesRef = firebase.database().ref('names');
+
+        // Eliminar todos los nombres existentes en la lista
+        namesRef.remove()
+            .then(function () {
+                // Éxito al restablecer los envíos para todos los usuarios
+                console.log('Envíos restablecidos para todos los usuarios.');
+            })
+            .catch(function (error) {
+                // Manejar errores al intentar restablecer los envíos
+                console.error('Error al restablecer envíos: ' + error.message);
+            });
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres.');
     }
