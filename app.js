@@ -88,6 +88,7 @@ function handleFormSubmission(e) {
             markUserAsSubmitted(user.uid);
 
             nameInput.value = '';
+            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
         }
     });
 }
