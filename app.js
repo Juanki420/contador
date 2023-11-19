@@ -20,10 +20,20 @@ nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
 
 function handleNameChange(data) {
+    var message = data.val();
+
+    // Mostrar la información en la consola
+    console.log('Nombre:', message.name);
+    console.log('ID de Usuario:', message.userId);
+    console.log('Nombre de Usuario:', message.userName);
+    console.log('Correo Electrónico del Usuario:', message.userEmail);
+
     var li = document.createElement('li');
-    li.innerText = data.val();
+    li.innerText = message.name;
     nameList.appendChild(li);
 }
+
+nameRef.on('child_added', handleNameChange);
 
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
@@ -75,11 +85,19 @@ function handleFormSubmission(e) {
 
     canSubmitNames = false;
 
-    firebase.database().ref('names').push(name);
-    nameInput.value = '';
+    // Crear un objeto con la información del mensaje y el usuario
+    var messageObject = {
+        name: name,
+        userId: user.uid,
+        userName: user.displayName,
+        userEmail: user.email,
+    };
 
+    // Enviar el objeto a la base de datos
+    firebase.database().ref('names').push(messageObject);
+
+    nameInput.value = '';
     setSubmittedName();
-}
 
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
