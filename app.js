@@ -48,6 +48,13 @@ function displayUserInfo(user) {
 function handleFormSubmission(e) {
     e.preventDefault();
 
+    var user = firebase.auth().currentUser;
+
+    if (!user) {
+        alert('Debes iniciar sesión antes de enviar un nombre.');
+        return;
+    }
+
     if (hasSubmittedName()) {
         alert('Solo puedes enviar un nombre.');
         return;
@@ -57,6 +64,22 @@ function handleFormSubmission(e) {
         alert('Los envíos de nombres están deshabilitados en este momento.');
         return;
     }
+
+    var nameInput = document.getElementById('nameInput');
+    var name = nameInput.value.trim();
+
+    if (name.length === 0 || name.length > 30) {
+        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
+        return;
+    }
+
+    canSubmitNames = false;
+
+    firebase.database().ref('names').push(name);
+    nameInput.value = '';
+
+    setSubmittedName();
+}
 
     var nameInput = document.getElementById('nameInput');
     var name = nameInput.value.trim();
