@@ -73,39 +73,36 @@ function handleFormSubmission(e) {
             }
 
             // Verifica si el nombre ya ha sido enviado
-            if (isNameAlreadySubmitted(name)) {
-                alert('Este nombre ya ha sido enviado. Por favor, elige otro.');
-                return;
-            }
+            isNameAlreadySubmitted(name).then(function(alreadySubmitted) {
+                if (alreadySubmitted) {
+                    alert('Este nombre ya ha sido enviado. Por favor, elige otro.');
+                } else {
+                    canSubmitNames = false;
 
-            canSubmitNames = false;
+                    var messageObject = {
+                        name: name,
+                        userId: user.uid,
+                        userName: user.displayName,
+                        userEmail: user.email,
+                    };
 
-            var messageObject = {
-                name: name,
-                userId: user.uid,
-                userName: user.displayName,
-                userEmail: user.email,
-            };
+                    var newMessageRef = nameRef.push(messageObject);
 
-            var newMessageRef = nameRef.push(messageObject);
+                    markUserAsSubmitted(user.uid);
 
-            markUserAsSubmitted(user.uid);
-
-            nameInput.value = '';
-            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
+                    nameInput.value = '';
+                    alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
+                }
+            });
         }
     });
 }
 
 // Función para verificar si el nombre ya ha sido enviado
 function isNameAlreadySubmitted(name) {
-    var namesSnapshot = nameRef.once('value').then(function(snapshot) {
-        return snapshot.exists() && Object.values(snapshot.val()).some(function(message) {
-            return message.name.toLowerCase() === name.toLowerCase();
-        });
+    return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
+        return snapshot.exists();
     });
-
-    return namesSnapshot;
 }
 
 function resetUserMessages() {
