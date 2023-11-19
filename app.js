@@ -90,7 +90,6 @@ function handleFormSubmission(e) {
             markUserAsSubmitted(user.uid);
 
             nameInput.value = '';
-            setSubmittedName();
         }
     });
 }
