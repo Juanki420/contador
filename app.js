@@ -23,6 +23,7 @@ nameRef.on('child_changed', handleNameChange);
 function handleNameChange(data) {
     var li = document.createElement('li');
     li.innerText = data.val();
+    li.className = 'name-list-item'; // Agrega la nueva clase aquí
     nameList.appendChild(li);
 }
 
