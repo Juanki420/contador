@@ -1,12 +1,13 @@
+// app.js
 
 var firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    databaseURL: process.env.FIREBASE_DATABASE_URL,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
+    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
+    authDomain: "contador-c6528.firebaseapp.com",
+    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "contador-c6528",
+    storageBucket: "contador-c6528.appspot.com",
+    messagingSenderId: "575749501934",
+    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -29,7 +30,7 @@ function handleNameChange(data) {
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
     // Aquí deberías reemplazar 'TU_ID_DE_GOOGLE' con tu propio ID de Google
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === REACT_APP_ALLOWED_USER_ID;
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
 // Verificar si el usuario ya ha enviado un nombre
@@ -120,30 +121,7 @@ if (loginButton) {
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 
-// Añadir un nuevo evento de clic para cerrar sesión
-var logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function() {
-        firebase.auth().signOut().then(function() {
-            // Cierre de sesión exitoso
-            alert('Has cerrado sesión correctamente.');
-        }).catch(function(error) {
-            // Manejar errores de cierre de sesión
-            alert('Error al cerrar sesión: ' + error.message);
-        });
-    });
-}
-
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
-
-    // Mostrar o ocultar botones según el estado de inicio de sesión
-    if (user) {
-        loginButton.style.display = 'none';
-        logoutButton.style.display = 'block';
-    } else {
-        loginButton.style.display = 'block';
-        logoutButton.style.display = 'none';
-    }
 });
