@@ -60,7 +60,7 @@ function handleFormSubmission(e) {
             alert('Ya has enviado un mensaje. No puedes enviar otro.');
         } else {
             if (!canSubmitNames) {
-                alert('Los envíos de nombres están deshabilitados en este momento.');
+                alert('Recargue la pagina y envie de nuevo.');
                 return;
             }
 
@@ -86,6 +86,7 @@ function handleFormSubmission(e) {
             markUserAsSubmitted(user.uid);
 
             nameInput.value = '';
+            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
         }
     });
 }
