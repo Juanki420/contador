@@ -122,6 +122,27 @@ if (logoutButton) {
         });
     });
 }
+// ...
+
+var loginButton = document.getElementById('loginButton');
+if (loginButton) {
+    loginButton.addEventListener('click', function() {
+        // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
+        var provider = new firebase.auth.GoogleAuthProvider();
+
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
+                // El usuario ha iniciado sesión correctamente
+                alert('¡Has iniciado sesión correctamente!');
+            })
+            .catch(function(error) {
+                // Manejar errores de inicio de sesión
+                alert('Error al iniciar sesión: ' + error.message);
+            });
+    });
+}
+
+// ...
 
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
