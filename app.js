@@ -52,7 +52,7 @@ function handleFormSubmission(e) {
 
     if (!user) {
         alert('Debes iniciar sesión antes de enviar un nombre.');
-        return;
+        return; // Esta declaración de retorno se puede usar aquí sin problemas.
     }
 
     if (hasSubmittedName()) {
