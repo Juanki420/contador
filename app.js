@@ -33,7 +33,26 @@ function isAllowedUser() {
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
-function handleFormSubmission() {
+// Verificar si el usuario ya ha enviado un nombre
+function hasSubmittedName() {
+    return localStorage.getItem('submittedName') === 'true';
+}
+
+// Almacenar que el usuario ha enviado un nombre
+function setSubmittedName() {
+    localStorage.setItem('submittedName', 'true');
+}
+
+function handleFormSubmission(e) {
+    // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
+    e.preventDefault();
+
+    // Verificar si el usuario ya ha enviado un nombre
+    if (hasSubmittedName()) {
+        alert('Solo puedes enviar un nombre.');
+        return;
+    }
+
     // Verificar si se pueden enviar nombres
     if (!canSubmitNames) {
         alert('Los envíos de nombres están deshabilitados en este momento.');
@@ -55,12 +74,17 @@ function handleFormSubmission() {
     // Enviar el nombre a Firebase
     firebase.database().ref('names').push(name);
     nameInput.value = '';
+
+    // Almacenar que el usuario ha enviado un nombre
+    setSubmittedName();
 }
 
 function resetNameSubmissions() {
     if (isAllowedUser()) {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
+        // Eliminar la marca de que el usuario ha enviado un nombre
+        localStorage.removeItem('submittedName');
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres.');
     }
