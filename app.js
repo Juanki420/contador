@@ -225,3 +225,27 @@ document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
 document.getElementById('registerButton').addEventListener('click', register);
+document.addEventListener('mousemove', (e) => {
+    var eyes = document.querySelectorAll('.eye');
+
+    eyes.forEach((eye) => {
+        // Obtener las coordenadas del centro del ojo
+        var eyeRect = eye.getBoundingClientRect();
+        var eyeCenterX = eyeRect.left + eyeRect.width / 2;
+        var eyeCenterY = eyeRect.top + eyeRect.height / 2;
+
+        // Calcular el ángulo entre el mouse y el centro del ojo
+        var deltaX = e.pageX - eyeCenterX;
+        var deltaY = e.pageY - eyeCenterY;
+        var angle = Math.atan2(deltaY, deltaX);
+
+        // Calcular la posición del iris dentro del ojo
+        var iris = eye.querySelector('.iris');
+        var irisSize = eyeRect.width * 0.2;
+        var irisX = Math.cos(angle) * (eyeRect.width / 3) - irisSize / 2;
+        var irisY = Math.sin(angle) * (eyeRect.height / 3) - irisSize / 2;
+
+        // Aplicar la transformación al iris
+        iris.style.transform = `translate(${irisX}px, ${irisY}px)`;
+    });
+});
