@@ -121,11 +121,41 @@ function resetAllData() {
     }
 }
 
+function logout() {
+    firebase.auth().signOut().then(function() {
+        alert('Has cerrado sesión correctamente.');
+    }).catch(function(error) {
+        alert('Error al cerrar sesión: ' + error.message);
+    });
+}
+
 function displayUserInfo(user) {
     var userInfoElement = document.getElementById('userInfo');
     if (userInfoElement) {
         userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
     }
+}
+
+function loginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            alert('¡Has iniciado sesión con Google correctamente!');
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión con Google: ' + error.message);
+        });
+}
+
+function loginWithEmail() {
+    // Implementa la lógica de inicio de sesión con correo y contraseña aquí
+    alert('Función de inicio de sesión con correo y contraseña aún no implementada.');
+}
+
+function register() {
+    // Implementa la lógica de registro aquí
+    alert('Función de registro aún no implementada.');
 }
 
 firebase.auth().onAuthStateChanged(function(user) {
@@ -151,11 +181,10 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
-document.getElementById('loginButton').addEventListener('click', handleLoginWithGoogle);
-document.getElementById('emailLoginButton').addEventListener('click', handleEmailLogin);
-document.getElementById('registerButton').addEventListener('click', handleRegister);
-document.getElementById('logoutButton').addEventListener('click', handleLogout);
-
+document.getElementById('logoutButton').addEventListener('click', logout);
+document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
+document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
+document.getElementById('registerButton').addEventListener('click', register);
 
 
 
