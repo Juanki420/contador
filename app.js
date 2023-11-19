@@ -21,8 +21,6 @@ nameRef.on('child_changed', handleNameChange);
 
 function handleNameChange(data) {
     var message = data.val();
-
-    // Mostrar la información en la consola
     console.log('Nombre:', message.name);
     console.log('ID de Usuario:', message.userId);
     console.log('Nombre de Usuario:', message.userName);
@@ -32,8 +30,6 @@ function handleNameChange(data) {
     li.innerText = message.name;
     nameList.appendChild(li);
 }
-
-nameRef.on('child_added', handleNameChange);
 
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
@@ -85,7 +81,6 @@ function handleFormSubmission(e) {
 
     canSubmitNames = false;
 
-    // Crear un objeto con la información del mensaje y el usuario
     var messageObject = {
         name: name,
         userId: user.uid,
@@ -93,11 +88,11 @@ function handleFormSubmission(e) {
         userEmail: user.email,
     };
 
-    // Enviar el objeto a la base de datos
     firebase.database().ref('names').push(messageObject);
 
     nameInput.value = '';
     setSubmittedName();
+}
 
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
@@ -111,14 +106,9 @@ function resetNameSubmissions() {
     }
 }
 
-document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
-document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
-
-// Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
-    // Mostrar u ocultar botones según el estado de inicio de sesión
     var loginButton = document.getElementById('googleLoginButton');
     var emailLoginButton = document.getElementById('emailLoginButton');
     var registerButton = document.getElementById('registerButton');
@@ -136,3 +126,6 @@ firebase.auth().onAuthStateChanged(function(user) {
         logoutButton.style.display = 'none';
     }
 });
+
+document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
