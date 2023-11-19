@@ -87,23 +87,10 @@ function handleFormSubmission(e) {
     setSubmittedName();
 }
 
-// app.js
-
-// ... (código anterior)
-
-// app.js
-
-// ... (código anterior)
-
 function resetNameSubmissions() {
-    var user = firebase.auth().currentUser;
-
-    // Verificar si el usuario actual es el propietario permitido
-    if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Restablecer la capacidad para enviar nombres
-        firebase.database().ref('resetInfo').set(true);
-
-        alert('Ahora todos pueden enviar nombres nuevamente.');
+    if (isAllowedUser()) {
+        canSubmitNames = true;
+        alert('Ahora puedes enviar nombres nuevamente.');
         // Eliminar la marca de que el usuario ha enviado un nombre
         localStorage.removeItem('submittedName');
     } else {
@@ -111,15 +98,6 @@ function resetNameSubmissions() {
     }
 }
 
-// Observar cambios en la información de restablecimiento
-firebase.database().ref('resetInfo').on('value', function(snapshot) {
-    var canSubmit = snapshot.val();
-    if (canSubmit) {
-        canSubmitNames = true;
-    }
-});
-
-// ... (código posterior)
 // Verificar si el botón existe antes de agregar el evento
 var loginButton = document.getElementById('loginButton');
 if (loginButton) {
