@@ -14,7 +14,7 @@ firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
-var usersRef = firebase.database().ref('users');
+var canSubmitNames = true;
 
 // Manejar tanto nuevos nombres como cambios en los nombres existentes
 nameRef.on('child_added', handleNameChange);
@@ -29,7 +29,18 @@ function handleNameChange(data) {
 // Verificar si el usuario actual es el propietario permitido
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
+    // Aquí deberías reemplazar 'TU_ID_DE_GOOGLE' con tu propio ID de Google
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
+}
+
+// Verificar si el usuario ya ha enviado un nombre
+function hasSubmittedName() {
+    return localStorage.getItem('submittedName') === 'true';
+}
+
+// Almacenar que el usuario ha enviado un nombre
+function setSubmittedName() {
+    localStorage.setItem('submittedName', 'true');
 }
 
 // Mostrar información del usuario en la página
@@ -40,35 +51,61 @@ function displayUserInfo(user) {
     }
 }
 
+function handleFormSubmission(e) {
+    // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
+    e.preventDefault();
+
+    // Verificar si el usuario ya ha enviado un nombre
+    if (hasSubmittedName()) {
+        alert('Solo puedes enviar un nombre.');
+        return;
+    }
+
+    // Verificar si se pueden enviar nombres
+    if (!canSubmitNames) {
+        alert('Los envíos de nombres están deshabilitados en este momento.');
+        return;
+    }
+
+    var nameInput = document.getElementById('nameInput');
+    var name = nameInput.value.trim();
+
+    // Validar la longitud del nombre
+    if (name.length === 0 || name.length > 30) {
+        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
+        return;
+    }
+
+    // Deshabilitar envíos de nombres después de enviar uno
+    canSubmitNames = false;
+
+    // Enviar el nombre a Firebase
+    firebase.database().ref('names').push(name);
+    nameInput.value = '';
+
+    // Almacenar que el usuario ha enviado un nombre
+    setSubmittedName();
+}
+
 function resetNameSubmissions() {
-    var user = firebase.auth().currentUser;
-    if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Verificar si ya se restableció
-        usersRef.once('value').then(function(snapshot) {
-            if (snapshot.exists()) {
-                alert('Ya se restableció previamente. No hay restricciones para restablecer.');
-            } else {
-                // Restablecer
-                usersRef.child(user.uid).set({
-                    submittedName: true
-                });
-                alert('Ahora puedes enviar nombres nuevamente.');
-            }
-        });
+    if (isAllowedUser()) {
+        canSubmitNames = true;
+        alert('Ahora puedes enviar nombres nuevamente.');
+        // Eliminar la marca de que el usuario ha enviado un nombre
+        localStorage.removeItem('submittedName');
     } else {
-        alert('No tienes permisos para restablecer los envíos de nombres. Asegúrate de haber iniciado sesión con la cuenta correcta.');
+        alert('No tienes permisos para restablecer los envíos de nombres.');
     }
 }
 
-// ... (otro código)
-
-// Inicialización del botón "Iniciar Sesión"
+// Verificar si el botón existe antes de agregar el evento
 var loginButton = document.getElementById('loginButton');
 if (loginButton) {
     loginButton.addEventListener('click', function() {
         // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
-        var provider = new firebase.auth.GoogleAuthProvider();
+        var provider = new firebase.auth.GoogleAuthProvider(); // Cambiado a GoogleAuthProvider
 
+        // Cambiar signInWithRedirect a signInWithPopup para Firebase 8.x
         firebase.auth().signInWithPopup(provider)
             .then(function(result) {
                 // El usuario ha iniciado sesión correctamente
@@ -81,21 +118,9 @@ if (loginButton) {
     });
 }
 
-// Inicialización del botón "Enviar"
-var submitButton = document.getElementById('submitButton');
-if (submitButton) {
-    submitButton.addEventListener('click', handleFormSubmission);
-}
+document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 
-// Inicialización del botón "Restablecer Envíos"
-var resetButton = document.getElementById('resetButton');
-if (resetButton) {
-    resetButton.addEventListener('click', resetNameSubmissions);
-}
-
-// ... (otro código)
-
-// Añadir un nuevo evento de clic para cerrar sesión
 var logoutButton = document.getElementById('logoutButton');
 if (logoutButton) {
     logoutButton.addEventListener('click', function() {
