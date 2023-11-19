@@ -26,6 +26,15 @@ function isAllowedUser() {
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
+function displayUserInfo(user) {
+    var userInfoDiv = document.getElementById('userInfo');
+    if (user) {
+        userInfoDiv.innerHTML = 'Usuario actual: ' + user.displayName;
+    } else {
+        userInfoDiv.innerHTML = 'No hay usuario autenticado.';
+    }
+}
+
 // Función para manejar el envío de nombres
 function handleFormSubmission() {
     // Verificar si se pueden enviar nombres
