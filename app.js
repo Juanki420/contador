@@ -121,6 +121,14 @@ function resetAllData() {
     }
 }
 
+function logout() {
+    firebase.auth().signOut().then(function() {
+        alert('Has cerrado sesión correctamente.');
+    }).catch(function(error) {
+        alert('Error al cerrar sesión: ' + error.message);
+    });
+}
+
 function displayUserInfo(user) {
     var userInfoElement = document.getElementById('userInfo');
     if (userInfoElement) {
@@ -151,10 +159,13 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
+document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 document.getElementById('loginButton').addEventListener('click', handleLoginWithGoogle);
 document.getElementById('emailLoginButton').addEventListener('click', handleEmailLogin);
 document.getElementById('registerButton').addEventListener('click', handleRegister);
 document.getElementById('logoutButton').addEventListener('click', handleLogout);
+
+
 
 
