@@ -101,7 +101,7 @@ function handleFormSubmission(e) {
 function isNameAlreadySubmitted(name) {
     var namesSnapshot = nameRef.once('value').then(function(snapshot) {
         return snapshot.exists() && Object.values(snapshot.val()).some(function(message) {
-            return message.name === name;
+            return message.name.toLowerCase() === name.toLowerCase();
         });
     });
 
