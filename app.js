@@ -121,7 +121,30 @@ if (loginButton) {
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 
+// Añadir un nuevo evento de clic para cerrar sesión
+var logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        firebase.auth().signOut().then(function() {
+            // Cierre de sesión exitoso
+            alert('Has cerrado sesión correctamente.');
+        }).catch(function(error) {
+            // Manejar errores de cierre de sesión
+            alert('Error al cerrar sesión: ' + error.message);
+        });
+    });
+}
+
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
+
+    // Mostrar o ocultar botones según el estado de inicio de sesión
+    if (user) {
+        loginButton.style.display = 'none';
+        logoutButton.style.display = 'block';
+    } else {
+        loginButton.style.display = 'block';
+        logoutButton.style.display = 'none';
+    }
 });
