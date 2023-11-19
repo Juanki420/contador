@@ -85,37 +85,25 @@ function resetNameSubmissions() {
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 
-var logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function() {
-        firebase.auth().signOut().then(function() {
-            // Cierre de sesión exitoso
-            alert('Has cerrado sesión correctamente.');
-        }).catch(function(error) {
-            // Manejar errores de cierre de sesión
-            alert('Error al cerrar sesión: ' + error.message);
-        });
-    });
-}
-
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
     // Mostrar u ocultar botones según el estado de inicio de sesión
-    var loginButton = document.getElementById('loginButton');
-    var googleLoginButton = document.getElementById('googleLoginButton');
+    var loginButton = document.getElementById('googleLoginButton');
     var emailLoginButton = document.getElementById('emailLoginButton');
+    var registerButton = document.getElementById('registerButton');
+    var logoutButton = document.getElementById('logoutButton');
 
     if (user) {
         loginButton.style.display = 'none';
-        googleLoginButton.style.display = 'none';
         emailLoginButton.style.display = 'none';
+        registerButton.style.display = 'none';
         logoutButton.style.display = 'block';
     } else {
         loginButton.style.display = 'block';
-        googleLoginButton.style.display = 'block';
         emailLoginButton.style.display = 'block';
+        registerButton.style.display = 'block';
         logoutButton.style.display = 'none';
     }
 });
