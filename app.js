@@ -223,5 +223,4 @@ document.getElementById('resetNamesButton').addEventListener('click', resetNames
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
-document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
 document.getElementById('registerButton').addEventListener('click', register);
