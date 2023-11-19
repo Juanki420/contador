@@ -14,6 +14,7 @@
         <div id="userInfo"></div>
         <button type="button" id="googleLoginButton">Iniciar Sesión con Google</button>
         <button type="button" id="emailLoginButton">Iniciar Sesión con Correo y Contraseña</button>
+        <button type="button" id="registerButton">Registrarse</button>
         <button type="button" id="logoutButton" style="display: none;">Cerrar Sesión</button>
     </header>
     <main>
@@ -32,26 +33,23 @@
     <script src="app.js"></script>
     <script>
         document.getElementById('googleLoginButton').addEventListener('click', function() {
-            var provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider)
-                .then(function(result) {
-                    alert('¡Has iniciado sesión con Google correctamente!');
-                })
-                .catch(function(error) {
-                    alert('Error al iniciar sesión con Google: ' + error.message);
-                });
+            // ... (Código para iniciar sesión con Google)
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
+            // ... (Código para iniciar sesión con correo y contraseña)
+        });
+
+        document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
             var password = prompt('Ingresa tu contraseña:');
 
-            firebase.auth().signInWithEmailAndPassword(email, password)
+            firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(function(result) {
-                    alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                    alert('¡Te has registrado correctamente!');
                 })
                 .catch(function(error) {
-                    alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                    alert('Error al registrarte: ' + error.message);
                 });
         });
     </script>
