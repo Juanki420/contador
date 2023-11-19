@@ -33,7 +33,7 @@ var allowedUserId = 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
     // Aquí deberías reemplazar 'TU_ID_DE_GOOGLE' con tu propio ID de Google
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === EcjgireoyRNjZ7Fo3W3eMZT05jp1;
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === allowedUserId;
 }
 
 // Verificar si el usuario ya ha enviado un nombre
@@ -100,8 +100,8 @@ function resetNames() {
     // Borrar la lista de nombres de la página
     nameList.innerHTML = '';
 
-    // Permitir el envío de nombres
-    canSubmitNames = true;
+    // Deshabilitar el envío de nombres
+    canSubmitNames = false;
 
     // Mostrar un mensaje de confirmación
     alert('Los envíos de nombres se han restablecido.');
@@ -152,4 +152,13 @@ function signOut() {
         // Mostrar el error
         alert(error.message);
     });
+}
+
+// Crear una función que maneje la eliminación de nombres
+function handleNameRemoval(data) {
+    // Actualizar el valor de la variable global
+    canSubmitNames = true;
+
+    // Actualizar el almacenamiento local
+    localStorage.clear();
 }
