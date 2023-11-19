@@ -1,6 +1,3 @@
-// app.js
-
-require('dotenv').config();
 
 var firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
