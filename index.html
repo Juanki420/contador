@@ -52,6 +52,16 @@
                     alert('Error al registrarte: ' + error.message);
                 });
         });
+
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            firebase.auth().signOut().then(function() {
+                // Cierre de sesión exitoso
+                alert('Has cerrado sesión correctamente.');
+            }).catch(function(error) {
+                // Manejar errores de cierre de sesión
+                alert('Error al cerrar sesión: ' + error.message);
+            });
+        });
     </script>
 </body>
 </html>
