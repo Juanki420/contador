@@ -89,11 +89,6 @@ function handleFormSubmission(e) {
 
 function resetNameSubmissions() {
     if (isAllowedUser()) {
-        canSubmitNames = true;
-        alert('Ahora puedes enviar nombres nuevamente.');
-        // Eliminar la marca de que el usuario ha enviado un nombre
-        localStorage.removeItem('submittedName');
-
         // Obtener referencia a la lista de nombres en Firebase
         var namesRef = firebase.database().ref('names');
 
@@ -102,6 +97,15 @@ function resetNameSubmissions() {
             .then(function () {
                 // Éxito al restablecer los envíos para todos los usuarios
                 console.log('Envíos restablecidos para todos los usuarios.');
+
+                // Actualizar el estado globalmente
+                canSubmitNames = true;
+                
+                // Notificar al usuario
+                alert('Ahora puedes enviar nombres nuevamente.');
+                
+                // Eliminar la marca de que el usuario ha enviado un nombre
+                localStorage.removeItem('submittedName');
             })
             .catch(function (error) {
                 // Manejar errores al intentar restablecer los envíos
