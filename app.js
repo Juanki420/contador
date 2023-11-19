@@ -15,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var usersRef = firebase.database().ref('users');
-var canSubmitNames = true;
+var canSubmitNames = true; // Mover esta declaración aquí para que sea global
 
 // Manejar tanto nuevos nombres como cambios en los nombres existentes
 nameRef.on('child_added', handleNameChange);
@@ -31,18 +31,6 @@ function handleNameChange(data) {
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
-}
-
-// Verificar si el usuario ya ha enviado un nombre
-// Verificar si el usuario ya ha enviado un nombre
-function hasSubmittedName() {
-    var user = firebase.auth().currentUser;
-    if (user) {
-        return usersRef.child(user.uid).child('submittedName').once('value').then(function(snapshot) {
-            return snapshot.val() === true;
-        });
-    }
-    return Promise.resolve(false);
 }
 
 // Almacenar que el usuario ha enviado un nombre
@@ -67,12 +55,6 @@ function displayUserInfo(user) {
 function handleFormSubmission(e) {
     // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
     e.preventDefault();
-
-    // Verificar si el usuario ya ha enviado un nombre
-    if (hasSubmittedName()) {
-        alert('Solo puedes enviar un nombre.');
-        return;
-    }
 
     // Verificar si se pueden enviar nombres
     if (!canSubmitNames) {
@@ -103,31 +85,16 @@ function handleFormSubmission(e) {
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
     if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        canSubmitNames = true;
-        alert('Ahora puedes enviar nombres nuevamente.');
-
         // Eliminar la restricción de envío de nombres en todos los dispositivos
         usersRef.remove();
-
+        canSubmitNames = true;
+        alert('Ahora puedes enviar nombres nuevamente.');
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres. Asegúrate de haber iniciado sesión con la cuenta correcta.');
     }
 }
-// Añadir un nuevo evento de clic para cerrar sesión
-var logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function() {
-        firebase.auth().signOut().then(function() {
-            // Cierre de sesión exitoso
-            alert('Has cerrado sesión correctamente.');
-        }).catch(function(error) {
-            // Manejar errores de cierre de sesión
-            alert('Error al cerrar sesión: ' + error.message);
-        });
-    });
-}
-// ...
 
+// Inicialización del botón "Iniciar Sesión"
 var loginButton = document.getElementById('loginButton');
 if (loginButton) {
     loginButton.addEventListener('click', function() {
@@ -146,9 +113,6 @@ if (loginButton) {
     });
 }
 
-// ...
-// ...
-
 // Inicialización del botón "Enviar"
 var submitButton = document.getElementById('submitButton');
 if (submitButton) {
@@ -161,7 +125,22 @@ if (resetButton) {
     resetButton.addEventListener('click', resetNameSubmissions);
 }
 
-// ...
+// ... (otro código)
+
+// Añadir un nuevo evento de clic para cerrar sesión
+var logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        firebase.auth().signOut().then(function() {
+            // Cierre de sesión exitoso
+            alert('Has cerrado sesión correctamente.');
+        }).catch(function(error) {
+            // Manejar errores de cierre de sesión
+            alert('Error al cerrar sesión: ' + error.message);
+        });
+    });
+}
+
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
@@ -169,7 +148,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     // Mostrar o ocultar botones según el estado de inicio de sesión
     if (user) {
         loginButton.style.display = 'none';
-        logoutButton.style.display = 'block';
+         logoutButton.style.display = 'block';
     } else {
         loginButton.style.display = 'block';
         logoutButton.style.display = 'none';
