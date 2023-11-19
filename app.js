@@ -218,7 +218,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     }
 });
 
-document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+document.getElementById('nameForm').addEventListener('submit', handleFormSubmission);
 document.getElementById('resetUserMessagesButton').addEventListener('click', resetUserMessages);
 document.getElementById('resetNamesButton').addEventListener('click', resetNames);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
@@ -226,7 +226,6 @@ document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
 document.getElementById('registerButton').addEventListener('click', register);
-
 
 
 
