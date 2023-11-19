@@ -39,42 +39,42 @@
 
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
-            var email = prompt('Ingrese su correo electrónico:');
-    
-    if (allowedEmails.includes(email)) {
-        firebase.auth().createUserWithEmailAndPassword(email, '123456')
-            .then(function(userCredential) {
-                var user = userCredential.user;
-                alert('¡Registro exitoso!');
-            })
-            .catch(function(error) {
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                alert('Error al registrarse: ' + errorMessage);
-            });
-    } else {
-        alert('Correo electrónico no permitido.');
-    }
-}
+            var email = prompt('Ingresa tu correo electrónico:');
+
+            // Verificar si el correo electrónico está en la lista permitida
+            if (allowedEmails.includes(email)) {
+                var password = prompt('Ingresa tu contraseña:');
+
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Te has registrado correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al registrarte: ' + error.message);
+                    });
+            } else {
+                alert('Correo electrónico no permitido. No se pudo completar el registro.');
+            }
+        });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var email = prompt('Ingrese su correo electrónico:');
-    
-    if (allowedEmails.includes(email)) {
-        firebase.auth().signInWithEmailAndPassword(email, '123456')
-            .then(function(userCredential) {
-                var user = userCredential.user;
-                alert('¡Inicio de sesión exitoso!');
-            })
-            .catch(function(error) {
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                alert('Error al iniciar sesión: ' + errorMessage);
-            });
-    } else {
-        alert('Correo electrónico no permitido.');
-    }
-}
+            var email = prompt('Ingresa tu correo electrónico:');
+
+            // Verificar si el correo electrónico está en la lista permitida
+            if (allowedEmails.includes(email)) {
+                var password = prompt('Ingresa tu contraseña:');
+
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                    });
+            } else {
+                alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
+            }
+        });
     </script>
 </body>
 </html>
