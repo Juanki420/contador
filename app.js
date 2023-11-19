@@ -1,6 +1,5 @@
 // app.js
 
-// Configuración de Firebase
 var firebaseConfig = {
     apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
     authDomain: "contador-c6528.firebaseapp.com",
@@ -11,13 +10,21 @@ var firebaseConfig = {
     appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
 
-// Inicialización de Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Referencias a elementos HTML
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var canSubmitNames = true;
+
+// Manejar tanto nuevos nombres como cambios en los nombres existentes
+nameRef.on('child_added', handleNameChange);
+nameRef.on('child_changed', handleNameChange);
+
+function handleNameChange(data) {
+    var li = document.createElement('li');
+    li.innerText = data.val();
+    nameList.appendChild(li);
+}
 
 // Verificar si el usuario actual es el propietario permitido
 function isAllowedUser() {
@@ -26,17 +33,34 @@ function isAllowedUser() {
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
+// Verificar si el usuario ya ha enviado un nombre
+function hasSubmittedName() {
+    return localStorage.getItem('submittedName') === 'true';
+}
+
+// Almacenar que el usuario ha enviado un nombre
+function setSubmittedName() {
+    localStorage.setItem('submittedName', 'true');
+}
+
+// Mostrar información del usuario en la página
 function displayUserInfo(user) {
-    var userInfoDiv = document.getElementById('userInfo');
-    if (user) {
-        userInfoDiv.innerHTML = 'Usuario actual: ' + user.displayName;
-    } else {
-        userInfoDiv.innerHTML = 'No hay usuario autenticado.';
+    var userInfoElement = document.getElementById('userInfo');
+    if (userInfoElement) {
+        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
     }
 }
 
-// Función para manejar el envío de nombres
-function handleFormSubmission() {
+function handleFormSubmission(e) {
+    // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
+    e.preventDefault();
+
+    // Verificar si el usuario ya ha enviado un nombre
+    if (hasSubmittedName()) {
+        alert('Solo puedes enviar un nombre.');
+        return;
+    }
+
     // Verificar si se pueden enviar nombres
     if (!canSubmitNames) {
         alert('Los envíos de nombres están deshabilitados en este momento.');
@@ -58,27 +82,59 @@ function handleFormSubmission() {
     // Enviar el nombre a Firebase
     firebase.database().ref('names').push(name);
     nameInput.value = '';
+
+    // Almacenar que el usuario ha enviado un nombre
+    setSubmittedName();
 }
 
-// Función para restablecer los envíos de nombres
 function resetNameSubmissions() {
     if (isAllowedUser()) {
-        // Restablecer los envíos permitiendo a todos
-        firebase.database().ref('.info/connected').once('value').then(function(connectedSnap) {
-            if (connectedSnap.val() === true) {
-                // Actualizar el valor en la base de datos
-                firebase.database().ref('allowSubmissions').set(true);
-                alert('Ahora todos pueden enviar nombres nuevamente.');
-            } else {
-                alert('Error: No se pudo restablecer los envíos. Verifica tu conexión a Internet.');
-            }
-        });
+        canSubmitNames = true;
+        alert('Ahora puedes enviar nombres nuevamente.');
+        // Eliminar la marca de que el usuario ha enviado un nombre
+        localStorage.removeItem('submittedName');
+
+        // Obtener referencia a la lista de nombres en Firebase
+        var namesRef = firebase.database().ref('names');
+
+        // Eliminar todos los nombres existentes en la lista
+        namesRef.remove()
+            .then(function () {
+                // Éxito al restablecer los envíos para todos los usuarios
+                console.log('Envíos restablecidos para todos los usuarios.');
+            })
+            .catch(function (error) {
+                // Manejar errores al intentar restablecer los envíos
+                console.error('Error al restablecer envíos: ' + error.message);
+            });
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres.');
     }
 }
 
-// Evento de clic para cerrar sesión
+// Verificar si el botón existe antes de agregar el evento
+var loginButton = document.getElementById('loginButton');
+if (loginButton) {
+    loginButton.addEventListener('click', function() {
+        // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
+        var provider = new firebase.auth.GoogleAuthProvider(); // Cambiado a GoogleAuthProvider
+
+        // Cambiar signInWithRedirect a signInWithPopup para Firebase 8.x
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
+                // El usuario ha iniciado sesión correctamente
+                alert('¡Has iniciado sesión correctamente!');
+            })
+            .catch(function(error) {
+                // Manejar errores de inicio de sesión
+                alert('Error al iniciar sesión: ' + error.message);
+            });
+    });
+}
+
+document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
+
 var logoutButton = document.getElementById('logoutButton');
 if (logoutButton) {
     logoutButton.addEventListener('click', function() {
@@ -91,23 +147,6 @@ if (logoutButton) {
         });
     });
 }
-
-// Verificar si el botón existe antes de agregar el evento
-var loginButton = document.getElementById('loginButton');
-var resetButton = document.getElementById('resetButton');
-
-if (loginButton) {
-    loginButton.addEventListener('click', function() {
-        // ...
-    });
-}
-
-if (resetButton) {
-    resetButton.addEventListener('click', resetNameSubmissions);
-}
-
-// Evento de clic para manejar el envío de nombres
-document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
