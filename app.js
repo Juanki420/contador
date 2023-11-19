@@ -43,6 +43,14 @@ function setSubmittedName() {
     localStorage.setItem('submittedName', 'true');
 }
 
+// Mostrar información del usuario en la página
+function displayUserInfo(user) {
+    var userInfoElement = document.getElementById('userInfo');
+    if (userInfoElement) {
+        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
+    }
+}
+
 function handleFormSubmission(e) {
     // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
     e.preventDefault();
@@ -112,3 +120,8 @@ if (loginButton) {
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
+
+// Actualizar la información del usuario al iniciar o cerrar sesión
+firebase.auth().onAuthStateChanged(function(user) {
+    displayUserInfo(user);
+});
