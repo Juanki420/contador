@@ -95,7 +95,7 @@ function handleFormSubmission(e) {
 
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
-    if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'TU_ID_DE_GOOGLE') {
+    if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
 
@@ -103,12 +103,9 @@ function resetNameSubmissions() {
         usersRef.remove();
 
     } else {
-        alert('No tienes permisos para restablecer los envíos de nombres.');
+        alert('No tienes permisos para restablecer los envíos de nombres. Asegúrate de haber iniciado sesión con la cuenta correcta.');
     }
 }
-
-// ... (código anterior)
-
 // Añadir un nuevo evento de clic para cerrar sesión
 var logoutButton = document.getElementById('logoutButton');
 if (logoutButton) {
