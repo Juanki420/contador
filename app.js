@@ -15,7 +15,6 @@ firebase.initializeApp(firebaseConfig);
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var usersRef = firebase.database().ref('users');
-var canSubmitNames = true; // Mover esta declaración aquí para que sea global
 
 // Manejar tanto nuevos nombres como cambios en los nombres existentes
 nameRef.on('child_added', handleNameChange);
@@ -33,17 +32,6 @@ function isAllowedUser() {
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
-// Almacenar que el usuario ha enviado un nombre
-function setSubmittedName() {
-    var user = firebase.auth().currentUser;
-    if (user) {
-        // Almacenar que el usuario ha enviado un nombre directamente en la base de datos
-        usersRef.child(user.uid).set({
-            submittedName: true
-        });
-    }
-}
-
 // Mostrar información del usuario en la página
 function displayUserInfo(user) {
     var userInfoElement = document.getElementById('userInfo');
@@ -52,51 +40,27 @@ function displayUserInfo(user) {
     }
 }
 
-function handleFormSubmission(e) {
-    // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
-    e.preventDefault();
-
-    // Verificar si se pueden enviar nombres
-    if (!canSubmitNames) {
-        alert('Los envíos de nombres están deshabilitados en este momento.');
-        return;
-    }
-
-    var nameInput = document.getElementById('nameInput');
-    var name = nameInput.value.trim();
-
-    // Validar la longitud del nombre
-    if (name.length === 0 || name.length > 30) {
-        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
-        return;
-    }
-
-    // Deshabilitar envíos de nombres después de enviar uno
-    canSubmitNames = false;
-
-    // Enviar el nombre a Firebase
-    nameRef.push(name);
-    nameInput.value = '';
-
-    // Almacenar que el usuario ha enviado un nombre
-    setSubmittedName();
-}
-
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
     if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        if (!canSubmitNames) {
-            // Eliminar la restricción de envío de nombres en todos los dispositivos
-            usersRef.remove();
-            canSubmitNames = true;
-            alert('Ahora puedes enviar nombres nuevamente.');
-        } else {
-            alert('No hay restricciones para restablecer.');
-        }
+        // Verificar si ya se restableció
+        usersRef.once('value').then(function(snapshot) {
+            if (snapshot.exists()) {
+                alert('Ya se restableció previamente. No hay restricciones para restablecer.');
+            } else {
+                // Restablecer
+                usersRef.child(user.uid).set({
+                    submittedName: true
+                });
+                alert('Ahora puedes enviar nombres nuevamente.');
+            }
+        });
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres. Asegúrate de haber iniciado sesión con la cuenta correcta.');
     }
 }
+
+// ... (otro código)
 
 // Inicialización del botón "Iniciar Sesión"
 var loginButton = document.getElementById('loginButton');
@@ -152,7 +116,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     // Mostrar o ocultar botones según el estado de inicio de sesión
     if (user) {
         loginButton.style.display = 'none';
-         logoutButton.style.display = 'block';
+        logoutButton.style.display = 'block';
     } else {
         loginButton.style.display = 'block';
         logoutButton.style.display = 'none';
