@@ -1,5 +1,3 @@
-// app.js
-
 var firebaseConfig = {
     apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
     authDomain: "contador-c6528.firebaseapp.com",
@@ -62,7 +60,7 @@ function handleFormSubmission(e) {
             alert('Ya has enviado un mensaje. No puedes enviar otro.');
         } else {
             if (!canSubmitNames) {
-                alert('Refresca la pagina e intenta enviar de nuevo');
+                alert('Recargue la pagina para poder enviar de nuevo.');
                 return;
             }
 
@@ -88,6 +86,7 @@ function handleFormSubmission(e) {
             markUserAsSubmitted(user.uid);
 
             nameInput.value = '';
+            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
         }
     });
 }
