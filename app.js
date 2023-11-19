@@ -22,8 +22,7 @@ nameRef.on('child_changed', handleNameChange);
 
 function handleNameChange(data) {
     var li = document.createElement('li');
-    var nameWithIP = `${data.val().name} (IP: ${data.val().ip})`;
-    li.innerText = nameWithIP;
+    li.innerText = data.val();
     nameList.appendChild(li);
 }
 
@@ -80,25 +79,8 @@ function handleFormSubmission(e) {
     // Deshabilitar envíos de nombres después de enviar uno
     canSubmitNames = false;
 
-    // Obtener la dirección IP del usuario
-    fetch('https://ipinfo.io/json')
-        .then(response => response.json())
-        .then(data => {
-            // Agregar la dirección IP al objeto que se enviará a Firebase
-            var submissionData = {
-                name: name,
-                ip: data.ip
-            };
-
-            // Enviar el objeto a Firebase
-            firebase.database().ref('names').push(submissionData);
-
-            // Resto del código...
-        })
-        .catch(error => {
-            console.error('Error al obtener la dirección IP: ', error);
-        });
-
+    // Enviar el nombre a Firebase
+    firebase.database().ref('names').push(name);
     nameInput.value = '';
 
     // Almacenar que el usuario ha enviado un nombre
@@ -109,11 +91,6 @@ function resetNameSubmissions() {
     if (isAllowedUser()) {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
-
-        // Eliminar todas las entradas de nombres en Firebase
-        firebase.database().ref('names').remove();
-
-        // Resto del código...
         // Eliminar la marca de que el usuario ha enviado un nombre
         localStorage.removeItem('submittedName');
     } else {
