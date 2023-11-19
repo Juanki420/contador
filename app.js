@@ -187,15 +187,6 @@ function loginWithGoogle() {
         });
 }
 
-function loginWithEmail() {
-    // Implementa la lógica de inicio de sesión con correo y contraseña aquí
-    alert('Función de inicio de sesión con correo y contraseña aún no implementada.');
-}
-
-function register() {
-    // Implementa la lógica de registro aquí
-    alert('Función de registro aún no implementada.');
-}
 
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
