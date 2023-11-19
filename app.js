@@ -52,7 +52,7 @@ function handleFormSubmission(e) {
 
     if (!user) {
         alert('Debes iniciar sesión antes de enviar un nombre.');
-        return; // Esta declaración de retorno se puede usar aquí sin problemas.
+        return;
     }
 
     if (hasSubmittedName()) {
@@ -81,29 +81,15 @@ function handleFormSubmission(e) {
     setSubmittedName();
 }
 
-    var nameInput = document.getElementById('nameInput');
-    var name = nameInput.value.trim();
-
-    if (name.length === 0 || name.length > 30) {
-        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
-        return;
-    }
-
-    canSubmitNames = false;
-
-    firebase.database().ref('names').push(name);
-    nameInput.value = '';
-
-    setSubmittedName();
-}
-
 function resetNameSubmissions() {
-    if (isAllowedUser()) {
+    var user = firebase.auth().currentUser;
+
+    if (user && isAllowedUser()) {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
         localStorage.removeItem('submittedName');
     } else {
-        alert('No tienes permisos para restablecer los envíos de nombres.');
+        alert('No tienes permisos para restablecer los envíos de nombres o no has iniciado sesión.');
     }
 }
 
