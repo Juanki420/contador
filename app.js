@@ -91,8 +91,14 @@ function resetNameSubmissions() {
     if (isAllowedUser()) {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
-        // Eliminar la marca de que el usuario ha enviado un nombre
+
+        // Eliminar la marca de que el usuario ha enviado un nombre localmente
         localStorage.removeItem('submittedName');
+
+        // Enviar un mensaje a otros dispositivos para que también eliminen la marca localmente
+        firebase.database().ref('systemMessage').set({
+            type: 'resetSubmission',
+        });
 
         // Obtener referencia a la lista de nombres en Firebase
         var namesRef = firebase.database().ref('names');
@@ -147,6 +153,19 @@ if (logoutButton) {
         });
     });
 }
+// Escuchar mensajes del sistema
+var systemMessageRef = firebase.database().ref('systemMessage');
+systemMessageRef.on('value', function(snapshot) {
+    var message = snapshot.val();
+
+    // Verificar el tipo de mensaje
+    if (message && message.type === 'resetSubmission') {
+        // Eliminar la marca localmente en respuesta al mensaje
+        localStorage.removeItem('submittedName');
+        console.log('Marca local eliminada en respuesta al mensaje de sistema.');
+    }
+});
+
 
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
