@@ -160,10 +160,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
-document.getElementById('loginButton').addEventListener('click', handleLoginWithGoogle);
-document.getElementById('emailLoginButton').addEventListener('click', handleEmailLogin);
-document.getElementById('registerButton').addEventListener('click', handleRegister);
-document.getElementById('logoutButton').addEventListener('click', handleLogout);
+
 
 
 
