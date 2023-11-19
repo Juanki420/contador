@@ -176,8 +176,16 @@ function logout() {
 
 function displayUserInfo(user) {
     var userInfoElement = document.getElementById('userInfo');
+    var spinButton = document.getElementById('spinButton');
+
     if (userInfoElement) {
         userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
+
+        // Verifica si el usuario actual es el permitido
+        var isAllowed = user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
+
+        // Muestra u oculta el botón de la ruleta según el resultado de la verificación
+        spinButton.style.display = isAllowed ? 'block' : 'none';
     }
 }
 
