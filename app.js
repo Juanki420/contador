@@ -239,7 +239,7 @@ document.addEventListener('mousemove', function (e) {
 
 // Función para mover el ojo hacia la posición del ratón
 function moveEye(eye, mouseX, mouseY) {
-    var eyeRect = eye.getBoundingClientRect();
+    var eyeRect = eye.getBoundingClientRect(); // Mover esta línea aquí
     var eyeX = eyeRect.left + eyeRect.width / 2;
     var eyeY = eyeRect.top + eyeRect.height / 2;
 
