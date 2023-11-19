@@ -143,7 +143,21 @@ if (loginButton) {
 }
 
 // ...
+// ...
 
+// Inicialización del botón "Enviar"
+var submitButton = document.getElementById('submitButton');
+if (submitButton) {
+    submitButton.addEventListener('click', handleFormSubmission);
+}
+
+// Inicialización del botón "Restablecer Envíos"
+var resetButton = document.getElementById('resetButton');
+if (resetButton) {
+    resetButton.addEventListener('click', resetNameSubmissions);
+}
+
+// ...
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
