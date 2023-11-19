@@ -92,6 +92,45 @@ function handleFormSubmission(e) {
     });
 }
 
+function resetUserMessages() {
+    var user = firebase.auth().currentUser;
+
+    if (user && isAllowedUser()) {
+        // Eliminar todos los 'userMessages'
+        userMessagesRef.remove()
+            .then(function() {
+                console.log('Todos los mensajes de usuarios han sido eliminados.');
+            })
+            .catch(function(error) {
+                console.error('Error al eliminar los mensajes de usuarios:', error);
+            });
+
+        alert('Se ha restablecido la información de los mensajes de usuarios.');
+    } else {
+        alert('No tienes permisos para restablecer los mensajes de usuarios o no has iniciado sesión.');
+    }
+}
+
+function resetNames() {
+    var user = firebase.auth().currentUser;
+
+    if (user && isAllowedUser()) {
+        // Eliminar todos los nombres en 'names'
+        nameRef.remove()
+            .then(function() {
+                console.log('Todos los nombres han sido eliminados.');
+            })
+            .catch(function(error) {
+                console.error('Error al eliminar los nombres:', error);
+            });
+
+        canSubmitNames = true;
+        alert('Se han restablecido todos los envíos de nombres.');
+    } else {
+        alert('No tienes permisos para restablecer los envíos de nombres o no has iniciado sesión.');
+    }
+}
+
 function resetAllData() {
     var user = firebase.auth().currentUser;
 
@@ -165,27 +204,37 @@ firebase.auth().onAuthStateChanged(function(user) {
     var emailLoginButton = document.getElementById('emailLoginButton');
     var registerButton = document.getElementById('registerButton');
     var logoutButton = document.getElementById('logoutButton');
+    var resetUserMessagesButton = document.getElementById('resetUserMessagesButton');
+    var resetNamesButton = document.getElementById('resetNamesButton');
+    var resetButton = document.getElementById('resetButton');
 
     if (user) {
         loginButton.style.display = 'none';
         emailLoginButton.style.display = 'none';
         registerButton.style.display = 'none';
         logoutButton.style.display = 'block';
+        resetUserMessagesButton.style.display = 'block';
+        resetNamesButton.style.display = 'block';
+        resetButton.style.display = 'block';
     } else {
         loginButton.style.display = 'block';
         emailLoginButton.style.display = 'block';
         registerButton.style.display = 'block';
         logoutButton.style.display = 'none';
+        resetUserMessagesButton.style.display = 'none';
+        resetNamesButton.style.display = 'none';
+        resetButton.style.display = 'none';
     }
 });
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+document.getElementById('resetUserMessagesButton').addEventListener('click', resetUserMessages);
+document.getElementById('resetNamesButton').addEventListener('click', resetNames);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
 document.getElementById('registerButton').addEventListener('click', register);
-
 
 
 
