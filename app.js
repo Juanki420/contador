@@ -12,7 +12,6 @@ firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
-var localStorageInfoRef = firebase.database().ref('localStorageInfo');
 var canSubmitNames = true;
 
 nameRef.on('child_added', handleNameChange);
@@ -35,6 +34,13 @@ function hasSubmittedName() {
 
 function setSubmittedName() {
     localStorage.setItem('submittedName', 'true');
+}
+
+function displayUserInfo(user) {
+    var userInfoElement = document.getElementById('userInfo');
+    if (userInfoElement) {
+        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
+    }
 }
 
 function handleFormSubmission(e) {
@@ -60,15 +66,9 @@ function handleFormSubmission(e) {
 
     canSubmitNames = false;
 
-    var newEntryRef = firebase.database().ref('names').push(name);
-
-    var localStorageKey = 'submittedName';  // Puedes cambiar esto según tu necesidad
-    localStorageInfoRef.child(localStorageKey).set({
-        nameKey: newEntryRef.key,
-        submitted: true
-    });
-
+    firebase.database().ref('names').push(name);
     nameInput.value = '';
+
     setSubmittedName();
 }
 
@@ -76,11 +76,7 @@ function resetNameSubmissions() {
     if (isAllowedUser()) {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
-
         localStorage.removeItem('submittedName');
-
-        var localStorageKey = 'submittedName';  // Puedes cambiar esto según tu necesidad
-        localStorageInfoRef.child(localStorageKey).remove();
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres.');
     }
@@ -89,8 +85,10 @@ function resetNameSubmissions() {
 var loginButton = document.getElementById('loginButton');
 if (loginButton) {
     loginButton.addEventListener('click', function() {
-        var provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider)
+        var email = prompt('Ingresa tu correo electrónico:');
+        var password = prompt('Ingresa tu contraseña:');
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
             .then(function(result) {
                 alert('¡Has iniciado sesión correctamente!');
             })
@@ -99,6 +97,7 @@ if (loginButton) {
             });
     });
 }
+
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
