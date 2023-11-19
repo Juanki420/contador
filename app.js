@@ -1,12 +1,12 @@
 
 var firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_FIREBASE_APP_ID
+    apiKey: REACT_APP_FIREBASE_API_KEY,
+    authDomain: REACT_APP_FIREBASE_AUTH_DOMAIN,
+    databaseURL: REACT_APP_FIREBASE_DATABASE_URL,
+    projectId: REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: REACT_APP_FIREBASE_APP_ID
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -29,7 +29,7 @@ function handleNameChange(data) {
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
     // Aquí deberías reemplazar 'TU_ID_DE_GOOGLE' con tu propio ID de Google
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === process.env.REACT_APP_ALLOWED_USER_ID;
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === REACT_APP_ALLOWED_USER_ID;
 }
 
 // Verificar si el usuario ya ha enviado un nombre
