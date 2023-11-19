@@ -30,7 +30,7 @@ function handleNameChange(data) {
 // Verificar si el usuario actual es el propietario permitido
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'TU_ID_DE_GOOGLE';
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
 // Verificar si el usuario ya ha enviado un nombre
