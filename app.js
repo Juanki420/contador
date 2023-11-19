@@ -58,13 +58,7 @@ function handleFormSubmission(e) {
     hasUserSubmittedMessage(user.uid).then(function(hasSubmitted) {
         if (hasSubmitted) {
             alert('Ya has enviado un mensaje. No puedes enviar otro.');
-        } else {
-            if (!canSubmitNames) {
-                alert('Los envíos de nombres están deshabilitados en este momento.');
-                return;
-            }
-        }
-
+        } else { // <- Agrega este else para corregir el error
             var nameInput = document.getElementById('nameInput');
             var name = nameInput.value.trim();
 
