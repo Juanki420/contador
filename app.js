@@ -41,7 +41,6 @@ function hasSubmittedName() {
 // Almacenar que el usuario ha enviado un nombre
 function setSubmittedName() {
     localStorage.setItem('submittedName', 'true');
-}
 
 // Mostrar información del usuario en la página
 function displayUserInfo(user) {
@@ -98,6 +97,7 @@ function resetNameSubmissions() {
         // Enviar un mensaje a otros dispositivos para que también eliminen la marca localmente
         firebase.database().ref('systemMessage').set({
             type: 'resetSubmission',
+            initiatorUserId: firebase.auth().currentUser.uid,
         });
 
         // Obtener referencia a la lista de nombres en Firebase
@@ -117,7 +117,6 @@ function resetNameSubmissions() {
         alert('No tienes permisos para restablecer los envíos de nombres.');
     }
 }
-
 // Verificar si el botón existe antes de agregar el evento
 var loginButton = document.getElementById('loginButton');
 if (loginButton) {
@@ -158,11 +157,18 @@ var systemMessageRef = firebase.database().ref('systemMessage');
 systemMessageRef.on('value', function(snapshot) {
     var message = snapshot.val();
 
-    // Verificar el tipo de mensaje
-    if (message && message.type === 'resetSubmission') {
+    // Escuchar mensajes del sistema
+var systemMessageRef = firebase.database().ref('systemMessage');
+systemMessageRef.on('value', function(snapshot) {
+    var message = snapshot.val();
+
+    // Verificar el tipo de mensaje y el iniciador del mensaje
+    if (message && message.type === 'resetSubmission' && message.initiatorUserId !== firebase.auth().currentUser.uid) {
         // Eliminar la marca localmente en respuesta al mensaje
         localStorage.removeItem('submittedName');
         console.log('Marca local eliminada en respuesta al mensaje de sistema.');
+        
+        // Actualizar la interfaz o realizar otras acciones según sea necesario
     }
 });
 
