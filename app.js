@@ -100,7 +100,6 @@ function resetNameSubmissions() {
     if (user && isAllowedUser()) {
         canSubmitNames = true;
         alert('Ahora puedes enviar nombres nuevamente.');
-        localStorage.removeItem('submittedName');
     } else {
         alert('No tienes permisos para restablecer los envíos de nombres o no has iniciado sesión.');
     }
