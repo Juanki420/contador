@@ -72,8 +72,8 @@ function handleFormSubmission(e) {
                 return;
             }
 
-            // Verifica si el nombre ya ha sido enviado
-            isNameAlreadySubmitted(name).then(function(alreadySubmitted) {
+            // Verifica si el nombre ya ha sido enviado (insensible a mayúsculas y minúsculas)
+            isNameAlreadySubmitted(name.toLowerCase()).then(function(alreadySubmitted) {
                 if (alreadySubmitted) {
                     alert('Este nombre ya ha sido enviado. Por favor, elige otro.');
                 } else {
@@ -98,9 +98,9 @@ function handleFormSubmission(e) {
     });
 }
 
-// Función para verificar si el nombre ya ha sido enviado
+// Función para verificar si el nombre ya ha sido enviado (insensible a mayúsculas y minúsculas)
 function isNameAlreadySubmitted(name) {
-    return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
+    return nameRef.orderByChild('nameLowercase').equalTo(name).once('value').then(function(snapshot) {
         return snapshot.exists();
     });
 }
