@@ -50,13 +50,8 @@ function displayUserInfo(user) {
         userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
     }
 }
-// Obtener la dirección IP del usuario
-async function getIPAddress() {
-    const response = await fetch('https://ipinfo.io/json');
-    const data = await response.json();
-    return data.ip;
-}
-async function handleFormSubmission(e) {
+
+function handleFormSubmission(e) {
     // Prevenir el comportamiento predeterminado del formulario (recarga de la página)
     e.preventDefault();
 
@@ -81,18 +76,11 @@ async function handleFormSubmission(e) {
         return;
     }
 
-    // Obtener la dirección IP del usuario
-    const ipAddress = await getIPAddress();
-
     // Deshabilitar envíos de nombres después de enviar uno
     canSubmitNames = false;
 
-    // Enviar el nombre y la dirección IP a Firebase
-    firebase.database().ref('names').push({
-        name: name,
-        ipAddress: ipAddress
-    });
-
+    // Enviar el nombre a Firebase
+    firebase.database().ref('names').push(name);
     nameInput.value = '';
 
     // Almacenar que el usuario ha enviado un nombre
