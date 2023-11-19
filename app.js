@@ -121,6 +121,17 @@ function resetAllData() {
     }
 }
 
+function handleLoginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            alert('¡Has iniciado sesión correctamente!');
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión: ' + error.message);
+        });
+}
+
 function logout() {
     firebase.auth().signOut().then(function() {
         alert('Has cerrado sesión correctamente.');
@@ -160,6 +171,8 @@ firebase.auth().onAuthStateChanged(function(user) {
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
+document.getElementById('googleLoginButton').addEventListener('click', handleLoginWithGoogle);
+// Otros event listeners...
 
 
 
