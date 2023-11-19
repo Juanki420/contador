@@ -60,7 +60,10 @@ function handleFormSubmission(e) {
     hasUserSubmittedMessage(user.uid).then(function(hasSubmitted) {
         if (hasSubmitted) {
             alert('Ya has enviado un mensaje. No puedes enviar otro.');
-        } 
+        } else {
+            if (!canSubmitNames) {
+                alert('Refresca la pagina e intenta enviar de nuevo');
+                return;
             }
 
             var nameInput = document.getElementById('nameInput');
@@ -85,7 +88,6 @@ function handleFormSubmission(e) {
             markUserAsSubmitted(user.uid);
 
             nameInput.value = '';
-            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
         }
     });
 }
@@ -224,7 +226,3 @@ document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
 document.getElementById('registerButton').addEventListener('click', register);
-
-
-
-
