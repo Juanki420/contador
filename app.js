@@ -93,10 +93,15 @@ function handleFormSubmission(e) {
 
 function resetNameSubmissions() {
     var user = firebase.auth().currentUser;
-    
+
     // Verificar si el usuario actual es el propietario permitido
     if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        canSubmitNames = true;
+        // Restablecer la capacidad para enviar nombres
+        firebase.database().ref('resetInfo').set({
+            canSubmitNames: true,
+            resetBy: user.uid
+        });
+
         alert('Ahora todos pueden enviar nombres nuevamente.');
         // Eliminar la marca de que el usuario ha enviado un nombre
         localStorage.removeItem('submittedName');
@@ -104,6 +109,14 @@ function resetNameSubmissions() {
         alert('No tienes permisos para restablecer los envíos de nombres.');
     }
 }
+
+// Observar cambios en la información de restablecimiento
+firebase.database().ref('resetInfo').on('value', function(snapshot) {
+    var resetInfo = snapshot.val();
+    if (resetInfo && resetInfo.canSubmitNames) {
+        canSubmitNames = true;
+    }
+});
 
 // ... (código posterior)
 
