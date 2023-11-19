@@ -1,11 +1,7 @@
+// app.js
+
 var firebaseConfig = {
-    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
-    authDomain: "contador-c6528.firebaseapp.com",
-    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "contador-c6528",
-    storageBucket: "contador-c6528.appspot.com",
-    messagingSenderId: "575749501934",
-    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
+    // ... (Tu configuración de Firebase)
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -53,10 +49,10 @@ function handleFormSubmission(e) {
         if (confirmLogin) {
             // Puedes redirigir a la página de inicio de sesión o mostrar el cuadro de diálogo de inicio de sesión aquí
             // Ejemplo: window.location.href = 'pagina-de-inicio-de-sesion.html';
-            return e.stopImmediatePropagation();
+            return;
         } else {
             alert('Envío de nombre cancelado. Inicia sesión o regístrate para enviar un nombre.');
-            return e.stopImmediatePropagation();
+            return;
         }
     }
 
@@ -86,49 +82,6 @@ function handleFormSubmission(e) {
     setSubmittedName();
 }
 
-    if (hasSubmittedName()) {
-        alert('Solo puedes enviar un nombre.');
-        return;
-    }
-
-    if (!canSubmitNames) {
-        alert('Los envíos de nombres están deshabilitados en este momento.');
-        return;
-    }
-
-    var nameInput = document.getElementById('nameInput');
-    var name = nameInput.value.trim();
-
-    if (name.length === 0 || name.length > 30) {
-        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
-        return;
-    }
-
-    canSubmitNames = false;
-
-    firebase.database().ref('names').push(name);
-    nameInput.value = '';
-
-    setSubmittedName();
-}
-
-
-    var nameInput = document.getElementById('nameInput');
-    var name = nameInput.value.trim();
-
-    if (name.length === 0 || name.length > 30) {
-        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
-        return;
-    }
-
-    canSubmitNames = false;
-
-    firebase.database().ref('names').push(name);
-    nameInput.value = '';
-
-    setSubmittedName();
-}
-
 function resetNameSubmissions() {
     if (isAllowedUser()) {
         canSubmitNames = true;
@@ -139,6 +92,7 @@ function resetNameSubmissions() {
     }
 }
 
+// Event listeners
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
 
