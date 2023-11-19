@@ -29,21 +29,36 @@
         <button type="button" id="resetButton">Restablecer Todo</button>
     </main>
     <!-- Asegúrate de incluir la biblioteca de Firebase App y Authentication -->
-    <script>document.getElementById('registerButton').addEventListener('click', function() {
-            var email = prompt('Ingresa tu correo electrónico:');
-            var password = prompt('Ingresa tu contraseña:');
+<script>
+    document.getElementById('registerButton').addEventListener('click', function() {
+        var email = prompt('Ingresa tu correo electrónico:');
+        var password = prompt('Ingresa tu contraseña:');
 
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(function(result) {
-                    alert('¡Te has registrado correctamente!');
-                })
-                .catch(function(error) {
-                    alert('Error al registrarte: ' + error.message);
-                });
-        });</script>
-    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
-    <script src="app.js"></script>
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(function(result) {
+                alert('¡Te has registrado correctamente!');
+            })
+            .catch(function(error) {
+                alert('Error al registrarte: ' + error.message);
+            });
+    });
+
+    document.getElementById('emailLoginButton').addEventListener('click', function() {
+        var email = prompt('Ingresa tu correo electrónico:');
+        var password = prompt('Ingresa tu contraseña:');
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(function(result) {
+                alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+            })
+            .catch(function(error) {
+                alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+            });
+    });
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
