@@ -12,6 +12,9 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+// Importar módulo de autenticación de Firebase
+import 'firebase/auth';
+
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var canSubmitNames = true;
@@ -119,9 +122,4 @@ if (loginButton) {
 }
 
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
-document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
-
-// Actualizar la información del usuario al iniciar o cerrar sesión
-firebase.auth().onAuthStateChanged(function(user) {
-    displayUserInfo(user);
-});
+document.getElementById('resetButton').addEventListener('click',
