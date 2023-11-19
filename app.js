@@ -92,10 +92,17 @@ function handleFormSubmission(e) {
 // ... (código anterior)
 
 function resetNameSubmissions() {
-    canSubmitNames = true;
-    alert('Ahora todos pueden enviar nombres nuevamente.');
-    // Eliminar la marca de que el usuario ha enviado un nombre
-    localStorage.removeItem('submittedName');
+    var user = firebase.auth().currentUser;
+    
+    // Verificar si el usuario actual es el propietario permitido
+    if (user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+        canSubmitNames = true;
+        alert('Ahora todos pueden enviar nombres nuevamente.');
+        // Eliminar la marca de que el usuario ha enviado un nombre
+        localStorage.removeItem('submittedName');
+    } else {
+        alert('No tienes permisos para restablecer los envíos de nombres.');
+    }
 }
 
 // ... (código posterior)
