@@ -1,3 +1,5 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,7 +26,6 @@
         <ul id="nameList"></ul>
         <button type="button" id="resetButton">Restablecer Envíos</button>
     </main>
-    <!-- Asegúrate de incluir la biblioteca de Firebase App y Authentication -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
@@ -69,10 +70,8 @@
 
         document.getElementById('logoutButton').addEventListener('click', function() {
             firebase.auth().signOut().then(function() {
-                // Cierre de sesión exitoso
                 alert('Has cerrado sesión correctamente.');
             }).catch(function(error) {
-                // Manejar errores de cierre de sesión
                 alert('Error al cerrar sesión: ' + error.message);
             });
         });
