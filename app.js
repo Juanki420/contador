@@ -34,8 +34,15 @@ function isAllowedUser() {
 }
 
 // Verificar si el usuario ya ha enviado un nombre
+// Verificar si el usuario ya ha enviado un nombre
 function hasSubmittedName() {
-    return localStorage.getItem('submittedName') === 'true';
+    var user = firebase.auth().currentUser;
+    if (user) {
+        return usersRef.child(user.uid).child('submittedName').once('value').then(function(snapshot) {
+            return snapshot.val() === true;
+        });
+    }
+    return Promise.resolve(false);
 }
 
 // Almacenar que el usuario ha enviado un nombre
