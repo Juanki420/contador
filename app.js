@@ -14,6 +14,8 @@ firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
+var canSubmitNamesRef = firebase.database().ref('canSubmitNames'); // Añadido
+var submittedNamesRef = firebase.database().ref('submittedNames'); // Añadido
 var canSubmitNames = true;
 
 // Manejar tanto nuevos nombres como cambios en los nombres existentes
@@ -26,14 +28,11 @@ function handleNameChange(data) {
     nameList.appendChild(li);
 }
 
-// Crear una variable global que almacene el ID de Google del propietario permitido
-var allowedUserId = 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
-
 // Verificar si el usuario actual es el propietario permitido
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
     // Aquí deberías reemplazar 'TU_ID_DE_GOOGLE' con tu propio ID de Google
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === allowedUserId;
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
 // Verificar si el usuario ya ha enviado un nombre
@@ -79,86 +78,78 @@ function handleFormSubmission(e) {
         return;
     }
 
-    // Enviar el nombre a la base de datos de Firebase
-    nameRef.push(name);
+    // Deshabilitar envíos de nombres después de enviar uno
+    canSubmitNames = false;
+
+    // Enviar el nombre a Firebase
+    firebase.database().ref('names').push(name);
+    nameInput.value = '';
 
     // Almacenar que el usuario ha enviado un nombre
     setSubmittedName();
 
-    // Limpiar el campo de entrada
-    nameInput.value = '';
+    // Añadir el nombre y la clave del usuario a la base de datos
+    var user = firebase.auth().currentUser;
+    if (user) {
+        var userId = user.uid;
+        submittedNamesRef.child(userId).set(name);
+    }
 }
 
-// Crear una función que borre la base de datos de Firebase y el almacenamiento local de los nombres enviados
-function resetNames() {
-    // Borrar la base de datos de Firebase
-    nameRef.remove();
-
-    // Borrar el almacenamiento local
-    localStorage.clear();
-
-    // Borrar la lista de nombres de la página
-    nameList.innerHTML = '';
-
-    // Deshabilitar el envío de nombres
-    canSubmitNames = false;
-
-    // Mostrar un mensaje de confirmación
-    alert('Los envíos de nombres se han restablecido.');
+function resetNameSubmissions() {
+    if (isAllowedUser()) {
+        // Establecer el valor de canSubmitNames a true
+        canSubmitNamesRef.set(true);
+        alert('Ahora puedes enviar nombres nuevamente.');
+        // Eliminar todos los nombres enviados
+        submittedNamesRef.remove();
+        // Eliminar la marca de que el usuario ha enviado un nombre
+        localStorage.removeItem('submittedName');
+    } else {
+        alert('No tienes permisos para restablecer los envíos de nombres.');
+    }
 }
 
-// Añadir un evento de clic al botón de restablecer que invoque la función de restablecer
-document.getElementById('resetButton').addEventListener('click', resetNames);
+// Verificar si el botón existe antes de agregar el evento
+var loginButton = document.getElementById('loginButton');
+if (loginButton) {
+    loginButton.addEventListener('click', function() {
+        // Abrir el cuadro de diálogo de inicio de sesión cuando se hace clic en el botón de inicio de sesión
+        var provider = new firebase.auth.GoogleAuthProvider(); // Cambiado a GoogleAuthProvider
 
-// Añadir un evento de clic al botón de enviar que invoque la función de enviar
-document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
-
-// Añadir un evento de clic al botón de iniciar sesión que invoque la función de iniciar sesión
-document.getElementById('loginButton').addEventListener('click', signIn);
-
-// Añadir un evento de clic al botón de cerrar sesión que invoque la función de cerrar sesión
-document.getElementById('logoutButton').addEventListener('click', signOut);
-
-// Crear una función que inicie sesión con Google
-function signIn() {
-    // Crear un proveedor de Google
-    var provider = new firebase.auth.GoogleAuthProvider();
-
-    // Iniciar sesión con el proveedor
-    firebase.auth().signInWithPopup(provider).then(function(result) {
-        // Mostrar el botón de cerrar sesión y ocultar el de iniciar sesión
-        document.getElementById('logoutButton').style.display = 'block';
-        document.getElementById('loginButton').style.display = 'none';
-
-        // Mostrar la información del usuario
-        displayUserInfo(result.user);
-    }).catch(function(error) {
-        // Mostrar el error
-        alert(error.message);
+        // Cambiar signInWithRedirect a signInWithPopup para Firebase 8.x
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
+                // El usuario ha iniciado sesión correctamente
+                displayUserInfo(result.user);
+            })
+            .catch(function(error) {
+                // Ha ocurrido un error al iniciar sesión
+                console.error(error);
+            });
     });
 }
 
-// Crear una función que cierre sesión
-function signOut() {
-    // Cerrar sesión
-    firebase.auth().signOut().then(function() {
-        // Ocultar el botón de cerrar sesión y mostrar el de iniciar sesión
-        document.getElementById('logoutButton').style.display = 'none';
-        document.getElementById('loginButton').style.display = 'block';
+// Leer el valor inicial de canSubmitNames desde la base de datos
+canSubmitNamesRef.once('value', function(snapshot) {
+    canSubmitNames = snapshot.val();
+});
 
-        // Ocultar la información del usuario
-        displayUserInfo(null);
-    }).catch(function(error) {
-        // Mostrar el error
-        alert(error.message);
-    });
-}
+// Escuchar cambios en el valor de canSubmitNames
+canSubmitNamesRef.on('value', function(snapshot) {
+    canSubmitNames = snapshot.val();
+    // Aquí puedes actualizar la interfaz de usuario según el valor de canSubmitNames
+});
 
-// Crear una función que maneje la eliminación de nombres
-function handleNameRemoval(data) {
-    // Actualizar el valor de la variable global
-    canSubmitNames = true;
+// Leer los nombres enviados desde la base de datos
+submittedNamesRef.once('value', function(snapshot) {
+    var submittedNames = snapshot.val();
+    // Aquí puedes usar la variable submittedNames para mostrar los nombres enviados en la interfaz de usuario
+});
 
-    // Actualizar el almacenamiento local
-    localStorage.clear();
-}
+// Escuchar cambios en los nombres enviados
+submittedNamesRef.on('child_added', function(data) {
+    var name = data.val();
+    var key = data.key;
+    // Aquí puedes usar la variable name y key para actualizar la interfaz de usuario con el nuevo nombre enviado
+});
