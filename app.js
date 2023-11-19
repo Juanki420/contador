@@ -58,10 +58,7 @@ function handleFormSubmission(e) {
     hasUserSubmittedMessage(user.uid).then(function(hasSubmitted) {
         if (hasSubmitted) {
             alert('Ya has enviado un mensaje. No puedes enviar otro.');
-        } else {
-            if (!canSubmitNames) {
-                alert('Recargue la pagina para poder enviar de nuevo.');
-                return;
+        } 
             }
 
             var nameInput = document.getElementById('nameInput');
