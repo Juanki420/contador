@@ -162,16 +162,13 @@ var systemMessageRef = firebase.database().ref('systemMessage');
 systemMessageRef.on('value', function(snapshot) {
     var message = snapshot.val();
 
-    // Verificar el tipo de mensaje y el iniciador del mensaje
-    if (message && message.type === 'resetSubmission' && message.initiatorUserId !== firebase.auth().currentUser.uid) {
+    // Verificar el tipo de mensaje
+    if (message && message.type === 'resetSubmission') {
         // Eliminar la marca localmente en respuesta al mensaje
         localStorage.removeItem('submittedName');
         console.log('Marca local eliminada en respuesta al mensaje de sistema.');
-        
-        // Actualizar la interfaz o realizar otras acciones según sea necesario
     }
 });
-
 
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
