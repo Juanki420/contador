@@ -14,6 +14,7 @@ firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
+var userMessagesRef = firebase.database().ref('userMessages'); // Nueva referencia para mensajes de usuario
 var canSubmitNames = true;
 
 nameRef.on('child_added', handleNameChange);
@@ -36,19 +37,14 @@ function isAllowedUser() {
     return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
-function hasSubmittedName() {
-    return localStorage.getItem('submittedName') === 'true';
+function hasUserSubmittedMessage(userId) {
+    return userMessagesRef.child(userId).once('value').then(function(snapshot) {
+        return snapshot.exists(); // Verificar si el usuario ha enviado un mensaje
+    });
 }
 
-function setSubmittedName() {
-    localStorage.setItem('submittedName', 'true');
-}
-
-function displayUserInfo(user) {
-    var userInfoElement = document.getElementById('userInfo');
-    if (userInfoElement) {
-        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
-    }
+function markUserAsSubmitted(userId) {
+    userMessagesRef.child(userId).push(true); // Marcar que el usuario ha enviado un mensaje
 }
 
 function handleFormSubmission(e) {
@@ -61,37 +57,42 @@ function handleFormSubmission(e) {
         return;
     }
 
-    if (hasSubmittedName()) {
-        alert('Solo puedes enviar un nombre.');
-        return;
-    }
+    hasUserSubmittedMessage(user.uid).then(function(hasSubmitted) {
+        if (hasSubmitted) {
+            alert('Ya has enviado un mensaje. No puedes enviar otro.');
+        } else {
+            if (!canSubmitNames) {
+                alert('Los envíos de nombres están deshabilitados en este momento.');
+                return;
+            }
 
-    if (!canSubmitNames) {
-        alert('Los envíos de nombres están deshabilitados en este momento.');
-        return;
-    }
+            var nameInput = document.getElementById('nameInput');
+            var name = nameInput.value.trim();
 
-    var nameInput = document.getElementById('nameInput');
-    var name = nameInput.value.trim();
+            if (name.length === 0 || name.length > 30) {
+                alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
+                return;
+            }
 
-    if (name.length === 0 || name.length > 30) {
-        alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
-        return;
-    }
+            canSubmitNames = false;
 
-    canSubmitNames = false;
+            var messageObject = {
+                name: name,
+                userId: user.uid,
+                userName: user.displayName,
+                userEmail: user.email,
+            };
 
-    var messageObject = {
-        name: name,
-        userId: user.uid,
-        userName: user.displayName,
-        userEmail: user.email,
-    };
+            // Enviar el objeto a la base de datos
+            var newMessageRef = nameRef.push(messageObject);
 
-    firebase.database().ref('names').push(messageObject);
+            // Marcar que el usuario ha enviado un mensaje
+            markUserAsSubmitted(user.uid);
 
-    nameInput.value = '';
-    setSubmittedName();
+            nameInput.value = '';
+            setSubmittedName();
+        }
+    });
 }
 
 function resetNameSubmissions() {
