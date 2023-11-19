@@ -225,29 +225,3 @@ document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
 document.getElementById('registerButton').addEventListener('click', register);
-var leftEye = document.getElementById('leftEye');
-var rightEye = document.getElementById('rightEye');
-
-// Añade un listener para el movimiento del ratón
-document.addEventListener('mousemove', function (e) {
-    var mouseX = e.clientX;
-    var mouseY = e.clientY;
-
-    moveEye(leftEye, mouseX, mouseY);
-    moveEye(rightEye, mouseX, mouseY);
-});
-
-// Función para mover el ojo hacia la posición del ratón
-function moveEye(eye, mouseX, mouseY) {
-    var eyeRect = eye.getBoundingClientRect(); // Mover esta línea aquí
-    var eyeX = eyeRect.left + eyeRect.width / 2;
-    var eyeY = eyeRect.top + eyeRect.height / 2;
-
-    var angle = Math.atan2(mouseY - eyeY, mouseX - eyeX);
-    var distance = Math.min(eyeRect.width / 4, eyeRect.height / 4);
-
-    var offsetX = distance * Math.cos(angle);
-    var offsetY = distance * Math.sin(angle);
-
-    eye.querySelector('.iris').style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';
-}
