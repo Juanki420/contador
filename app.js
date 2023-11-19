@@ -1,7 +1,13 @@
 // app.js
 
 var firebaseConfig = {
-    // ... (Tu configuración de Firebase)
+    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
+    authDomain: "contador-c6528.firebaseapp.com",
+    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "contador-c6528",
+    storageBucket: "contador-c6528.appspot.com",
+    messagingSenderId: "575749501934",
+    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -42,20 +48,6 @@ function displayUserInfo(user) {
 function handleFormSubmission(e) {
     e.preventDefault();
 
-    // Verificar si el usuario ha iniciado sesión
-    var user = firebase.auth().currentUser;
-    if (!user) {
-        var confirmLogin = confirm('Debes iniciar sesión o registrarte para enviar un nombre. ¿Quieres iniciar sesión ahora?');
-        if (confirmLogin) {
-            // Puedes redirigir a la página de inicio de sesión o mostrar el cuadro de diálogo de inicio de sesión aquí
-            // Ejemplo: window.location.href = 'pagina-de-inicio-de-sesion.html';
-            return;
-        } else {
-            alert('Envío de nombre cancelado. Inicia sesión o regístrate para enviar un nombre.');
-            return;
-        }
-    }
-
     if (hasSubmittedName()) {
         alert('Solo puedes enviar un nombre.');
         return;
@@ -92,29 +84,48 @@ function resetNameSubmissions() {
     }
 }
 
-// Event listeners
+var loginButton = document.getElementById('loginButton');
+if (loginButton) {
+    loginButton.addEventListener('click', function() {
+        var email = prompt('Ingresa tu correo electrónico:');
+        var password = prompt('Ingresa tu contraseña:');
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(function(result) {
+                alert('¡Has iniciado sesión correctamente!');
+            })
+            .catch(function(error) {
+                alert('Error al iniciar sesión: ' + error.message);
+            });
+    });
+}
+
 document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
 document.getElementById('resetButton').addEventListener('click', resetNameSubmissions);
+
+var logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        firebase.auth().signOut().then(function() {
+            // Cierre de sesión exitoso
+            alert('Has cerrado sesión correctamente.');
+        }).catch(function(error) {
+            // Manejar errores de cierre de sesión
+            alert('Error al cerrar sesión: ' + error.message);
+        });
+    });
+}
 
 // Actualizar la información del usuario al iniciar o cerrar sesión
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
-    // Mostrar u ocultar botones según el estado de inicio de sesión
-    var loginButton = document.getElementById('googleLoginButton');
-    var emailLoginButton = document.getElementById('emailLoginButton');
-    var registerButton = document.getElementById('registerButton');
-    var logoutButton = document.getElementById('logoutButton');
-
+    // Mostrar o ocultar botones según el estado de inicio de sesión
     if (user) {
         loginButton.style.display = 'none';
-        emailLoginButton.style.display = 'none';
-        registerButton.style.display = 'none';
         logoutButton.style.display = 'block';
     } else {
         loginButton.style.display = 'block';
-        emailLoginButton.style.display = 'block';
-        registerButton.style.display = 'block';
         logoutButton.style.display = 'none';
     }
 });
