@@ -1,0 +1,23 @@
+<!-- resultados.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Ruleta</title>
+</head>
+<body>
+    <h1>Resultados de la Ruleta</h1>
+    <p id="result"></p>
+
+    <script>
+        // Obtén el resultado de la ruleta de la URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var result = urlParams.get('result');
+
+        // Muestra el resultado en la página
+        document.getElementById('result').innerText = 'Ganador: ' + result;
+    </script>
+</body>
+</html>
