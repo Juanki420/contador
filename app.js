@@ -14,7 +14,9 @@ firebase.initializeApp(firebaseConfig);
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var userMessagesRef = firebase.database().ref('userMessages');
+var verificationRef = firebase.database().ref('verificationEnabled');
 var canSubmitNames = true;
+
 
 nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
@@ -29,6 +31,26 @@ function handleNameChange(data) {
     var li = document.createElement('li');
     li.innerText = message.name;
     nameList.appendChild(li);
+}
+
+function isVerificationEnabled() {
+    return verificationRef.once('value').then(function(snapshot) {
+        return snapshot.val() === true;
+    });
+}
+
+// Función para mostrar u ocultar el botón de alternar verificación según el usuario autenticado
+function toggleVerificationButtonVisibility(user) {
+    var toggleVerificationButton = document.getElementById('toggleVerificationButton');
+
+    // Verificar si la verificación está habilitada y si el usuario es el permitido
+    isVerificationEnabled().then(function(verificationEnabled) {
+        if (verificationEnabled && user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+            toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
+        } else {
+            toggleVerificationButton.style.display = 'none'; // Ocultar el botón
+        }
+    });
 }
 
 function isAllowedUser() {
