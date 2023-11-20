@@ -25,58 +25,6 @@ var canSubmitNames = true;
 nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
 
-// Restringe el evento popstate para evitar el reinicio de datos no deseado
-var isPopstateRestricted = false;
-
-// Almacena la información del historial al cargar la página
-window.history.pushState({ page: "initial" }, "", "");
-
-// Agrega un evento al cargar la página para manejar el evento de retroceso del navegador
-window.addEventListener('popstate', function (event) {
-    // Restablece los datos solo si el usuario ha hecho clic en el botón de retroceso del navegador
-    if (event.state && event.state.page === "resetPage" && !isPopstateRestricted) {
-        resetData();
-    }
-    // Restringe el evento popstate nuevamente después de manejarlo
-    isPopstateRestricted = false;
-});
-
-// Llama a resetData solo si el usuario tiene permisos
-function resetData() {
-    var user = firebase.auth().currentUser;
-
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Elimina todos los datos en la base de datos
-        nameRef.remove().then(function () {
-            console.log('Todos los nombres han sido eliminados.');
-        }).catch(function (error) {
-            console.error('Error al eliminar los nombres:', error);
-        });
-
-        userMessagesRef.remove().then(function () {
-            console.log('Todos los mensajes de usuarios han sido eliminados.');
-        }).catch(function (error) {
-            console.error('Error al eliminar los mensajes de usuarios:', error);
-        });
-
-        canSubmitNames = true;
-        alert('Se han restablecido todos los envíos y mensajes de usuarios.');
-    } else {
-        alert('No tienes permisos para restablecer los envíos o no has iniciado sesión.');
-    }
-}
-
-// En lugar de llamar directamente a resetData, cambia la ubicación a una nueva entrada en el historial
-function triggerResetData() {
-    // Restringe el evento popstate antes de cambiar la ubicación para evitar el reinicio de datos no deseado
-    isPopstateRestricted = true;
-    // Cambia la ubicación a una nueva entrada en el historial
-    window.history.pushState({ page: "resetPage" }, "", "");
-    // Llama a resetData después de cambiar la ubicación
-    resetData();
-}
-
-
 function isAllowedUser(email) {
     return verificationRef.once('value').then(function(snapshot) {
         var verificationEnabled = snapshot.val().verificationEnabled;
@@ -92,13 +40,15 @@ function isAllowedUser(email) {
     });
 }
 
-function toggleVerificationButtonVisibility(isAuthorizedUser) {
-    if (isAuthorizedUser) {
+function toggleVerificationButtonVisibility() {
+    var user = firebase.auth().currentUser;
+
+    if (user && user.uid === 'TuUIDAutorizado') {
         verificationRef.once('value').then(function(snapshot) {
             var verificationEnabled = snapshot.val().verificationEnabled;
 
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-
+            
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
         });
     } else {
@@ -107,13 +57,6 @@ function toggleVerificationButtonVisibility(isAuthorizedUser) {
         toggleVerificationButton.style.display = 'none';
     }
 }
-
-function handleVerificationChange(snapshot) {
-    toggleVerificationButtonVisibility(snapshot.val().verificationEnabled);
-}
-
-verificationRef.on('value', handleVerificationChange);
-
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
@@ -225,13 +168,6 @@ function isNameAlreadySubmitted(name) {
     });
 }
 
-// Agrega un evento al cargar la página para manejar el evento de retroceso del navegador
-window.addEventListener('popstate', function (event) {
-    // Restablece los datos cuando se detecta el evento de retroceso
-    resetData();
-});
-
-
 // Función para normalizar el correo electrónico
 function normalizeEmail(email) {
     return email.replace('.', '_').replace('@', '_');
@@ -240,19 +176,13 @@ function normalizeEmail(email) {
 // Función para agregar un correo a la lista de correos permitidos
 function addAllowedEmail(email) {
     var normalizedEmail = normalizeEmail(email);
-
-    return verificationRef.child('allowedEmails').update({
-        [normalizedEmail]: true
-    });
+    return verificationRef.child('allowedEmails').child(normalizedEmail).set(true);
 }
 
 function resetUserMessages() {
     var user = firebase.auth().currentUser;
 
     if (user) {
-        // Desvincular eventos relacionados con 'nameRef'
-        nameRef.off();
-        nameList.innerHTML = ''; // Limpiar la lista de nombres
         userMessagesRef.remove().then(function() {
             console.log('Todos los mensajes de usuarios han sido eliminados.');
         }).catch(function(error) {
@@ -269,8 +199,6 @@ function resetNames() {
     var user = firebase.auth().currentUser;
 
     if (user) {
-        // Desvincular eventos relacionados con 'nameRef'
-        nameRef.off();
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
         }).catch(function(error) {
@@ -287,10 +215,7 @@ function resetNames() {
 function resetAllData() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Desvincular eventos relacionados con 'nameRef'
-        nameRef.off();
-        // Elimina todos los datos en la base de datos
+    if (user) {
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
         }).catch(function(error) {
@@ -311,11 +236,6 @@ function resetAllData() {
 }
 
 function logout() {
-    // Desvincular eventos relacionados con 'nameRef'
-    nameRef.off();
-    // Limpiar la lista de nombres
-    nameList.innerHTML = '';
-    
     firebase.auth().signOut().then(function() {
         alert('Has cerrado sesión correctamente.');
     }).catch(function(error) {
@@ -383,6 +303,7 @@ function addEmailManually() {
     }
 }
 
+
 function spinTheWheel() {
     var names = [];
 
@@ -424,7 +345,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     var resetUserMessagesButton = document.getElementById('resetUserMessagesButton');
     var resetNamesButton = document.getElementById('resetNamesButton');
     var resetButton = document.getElementById('resetButton');
-    var toggleVerificationButton = document.getElementById('toggleVerificationButton');
 
     if (user) {
         loginButton.style.display = 'none';
@@ -441,9 +361,6 @@ firebase.auth().onAuthStateChanged(function(user) {
             resetNamesButton.style.display = 'none';
             resetButton.style.display = 'none';
         }
-
-        // Verificar si el usuario es el autorizado al cambiar la autenticación
-        toggleVerificationButtonVisibility(user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1');
     } else {
         loginButton.style.display = 'block';
         emailLoginButton.style.display = 'block';
@@ -452,9 +369,6 @@ firebase.auth().onAuthStateChanged(function(user) {
         resetUserMessagesButton.style.display = 'none';
         resetNamesButton.style.display = 'none';
         resetButton.style.display = 'none';
-
-        // Ocultar el botón de verificación si el usuario no está autenticado
-        toggleVerificationButton.style.display = 'none';
     }
 });
 
@@ -465,6 +379,3 @@ document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('spinButton').addEventListener('click', spinTheWheel);
-document.getElementById('resetButton').addEventListener('click', function() {
-    triggerResetData();
-});
