@@ -40,17 +40,15 @@ firebase.auth().onAuthStateChanged(function(user) {
 var database = firebase.database();
 
 // Configurar el listener de cambio en verificationEnabled
-database.ref('verificationEnabled').on('value', function(snapshot) {
+verificationRef.on('value', function(snapshot) {
     var verificationEnabled = snapshot.val();
 
     // Lógica para habilitar o deshabilitar la lista de correos permitidos
     if (verificationEnabled === false) {
         // Deshabilitar la lista de correos permitidos
-        allowedEmails = [];
         alert('La verificación de correos está desactivada. Se permitirá el acceso a todos los correos.');
     } else {
         // Habilitar la lista de correos permitidos
-        allowedEmails = ["juankplays420@gmail.com", "laprueba@123.es", "usuario3@example.com"];
         alert('La verificación de correos está activada. Se aplicará la lista de correos permitidos.');
     }
 });
@@ -64,7 +62,7 @@ document.getElementById('toggleVerificationButton').addEventListener('click', fu
     localStorage.setItem('verificationEnabled', verificationEnabled);
 
     // Enviar el nuevo estado a la Firebase Realtime Database
-    database.ref('verificationEnabled').set(verificationEnabled);
+    verificationRef.set(verificationEnabled);
 
     // Mostrar un mensaje indicando el nuevo estado
     if (verificationEnabled) {
@@ -86,9 +84,19 @@ function handleNameChange(data) {
     nameList.appendChild(li);
 }
 
-function isAllowedUser() {
-    var user = firebase.auth().currentUser;
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
+function isAllowedUser(email) {
+    // Obtener el estado actual de verificación
+    verificationRef.once('value').then(function(snapshot) {
+        var verificationEnabled = snapshot.val();
+
+        if (!verificationEnabled) {
+            // Si la verificación está desactivada, permitir cualquier correo
+            return true;
+        } else {
+            // Verificar si el correo está en la lista permitida
+            return allowedEmails.includes(email);
+        }
+    });
 }
 
 function hasUserSubmittedMessage(userId) {
@@ -144,18 +152,27 @@ function handleFormSubmission(e) {
                         userEmail: user.email,
                     };
 
-                    // Guarda el mensaje en 'names'
-                    var newMessageRef = nameRef.push(messageObject);
+                    // Verificar si el usuario está permitido
+                    isAllowedUser(user.email).then(function(allowed) {
+                        if (allowed) {
+                            // Guarda el mensaje en 'names'
+                            var newMessageRef = nameRef.push(messageObject);
 
-                    // Guarda el correo electrónico en 'userMessages'
-                    userMessagesRef.child(user.uid).set({
-                        userEmail: user.email,
+                            // Guarda el correo electrónico en 'userMessages'
+                            userMessagesRef.child(user.uid).set({
+                                userEmail: user.email,
+                            });
+
+                            markUserAsSubmitted(user.uid);
+
+                            nameInput.value = '';
+                            alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
+                        } else {
+                            alert('Este correo no está permitido.');
+                        }
+
+                        canSubmitNames = true;  // Restablecer el estado de envío
                     });
-
-                    markUserAsSubmitted(user.uid);
-
-                    nameInput.value = '';
-                    alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
                 }
             });
         }
