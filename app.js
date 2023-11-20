@@ -21,6 +21,7 @@ verificationRef.set({
 });
 
 var canSubmitNames = true;
+var isViewingResults = false; // Nueva variable para rastrear si se están viendo los resultados
 
 nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
@@ -55,6 +56,7 @@ function toggleVerificationButtonVisibility(isAuthorizedUser) {
         toggleVerificationButton.style.display = 'none';
     }
 }
+
 function handleVerificationChange(snapshot) {
     toggleVerificationButtonVisibility(snapshot.val().verificationEnabled);
 }
@@ -94,6 +96,12 @@ function markUserAsSubmitted(userId) {
 
 function handleFormSubmission(e) {
     e.preventDefault();
+
+    // Verificar si se están viendo los resultados
+    if (isViewingResults) {
+        alert('No puedes enviar un nombre mientras estás viendo los resultados. Vuelve atrás para enviar nombres.');
+        return;
+    }
 
     var user = firebase.auth().currentUser;
 
@@ -311,7 +319,6 @@ function addEmailManually() {
     }
 }
 
-
 function spinTheWheel() {
     var names = [];
 
@@ -330,6 +337,8 @@ function spinTheWheel() {
                 resultRef.set({
                     winner: winner
                 });
+
+                isViewingResults = true; // Marcar que se están viendo los resultados
 
                 alert('Resultado almacenado: ¡' + winner + '!');
             } else {
