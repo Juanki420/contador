@@ -25,6 +25,57 @@ var canSubmitNames = true;
 nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
 
+// Restringe el evento popstate para evitar el reinicio de datos no deseado
+var isPopstateRestricted = false;
+
+// Almacena la información del historial al cargar la página
+window.history.pushState({ page: "initial" }, "", "");
+
+// Agrega un evento al cargar la página para manejar el evento de retroceso del navegador
+window.addEventListener('popstate', function (event) {
+    // Restablece los datos solo si el usuario ha hecho clic en el botón de retroceso del navegador
+    if (event.state && event.state.page === "resetPage" && !isPopstateRestricted) {
+        resetData();
+    }
+    // Restringe el evento popstate nuevamente después de manejarlo
+    isPopstateRestricted = false;
+});
+
+function resetData() {
+    var user = firebase.auth().currentUser;
+
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+        // Elimina todos los datos en la base de datos
+        nameRef.remove().then(function () {
+            console.log('Todos los nombres han sido eliminados.');
+        }).catch(function (error) {
+            console.error('Error al eliminar los nombres:', error);
+        });
+
+        userMessagesRef.remove().then(function () {
+            console.log('Todos los mensajes de usuarios han sido eliminados.');
+        }).catch(function (error) {
+            console.error('Error al eliminar los mensajes de usuarios:', error);
+        });
+
+        canSubmitNames = true;
+        alert('Se han restablecido todos los envíos y mensajes de usuarios.');
+    } else {
+        alert('No tienes permisos para restablecer los envíos o no has iniciado sesión.');
+    }
+}
+
+// En lugar de llamar directamente a resetData, cambia la ubicación a una nueva entrada en el historial
+function triggerResetData() {
+    // Restringe el evento popstate antes de cambiar la ubicación para evitar el reinicio de datos no deseado
+    isPopstateRestricted = true;
+    // Cambia la ubicación a una nueva entrada en el historial
+    window.history.pushState({ page: "resetPage" }, "", "");
+    // Llama a resetData después de cambiar la ubicación
+    resetData();
+}
+
+
 function isAllowedUser(email) {
     return verificationRef.once('value').then(function(snapshot) {
         var verificationEnabled = snapshot.val().verificationEnabled;
@@ -179,29 +230,6 @@ window.addEventListener('popstate', function (event) {
     resetData();
 });
 
-function resetData() {
-    var user = firebase.auth().currentUser;
-
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Elimina todos los datos en la base de datos
-        nameRef.remove().then(function () {
-            console.log('Todos los nombres han sido eliminados.');
-        }).catch(function (error) {
-            console.error('Error al eliminar los nombres:', error);
-        });
-
-        userMessagesRef.remove().then(function () {
-            console.log('Todos los mensajes de usuarios han sido eliminados.');
-        }).catch(function (error) {
-            console.error('Error al eliminar los mensajes de usuarios:', error);
-        });
-
-        canSubmitNames = true;
-        alert('Se han restablecido todos los envíos y mensajes de usuarios.');
-    } else {
-        alert('No tienes permisos para restablecer los envíos o no has iniciado sesión.');
-    }
-}
 
 // Función para normalizar el correo electrónico
 function normalizeEmail(email) {
