@@ -43,7 +43,7 @@ function isAllowedUser(email) {
 function toggleVerificationButtonVisibility() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'TuUIDAutorizado') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         verificationRef.once('value').then(function(snapshot) {
             var verificationEnabled = snapshot.val().verificationEnabled;
 
@@ -277,32 +277,31 @@ function loginWithGoogle() {
         });
 }
 
-function addEmailManually() {
+function toggleManualEmailButtonVisibility() {
     var user = firebase.auth().currentUser;
 
-    // Verificar si el usuario actual es el permitido
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
-
-        if (emailToAdd && emailToAdd.trim() !== "") {
-            var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
-
-            verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
-                .then(function() {
-                    alert('Correo añadido correctamente.');
-                })
-                .catch(function(error) {
-                    console.error('Error al añadir el correo:', error);
-                    alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
-                });
-        } else {
-            alert('Debes ingresar un correo válido.');
-        }
+    if (user && user.uid === 'TuUIDAutorizado') {
+        var manualEmailButton = document.getElementById('manualEmailButton');
+        manualEmailButton.style.display = 'inline-block';
     } else {
-        alert('No tienes permisos para añadir correos manualmente o no has iniciado sesión.');
+        // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
+        var manualEmailButton = document.getElementById('manualEmailButton');
+        manualEmailButton.style.display = 'none';
     }
 }
 
+// Resto del código...
+
+document.getElementById('manualEmailButton').addEventListener('click', function() {
+    var user = firebase.auth().currentUser;
+
+    if (user && user.uid === 'TuUIDAutorizado') {
+        // Lógica para enviar correos manualmente
+        // ...
+    } else {
+        alert('No tienes permisos para enviar correos manualmente o no has iniciado sesión.');
+    }
+});
 
 function spinTheWheel() {
     var names = [];
