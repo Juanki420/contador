@@ -106,9 +106,18 @@
         var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
         if (shouldAutoFill) {
-            // Rellenar los campos con las credenciales almacenadas
+            // Iniciar sesión directamente con las credenciales almacenadas
+            firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
+                .then(function(result) {
+                    alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                })
+                .catch(function(error) {
+                    alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                });
+        } else {
+            // Preguntar por el correo y contraseña manualmente en forma de alertas
             var emailInput = prompt('Ingresa tu correo electrónico:');
-            var passwordInput = prompt('Ingresa tu contraseña:', lastRegisteredPassword);
+            var passwordInput = prompt('Ingresa tu contraseña:');
 
             // Verificar si se ingresaron datos manualmente
             if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
@@ -122,9 +131,6 @@
             } else {
                 alert('Inicio de sesión cancelado. Ingresa tus credenciales manualmente.');
             }
-        } else {
-            // Mostrar el formulario de inicio de sesión
-            document.getElementById('loginForm').style.display = 'block';
         }
     } else {
         alert('No hay credenciales almacenadas. Regístrate primero.');
