@@ -99,9 +99,9 @@
                 savedCredentials.push({ email: email, password: password });
                 localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
             } else {
-                // Elegir entre las credenciales almacenadas
+                // Elegir entre correos y contraseñas almacenados
                 var selectedCredentials = savedCredentials[parseInt(choice) - 1];
-                var email = selectedCredentials ? selectedCredentials.email : '';
+                var  email = selectedCredentials ? selectedCredentials.email : '';
                 var password = selectedCredentials ? selectedCredentials.password : '';
             }
 
