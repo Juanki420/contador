@@ -59,15 +59,11 @@
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
+            var password = prompt('Ingresa tu contraseña:');
 
-            var password1 = prompt('Ingresa tu primera contraseña:');
-            var password2 = prompt('Ingresa tu segunda contraseña:');
-            var password3 = prompt('Ingresa tu tercera contraseña:');
-
-            // Verificar si el correo electrónico está en la lista permitida
-            // y guardar las contraseñas
-            if (email) {
-                firebase.auth().createUserWithEmailAndPassword(email, password1)
+            // Verificar si el correo electrónico y la contraseña se han ingresado
+            if (email && password) {
+                firebase.auth().createUserWithEmailAndPassword(email, password)
                     .then(function(result) {
                         alert('¡Te has registrado correctamente!');
                     })
@@ -83,7 +79,7 @@
             var email = prompt('Ingresa tu correo electrónico:');
             var savedPasswords = ['password1', 'password2', 'password3'];  // Coloca las contraseñas guardadas aquí
 
-            // Verificar si el correo electrónico está en la lista permitida
+            // Verificar si el correo electrónico se ha ingresado
             if (email) {
                 var selectedPassword = prompt('Selecciona tu contraseña:\n1. ' + savedPasswords[0] +
                     '\n2. ' + savedPasswords[1] + '\n3. ' + savedPasswords[2]);
