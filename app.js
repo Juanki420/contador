@@ -41,6 +41,7 @@ window.addEventListener('popstate', function (event) {
     isPopstateRestricted = false;
 });
 
+// Llama a resetData solo si el usuario tiene permisos
 function resetData() {
     var user = firebase.auth().currentUser;
 
@@ -464,3 +465,6 @@ document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
 document.getElementById('spinButton').addEventListener('click', spinTheWheel);
+document.getElementById('resetButton').addEventListener('click', function() {
+    triggerResetData();
+});
