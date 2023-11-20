@@ -1,1 +1,287 @@
-var _0x1bd96f=_0xba94;(function(_0x4f7e77,_0xb050fb){var _0x598722=_0xba94,_0x141446=_0x4f7e77();while(!![]){try{var _0x32e0c0=parseInt(_0x598722(0x1ef))/0x1+-parseInt(_0x598722(0x1af))/0x2*(parseInt(_0x598722(0x1c0))/0x3)+-parseInt(_0x598722(0x20c))/0x4*(-parseInt(_0x598722(0x1f0))/0x5)+-parseInt(_0x598722(0x20b))/0x6*(parseInt(_0x598722(0x203))/0x7)+parseInt(_0x598722(0x1df))/0x8*(parseInt(_0x598722(0x1bb))/0x9)+-parseInt(_0x598722(0x1c1))/0xa+parseInt(_0x598722(0x1b8))/0xb;if(_0x32e0c0===_0xb050fb)break;else _0x141446['push'](_0x141446['shift']());}catch(_0x53d484){_0x141446['push'](_0x141446['shift']());}}}(_0xa66e,0xa346e));var firebaseConfig={'apiKey':_0x1bd96f(0x1eb),'authDomain':_0x1bd96f(0x1e1),'databaseURL':_0x1bd96f(0x1fa),'projectId':_0x1bd96f(0x1bd),'storageBucket':_0x1bd96f(0x1c2),'messagingSenderId':_0x1bd96f(0x1b1),'appId':_0x1bd96f(0x1d0)},allowedEmails=[_0x1bd96f(0x1f1),_0x1bd96f(0x1c9),'usuario3@example.com'];firebase[_0x1bd96f(0x1da)](firebaseConfig);var nameList=document[_0x1bd96f(0x1c3)](_0x1bd96f(0x209)),nameRef=firebase[_0x1bd96f(0x1b9)]()[_0x1bd96f(0x1d4)](_0x1bd96f(0x1fc)),userMessagesRef=firebase['database']()['ref']('userMessages'),canSubmitNames=!![];nameRef['on'](_0x1bd96f(0x1b4),handleNameChange),nameRef['on'](_0x1bd96f(0x1e9),handleNameChange);function handleNameChange(_0x5b44de){var _0x383027=_0x1bd96f,_0x562b03=_0x5b44de[_0x383027(0x1f3)]();console[_0x383027(0x1b6)](_0x383027(0x1b7),_0x562b03[_0x383027(0x1b5)]),console[_0x383027(0x1b6)](_0x383027(0x1b2),_0x562b03[_0x383027(0x20d)]),console[_0x383027(0x1b6)](_0x383027(0x1e6),_0x562b03[_0x383027(0x1a6)]),console[_0x383027(0x1b6)](_0x383027(0x1ce),_0x562b03[_0x383027(0x202)]);var _0x440f45=document[_0x383027(0x1fb)]('li');_0x440f45[_0x383027(0x1a8)]=_0x562b03['name'],nameList[_0x383027(0x1be)](_0x440f45);}function isAllowedUser(){var _0x2bfb33=_0x1bd96f,_0x12cc4e=firebase[_0x2bfb33(0x1e2)]()[_0x2bfb33(0x1aa)];return _0x12cc4e&&_0x12cc4e[_0x2bfb33(0x1ec)][0x0]?.[_0x2bfb33(0x20e)]===_0x2bfb33(0x1f9)&&_0x12cc4e['uid']===_0x2bfb33(0x1e0);}function hasUserSubmittedMessage(_0x9c3439){var _0x412c23=_0x1bd96f;return userMessagesRef['child'](_0x9c3439)[_0x412c23(0x1d1)](_0x412c23(0x1d7))[_0x412c23(0x20a)](function(_0x41fc49){return _0x41fc49['exists']();});}function markUserAsSubmitted(_0x193dc8){var _0x364489=_0x1bd96f;userMessagesRef['child'](_0x193dc8)[_0x364489(0x1ff)](!![]);}function handleFormSubmission(_0x5303f6){var _0x3a33f8=_0x1bd96f;_0x5303f6[_0x3a33f8(0x1ae)]();var _0x4c9c41=firebase['auth']()[_0x3a33f8(0x1aa)];if(!_0x4c9c41){alert(_0x3a33f8(0x1d3));return;}hasUserSubmittedMessage(_0x4c9c41[_0x3a33f8(0x1d2)])[_0x3a33f8(0x20a)](function(_0x18ce3b){var _0x362dfc=_0x3a33f8;if(_0x18ce3b)alert(_0x362dfc(0x1e8));else{if(!canSubmitNames){alert(_0x362dfc(0x1b3));return;}var _0x31b392=document[_0x362dfc(0x1c3)](_0x362dfc(0x1c4)),_0x578f1e=_0x31b392['value']['trim']();if(_0x578f1e[_0x362dfc(0x1f6)]===0x0||_0x578f1e['length']>0x1e){alert(_0x362dfc(0x1ea));return;}canSubmitNames=![];var _0x518e75={'name':_0x578f1e,'userId':_0x4c9c41[_0x362dfc(0x1d2)],'userName':_0x4c9c41[_0x362dfc(0x1f7)],'userEmail':_0x4c9c41[_0x362dfc(0x1e3)]},_0x5c8a6d=nameRef[_0x362dfc(0x1ff)](_0x518e75);userMessagesRef[_0x362dfc(0x20f)](_0x4c9c41[_0x362dfc(0x1d2)])['set']({'userEmail':_0x4c9c41[_0x362dfc(0x1e3)]}),markUserAsSubmitted(_0x4c9c41['uid']),_0x31b392[_0x362dfc(0x1d7)]='',alert(_0x362dfc(0x1cb));}});}function isNameAlreadySubmitted(_0x203e92){var _0x411839=_0x1bd96f;return nameRef[_0x411839(0x1f8)](_0x411839(0x1b5))[_0x411839(0x1dd)](_0x203e92)['once'](_0x411839(0x1d7))['then'](function(_0x3d5d8f){return _0x3d5d8f['exists']();});}function _0xa66e(){var _0x36e31d=['Su\x20nombre\x20ha\x20sido\x20enviado.\x20Si\x20no\x20lo\x20ve,\x20por\x20favor,\x20recargue\x20la\x20página.','block','Error\x20al\x20cerrar\x20sesión:\x20','Correo\x20Electrónico\x20del\x20Usuario:','click','1:575749501934:web:4b48ebab36b25e925914ff','once','uid','Debes\x20iniciar\x20sesión\x20antes\x20de\x20enviar\x20un\x20nombre.','ref','Correo\x20electrónico\x20no\x20permitido.\x20No\x20se\x20pudo\x20iniciar\x20sesión.','signOut','value','message','submit','initializeApp','innerHTML','spinButton','equalTo','random','7957840XVYoFK','EcjgireoyRNjZ7Fo3W3eMZT05jp1','contador-c6528.firebaseapp.com','auth','email','toLowerCase','Todos\x20los\x20nombres\x20han\x20sido\x20eliminados.','Nombre\x20de\x20Usuario:','display','Ya\x20has\x20enviado\x20un\x20mensaje.\x20No\x20puedes\x20enviar\x20otro.','child_changed','Por\x20favor,\x20ingresa\x20un\x20nombre\x20válido\x20(máximo\x2030\x20caracteres).','AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo','providerData','remove','¡El\x20ganador\x20es:\x20','411868Ffplbu','13435SWkXlf','juankplays420@gmail.com','Error\x20al\x20eliminar\x20los\x20nombres:','val','style','No\x20tienes\x20permisos\x20para\x20restablecer\x20los\x20envíos\x20de\x20nombres\x20o\x20no\x20has\x20iniciado\x20sesión.','length','displayName','orderByChild','google.com','https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app','createElement','names','resetUserMessagesButton','signInWithPopup','push','Todos\x20los\x20mensajes\x20de\x20usuarios\x20han\x20sido\x20eliminados.','loginButton','userEmail','14iCgOYp','user','Error\x20al\x20iniciar\x20sesión\x20con\x20Google:\x20','addEventListener','nameForm','Se\x20han\x20restablecido\x20todos\x20los\x20envíos\x20y\x20mensajes\x20de\x20usuarios.','nameList','then','3527754oiBJih','444sflglC','userId','providerId','child','resetNamesButton','userName','Error\x20al\x20eliminar\x20los\x20mensajes\x20de\x20usuarios:','innerText','No\x20tienes\x20permisos\x20para\x20restablecer\x20los\x20mensajes\x20de\x20usuarios\x20o\x20no\x20has\x20iniciado\x20sesión.','currentUser','No\x20tienes\x20permisos\x20para\x20restablecer\x20los\x20envíos\x20o\x20no\x20has\x20iniciado\x20sesión.','Se\x20han\x20restablecido\x20todos\x20los\x20envíos\x20de\x20nombres.','emailLoginButton','preventDefault','66998EeQhkL','userInfo','575749501934','ID\x20de\x20Usuario:','Recargue\x20la\x20pagina\x20y\x20envíe\x20de\x20nuevo.','child_added','name','log','Nombre:','24007005xiShWF','database','GoogleAuthProvider','9DUdjKo','onAuthStateChanged','contador-c6528','appendChild','catch','81pfPRbS','11381370jGmaKk','contador-c6528.appspot.com','getElementById','nameInput','resetButton','forEach','Has\x20cerrado\x20sesión\x20correctamente.','none','usuario2@example.com','error'];_0xa66e=function(){return _0x36e31d;};return _0xa66e();}function resetUserMessages(){var _0x292194=_0x1bd96f,_0x32edc9=firebase[_0x292194(0x1e2)]()[_0x292194(0x1aa)];_0x32edc9&&isAllowedUser()?(userMessagesRef[_0x292194(0x1ed)]()['then'](function(){var _0x44189=_0x292194;console[_0x44189(0x1b6)](_0x44189(0x200));})[_0x292194(0x1bf)](function(_0x40dcbf){var _0xf89d16=_0x292194;console[_0xf89d16(0x1ca)](_0xf89d16(0x1a7),_0x40dcbf);}),alert('Se\x20ha\x20restablecido\x20la\x20información\x20de\x20los\x20mensajes\x20de\x20usuarios.')):alert(_0x292194(0x1a9));}function resetNames(){var _0x601396=_0x1bd96f,_0x3730a5=firebase['auth']()['currentUser'];_0x3730a5&&isAllowedUser()?(nameRef[_0x601396(0x1ed)]()['then'](function(){var _0x330aae=_0x601396;console['log'](_0x330aae(0x1e5));})[_0x601396(0x1bf)](function(_0xfddef4){var _0x562c22=_0x601396;console['error'](_0x562c22(0x1f2),_0xfddef4);}),canSubmitNames=!![],alert(_0x601396(0x1ac))):alert(_0x601396(0x1f5));}function _0xba94(_0x2dbca9,_0x5160ec){var _0xa66e00=_0xa66e();return _0xba94=function(_0xba94b7,_0x4a9f89){_0xba94b7=_0xba94b7-0x1a5;var _0x2fd4c5=_0xa66e00[_0xba94b7];return _0x2fd4c5;},_0xba94(_0x2dbca9,_0x5160ec);}function resetAllData(){var _0xe6f1b3=_0x1bd96f,_0x515bc6=firebase['auth']()[_0xe6f1b3(0x1aa)];_0x515bc6&&isAllowedUser()?(nameRef['remove']()['then'](function(){var _0x610e17=_0xe6f1b3;console[_0x610e17(0x1b6)]('Todos\x20los\x20nombres\x20han\x20sido\x20eliminados.');})[_0xe6f1b3(0x1bf)](function(_0x5bb5cc){var _0x98870c=_0xe6f1b3;console[_0x98870c(0x1ca)]('Error\x20al\x20eliminar\x20los\x20nombres:',_0x5bb5cc);}),userMessagesRef['remove']()[_0xe6f1b3(0x20a)](function(){var _0x17addf=_0xe6f1b3;console[_0x17addf(0x1b6)]('Todos\x20los\x20mensajes\x20de\x20usuarios\x20han\x20sido\x20eliminados.');})[_0xe6f1b3(0x1bf)](function(_0x1c9138){var _0x5a0174=_0xe6f1b3;console[_0x5a0174(0x1ca)](_0x5a0174(0x1a7),_0x1c9138);}),canSubmitNames=!![],alert(_0xe6f1b3(0x208))):alert(_0xe6f1b3(0x1ab));}function logout(){var _0xc754de=_0x1bd96f;firebase[_0xc754de(0x1e2)]()['signOut']()[_0xc754de(0x20a)](function(){var _0x261556=_0xc754de;alert(_0x261556(0x1c7));})[_0xc754de(0x1bf)](function(_0x43a6ec){var _0x4368c3=_0xc754de;alert(_0x4368c3(0x1cd)+_0x43a6ec[_0x4368c3(0x1d8)]);});}function displayUserInfo(_0x491064){var _0x2624ad=_0x1bd96f,_0x21338f=document['getElementById'](_0x2624ad(0x1b0)),_0x451a5d=document[_0x2624ad(0x1c3)](_0x2624ad(0x1dc));if(_0x21338f){_0x21338f[_0x2624ad(0x1db)]=_0x491064?'Usuario\x20actual:\x20'+_0x491064['displayName']+'\x20('+_0x491064[_0x2624ad(0x1e3)]+')':'';var _0x86156f=_0x491064&&_0x491064[_0x2624ad(0x1ec)][0x0]?.[_0x2624ad(0x20e)]===_0x2624ad(0x1f9)&&_0x491064['uid']===_0x2624ad(0x1e0);_0x451a5d[_0x2624ad(0x1f4)][_0x2624ad(0x1e7)]=_0x86156f?_0x2624ad(0x1cc):_0x2624ad(0x1c8);}}function loginWithGoogle(){var _0x4a9749=_0x1bd96f,_0x2f138e=new firebase[(_0x4a9749(0x1e2))][(_0x4a9749(0x1ba))]();firebase['auth']()[_0x4a9749(0x1fe)](_0x2f138e)['then'](function(_0x2ccedd){var _0x8d58ef=_0x4a9749,_0xdf9c04=_0x2ccedd[_0x8d58ef(0x204)][_0x8d58ef(0x1e3)][_0x8d58ef(0x1e4)]();allowedEmails['includes'](_0xdf9c04)?alert('¡Has\x20iniciado\x20sesión\x20con\x20Google\x20correctamente!'):(firebase[_0x8d58ef(0x1e2)]()[_0x8d58ef(0x1d6)](),alert(_0x8d58ef(0x1d5)));})[_0x4a9749(0x1bf)](function(_0x5011a8){var _0x15493b=_0x4a9749;alert(_0x15493b(0x205)+_0x5011a8['message']);});}function spinTheWheel(){var _0x40b41b=_0x1bd96f,_0x1e4a5c=[];nameRef[_0x40b41b(0x1d1)](_0x40b41b(0x1d7))[_0x40b41b(0x20a)](function(_0x4e1479){var _0x3acfe2=_0x40b41b;_0x4e1479[_0x3acfe2(0x1c6)](function(_0x427f98){var _0x48ef04=_0x3acfe2,_0x422cdf=_0x427f98[_0x48ef04(0x1f3)]()['name'];_0x1e4a5c[_0x48ef04(0x1ff)](_0x422cdf);});if(_0x1e4a5c[_0x3acfe2(0x1f6)]>0x0){var _0x7a4b79=Math['floor'](Math[_0x3acfe2(0x1de)]()*_0x1e4a5c[_0x3acfe2(0x1f6)]),_0x53cca8=_0x1e4a5c[_0x7a4b79];alert(_0x3acfe2(0x1ee)+_0x53cca8+'!');}else alert('No\x20hay\x20nombres\x20disponibles\x20para\x20elegir.');})[_0x40b41b(0x1bf)](function(_0x22ef97){var _0x328370=_0x40b41b;console[_0x328370(0x1ca)]('Error\x20al\x20obtener\x20nombres:',_0x22ef97);});}firebase[_0x1bd96f(0x1e2)]()[_0x1bd96f(0x1bc)](function(_0x55f99f){var _0x1e405d=_0x1bd96f;displayUserInfo(_0x55f99f);var _0x375996=_0x1e405d(0x1e0),_0x172b57=document['getElementById']('loginButton'),_0x29f60d=document[_0x1e405d(0x1c3)](_0x1e405d(0x1ad)),_0x16103a=document['getElementById']('registerButton'),_0x53cd34=document[_0x1e405d(0x1c3)]('logoutButton'),_0x4811a2=document[_0x1e405d(0x1c3)]('resetUserMessagesButton'),_0x5e865b=document[_0x1e405d(0x1c3)](_0x1e405d(0x1a5)),_0x6643a2=document[_0x1e405d(0x1c3)](_0x1e405d(0x1c5));_0x55f99f?(_0x172b57[_0x1e405d(0x1f4)]['display']='none',_0x29f60d[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]='none',_0x16103a[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1c8),_0x53cd34['style'][_0x1e405d(0x1e7)]=_0x1e405d(0x1cc),_0x55f99f[_0x1e405d(0x1d2)]===_0x375996?(_0x4811a2[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1cc),_0x5e865b[_0x1e405d(0x1f4)]['display']=_0x1e405d(0x1cc),_0x6643a2[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1cc)):(_0x4811a2[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1c8),_0x5e865b[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]='none',_0x6643a2[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1c8))):(_0x172b57[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1cc),_0x29f60d['style']['display']='block',_0x16103a[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1cc),_0x53cd34[_0x1e405d(0x1f4)]['display']=_0x1e405d(0x1c8),_0x4811a2[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1c8),_0x5e865b[_0x1e405d(0x1f4)]['display']='none',_0x6643a2[_0x1e405d(0x1f4)][_0x1e405d(0x1e7)]=_0x1e405d(0x1c8));}),document[_0x1bd96f(0x1c3)](_0x1bd96f(0x207))['addEventListener'](_0x1bd96f(0x1d9),handleFormSubmission),document[_0x1bd96f(0x1c3)](_0x1bd96f(0x1fd))[_0x1bd96f(0x206)](_0x1bd96f(0x1cf),resetUserMessages),document[_0x1bd96f(0x1c3)]('resetNamesButton')[_0x1bd96f(0x206)]('click',resetNames),document[_0x1bd96f(0x1c3)](_0x1bd96f(0x1c5))['addEventListener'](_0x1bd96f(0x1cf),resetAllData),document[_0x1bd96f(0x1c3)]('logoutButton')[_0x1bd96f(0x206)](_0x1bd96f(0x1cf),logout),document[_0x1bd96f(0x1c3)](_0x1bd96f(0x201))[_0x1bd96f(0x206)](_0x1bd96f(0x1cf),loginWithGoogle),document[_0x1bd96f(0x1c3)]('spinButton')['addEventListener'](_0x1bd96f(0x1cf),spinTheWheel);
+var firebaseConfig = {
+    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
+    authDomain: "contador-c6528.firebaseapp.com",
+    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "contador-c6528",
+    storageBucket: "contador-c6528.appspot.com",
+    messagingSenderId: "575749501934",
+    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
+};
+var allowedEmails = ["juankplays420@gmail.com", "usuario2@example.com", "usuario3@example.com"];
+
+firebase.initializeApp(firebaseConfig);
+
+var nameList = document.getElementById('nameList');
+var nameRef = firebase.database().ref('names');
+var userMessagesRef = firebase.database().ref('userMessages');
+var canSubmitNames = true;
+
+nameRef.on('child_added', handleNameChange);
+nameRef.on('child_changed', handleNameChange);
+
+function handleNameChange(data) {
+    var message = data.val();
+    console.log('Nombre:', message.name);
+    console.log('ID de Usuario:', message.userId);
+    console.log('Nombre de Usuario:', message.userName);
+    console.log('Correo Electrónico del Usuario:', message.userEmail);
+
+    var li = document.createElement('li');
+    li.innerText = message.name;
+    nameList.appendChild(li);
+}
+
+function isAllowedUser() {
+    var user = firebase.auth().currentUser;
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
+}
+
+function hasUserSubmittedMessage(userId) {
+    return userMessagesRef.child(userId).once('value').then(function(snapshot) {
+        return snapshot.exists();
+    });
+}
+
+function markUserAsSubmitted(userId) {
+    userMessagesRef.child(userId).push(true);
+}
+
+function handleFormSubmission(e) {
+    e.preventDefault();
+
+    var user = firebase.auth().currentUser;
+
+    if (!user) {
+        alert('Debes iniciar sesión antes de enviar un nombre.');
+        return;
+    }
+
+    hasUserSubmittedMessage(user.uid).then(function(hasSubmitted) {
+        if (hasSubmitted) {
+            alert('Ya has enviado un mensaje. No puedes enviar otro.');
+        } else {
+            if (!canSubmitNames) {
+                alert('Recargue la pagina y envíe de nuevo.');
+                return;
+            }
+
+            var nameInput = document.getElementById('nameInput');
+            var name = nameInput.value.trim();
+
+            if (name.length === 0 || name.length > 30) {
+                alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
+                return;
+            }
+
+            canSubmitNames = false;
+
+            // Agrega el correo electrónico al objeto messageObject
+            var messageObject = {
+                name: name,
+                userId: user.uid,
+                userName: user.displayName,
+                userEmail: user.email,
+            };
+
+            // Guarda el mensaje en 'names'
+            var newMessageRef = nameRef.push(messageObject);
+
+            // Guarda el correo electrónico en 'userMessages'
+            userMessagesRef.child(user.uid).set({
+                userEmail: user.email,
+            });
+
+            markUserAsSubmitted(user.uid);
+
+            nameInput.value = '';
+            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
+        }
+    });
+}
+
+// Función para verificar si el nombre ya ha sido enviado
+function isNameAlreadySubmitted(name) {
+    return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
+        return snapshot.exists();
+    });
+}
+
+function resetUserMessages() {
+    var user = firebase.auth().currentUser;
+
+    if (user && isAllowedUser()) {
+        // Eliminar todos los 'userMessages'
+        userMessagesRef.remove()
+            .then(function() {
+                console.log('Todos los mensajes de usuarios han sido eliminados.');
+            })
+            .catch(function(error) {
+                console.error('Error al eliminar los mensajes de usuarios:', error);
+            });
+
+        alert('Se ha restablecido la información de los mensajes de usuarios.');
+    } else {
+        alert('No tienes permisos para restablecer los mensajes de usuarios o no has iniciado sesión.');
+    }
+}
+
+function resetNames() {
+    var user = firebase.auth().currentUser;
+
+    if (user && isAllowedUser()) {
+        // Eliminar todos los nombres en 'names'
+        nameRef.remove()
+            .then(function() {
+                console.log('Todos los nombres han sido eliminados.');
+            })
+            .catch(function(error) {
+                console.error('Error al eliminar los nombres:', error);
+            });
+
+        canSubmitNames = true;
+        alert('Se han restablecido todos los envíos de nombres.');
+    } else {
+        alert('No tienes permisos para restablecer los envíos de nombres o no has iniciado sesión.');
+    }
+}
+
+function resetAllData() {
+    var user = firebase.auth().currentUser;
+
+    if (user && isAllowedUser()) {
+        // Eliminar todos los nombres en 'names'
+        nameRef.remove()
+            .then(function() {
+                console.log('Todos los nombres han sido eliminados.');
+            })
+            .catch(function(error) {
+                console.error('Error al eliminar los nombres:', error);
+            });
+
+        // Eliminar todos los 'userMessages'
+        userMessagesRef.remove()
+            .then(function() {
+                console.log('Todos los mensajes de usuarios han sido eliminados.');
+            })
+            .catch(function(error) {
+                console.error('Error al eliminar los mensajes de usuarios:', error);
+            });
+
+        canSubmitNames = true;
+        alert('Se han restablecido todos los envíos y mensajes de usuarios.');
+    } else {
+        alert('No tienes permisos para restablecer los envíos o no has iniciado sesión.');
+    }
+}
+
+function logout() {
+    firebase.auth().signOut().then(function() {
+        alert('Has cerrado sesión correctamente.');
+    }).catch(function(error) {
+        alert('Error al cerrar sesión: ' + error.message);
+    });
+}
+
+function displayUserInfo(user) {
+    var userInfoElement = document.getElementById('userInfo');
+    var spinButton = document.getElementById('spinButton');
+
+    if (userInfoElement) {
+        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
+
+        // Verifica si el usuario actual es el permitido
+        var isAllowed = user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
+
+        // Muestra u oculta el botón de la ruleta según el resultado de la verificación
+        spinButton.style.display = isAllowed ? 'block' : 'none';
+    }
+}
+
+function loginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            // No es necesario verificar el correo electrónico
+            alert('¡Has iniciado sesión con Google correctamente!');
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión con Google: ' + error.message);
+        });
+}
+function spinTheWheel() {
+    var names = [];  // Array para almacenar todos los nombres
+
+    // Obtener todos los nombres de la base de datos
+    nameRef.once('value')
+        .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var name = childSnapshot.val().name;
+                names.push(name);
+            });
+
+            // Verificar si hay nombres disponibles
+            if (names.length > 0) {
+                // Elegir un nombre al azar
+                var randomIndex = Math.floor(Math.random() * names.length);
+                var winner = names[randomIndex];
+
+                alert('¡El ganador es: ' + winner + '!');
+            } else {
+                alert('No hay nombres disponibles para elegir.');
+            }
+        })
+        .catch(function(error) {
+            console.error('Error al obtener nombres:', error);
+        });
+}
+
+
+firebase.auth().onAuthStateChanged(function(user) {
+    displayUserInfo(user);
+
+    var allowedUserUid = "EcjgireoyRNjZ7Fo3W3eMZT05jp1";  // Reemplaza con el identificador único de la cuenta permitida
+
+    var loginButton = document.getElementById('loginButton');
+    var emailLoginButton = document.getElementById('emailLoginButton');
+    var registerButton = document.getElementById('registerButton');
+    var logoutButton = document.getElementById('logoutButton');
+    var resetUserMessagesButton = document.getElementById('resetUserMessagesButton');
+    var resetNamesButton = document.getElementById('resetNamesButton');
+    var resetButton = document.getElementById('resetButton');
+
+    if (user) {
+        loginButton.style.display = 'none';
+        emailLoginButton.style.display = 'none';
+        registerButton.style.display = 'none';
+        logoutButton.style.display = 'block';
+
+        if (user.uid === allowedUserUid) {
+            // Mostrar botones solo para la cuenta permitida
+            resetUserMessagesButton.style.display = 'block';
+            resetNamesButton.style.display = 'block';
+            resetButton.style.display = 'block';
+        } else {
+            // Ocultar botones para otras cuentas
+            resetUserMessagesButton.style.display = 'none';
+            resetNamesButton.style.display = 'none';
+            resetButton.style.display = 'none';
+        }
+    } else {
+        loginButton.style.display = 'block';
+        emailLoginButton.style.display = 'block';
+        registerButton.style.display = 'block';
+        logoutButton.style.display = 'none';
+        resetUserMessagesButton.style.display = 'none';
+        resetNamesButton.style.display = 'none';
+        resetButton.style.display = 'none';
+    }
+});
+
+document.getElementById('nameForm').addEventListener('submit', handleFormSubmission);
+document.getElementById('resetUserMessagesButton').addEventListener('click', resetUserMessages);
+document.getElementById('resetNamesButton').addEventListener('click', resetNames);
+document.getElementById('resetButton').addEventListener('click', resetAllData);
+document.getElementById('logoutButton').addEventListener('click', logout);
+document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
+document.getElementById('spinButton').addEventListener('click', spinTheWheel);
