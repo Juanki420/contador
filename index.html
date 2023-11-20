@@ -1,3 +1,5 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,20 +12,11 @@
 </head>
 <body>
     <header>
-        <h1>Registra aquí tu nombre</h1>
+        <h1>Registra aqui tu nombre</h1>
         <div id="userInfo"></div>
         <button type="button" id="loginButton">Iniciar Sesión con Google</button>
-        <!-- Añadido un formulario para el registro y inicio de sesión -->
-        <form id="authForm">
-            <label for="emailInput">Correo Electrónico:</label>
-            <input type="email" id="emailInput" required>
-
-            <label for="passwordInput">Contraseña:</label>
-            <input type="password" id="passwordInput" required>
-
-            <button type="button" id="registerButton">Registrarse</button>
-            <button type="button" id="emailLoginButton">Iniciar Sesión</button>
-        </form>
+        <button type="button" id="emailLoginButton">Iniciar Sesión con Correo y Contraseña</button>
+        <button type="button" id="registerButton">Registrarse</button>
         <button type="button" id="logoutButton" style="display: none;">Cerrar Sesión</button>
     </header>
     <main>
@@ -32,7 +25,7 @@
             <input type="text" id="nameInput" placeholder="Tu nombre">
             <button type="submit" id="submitButton">Enviar</button>
             <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
-            <a href="resultados.html" id="redirectButton">Ver Resultados de la ruleta</a>
+    <a href="resultados.html" id="redirectButton">Ver Resultados de la ruleta</a>
         </form>
         <ul id="nameList"></ul>
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
@@ -47,17 +40,41 @@
 
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
-            var email = document.getElementById('emailInput').value;
-            var password = document.getElementById('passwordInput').value;
+            var email = prompt('Ingresa tu correo electrónico:');
 
-            // Tu lógica de registro aquí
+            // Verificar si el correo electrónico está en la lista permitida
+            if (allowedEmails.includes(email)) {
+                var password = prompt('Ingresa tu contraseña:');
+
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Te has registrado correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al registrarte: ' + error.message);
+                    });
+            } else {
+                alert('Correo electrónico no permitido. No se pudo completar el registro.');
+            }
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var email = document.getElementById('emailInput').value;
-            var password = document.getElementById('passwordInput').value;
+            var email = prompt('Ingresa tu correo electrónico:');
 
-            // Tu lógica de inicio de sesión aquí
+            // Verificar si el correo electrónico está en la lista permitida
+            if (allowedEmails.includes(email)) {
+                var password = prompt('Ingresa tu contraseña:');
+
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                    });
+            } else {
+                alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
+            }
         });
     </script>
 </body>
