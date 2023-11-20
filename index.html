@@ -57,6 +57,19 @@
     <script src="app.js"></script>
 
     <script>
+        document.getElementById('registerButton').addEventListener('click', function() {
+            var email = prompt('Ingresa tu correo electrónico:');
+            var password = prompt('Ingresa tu contraseña:');
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(function(result) {
+                    alert('¡Te has registrado correctamente!');
+                })
+                .catch(function(error) {
+                    alert('Error al registrarte: ' + error.message);
+                });
+        });
+
         document.getElementById('emailLoginButton').addEventListener('click', function() {
             var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
             var options = '';
