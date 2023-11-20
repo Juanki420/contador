@@ -75,6 +75,28 @@
     <script src="app.js"></script>
 
     <script>
+        document.getElementById('registerButton').addEventListener('click', function() {
+            var email = prompt('Ingresa tu correo electrónico:');
+            var password = prompt('Ingresa tu contraseña:');
+
+            // Verificar si el correo electrónico y la contraseña se han ingresado
+            if (email !== null && password !== null && email !== '' && password !== '') {
+                // Guardar las credenciales localmente
+                localStorage.setItem('lastRegisteredEmail', email);
+                localStorage.setItem('lastRegisteredPassword', password);
+
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Te has registrado correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al registrarte: ' + error.message);
+                    });
+            } else {
+                alert('Registro cancelado. No se pudo completar el registro.');
+            }
+        });
+
         document.getElementById('emailLoginButton').addEventListener('click', function() {
             var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
             var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
@@ -89,7 +111,7 @@
                     var passwordInput = prompt('Ingresa tu contraseña:', lastRegisteredPassword);
 
                     // Mostrar el formulario de inicio de sesión
-                    if (emailInput && passwordInput) {
+                    if (emailInput !== null && passwordInput !== null && emailInput !== '' && passwordInput !== '') {
                         firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
                             .then(function(result) {
                                 alert('¡Has iniciado sesión con correo y contraseña correctamente!');
@@ -106,42 +128,11 @@
             }
         });
 
-        document.getElementById('loginButton').addEventListener('click', function() {
-            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
-            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
-
-            // Verificar si hay credenciales almacenadas
-                    if (lastRegisteredEmail && lastRegisteredPassword) {
-            var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
-
-            if (shouldAutoFill) {
-                // Rellenar los campos con las credenciales almacenadas
-                var emailInput = prompt('Ingresa tu correo electrónico:', lastRegisteredEmail);
-                var passwordInput = prompt('Ingresa tu contraseña:', lastRegisteredPassword);
-
-                // Mostrar el formulario de inicio de sesión
-                if (emailInput && passwordInput) {
-                    firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
-                        .then(function(result) {
-                            alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                        })
-                        .catch(function(error) {
-                            alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                        });
-                } else {
-                    alert('Inicio de sesión cancelado. Ingresa tus credenciales manualmente.');
-                }
-            }
-        } else {
-            alert('No hay credenciales almacenadas. Ingresa tus credenciales manualmente.');
-        }
-    });
-
-    document.getElementById('removePasswordButton').addEventListener('click', function() {
-        // Eliminar la última contraseña guardada
-        localStorage.removeItem('lastRegisteredPassword');
-        alert('¡La última contraseña guardada ha sido eliminada!');
-    });
-</script>
+        document.getElementById('removePasswordButton').addEventListener('click', function() {
+            // Eliminar la última contraseña guardada
+            localStorage.removeItem('lastRegisteredPassword');
+            alert('¡La última contraseña guardada ha sido eliminada!');
+        });
+    </script>
 </body>
 </html>
