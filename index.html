@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,16 +9,64 @@
     <link rel="icon" href="web1.ico" type="image/x-icon">
     <link rel="shortcut icon" href="web1.ico" type="image/x-icon">
     <style>
-        /* Estilos CSS aquí */
+        #redirectButton {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #redirectButton:hover {
+            background-color: #45a049;
+        }
+
+        #removePasswordButton {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #ff6666;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #removePasswordButton:hover {
+            background-color: #ff3333;
+        }
+
+        #toggleVerificationButton {
+            display: none; /* Inicialmente oculto */
+        }
     </style>
 </head>
 <body>
     <header>
-        <!-- Encabezado aquí -->
+        <h1>Registra aquí tu nombre</h1>
+        <div id="userInfo"></div>
+        <button type="button" id="loginButton">Iniciar Sesión con Google</button>
+        <button type="button" id="emailLoginButton">Iniciar Sesión con Correo y Contraseña</button>
+        <button type="button" id="registerButton">Registrarse</button>
+        <button type="button" id="toggleVerificationButton">Alternar Verificación</button>
+        <button type="button" id="logoutButton" style="display: none;">Cerrar Sesión</button>
+        <button onclick="addEmailManually()">Añadir Correo Manualmente</button>
+
     </header>
     <main>
         <form id="nameForm">
-            <!-- Formulario aquí -->
+            <label for="nameInput">Escribe tu nombre:</label>
+            <input type="text" id="nameInput" placeholder="Tu nombre">
+            <button type="submit" id="submitButton">Enviar</button>
+            <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
+            <a href="resultados.html" id="redirectButton">Ver Resultados de la Ruleta</a>
         </form>
         <ul id="nameList"></ul>
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
@@ -31,16 +80,23 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
     <script src="app.js"></script>
     <script>
-        document.getElementById('registerButton').addEventListener('click', function() {
+        // Obtener referencia a la base de datos
+        var database = firebase.database();
+
+       document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
             var password = prompt('Ingresa tu contraseña:');
 
+            // Verificar si el correo electrónico y la contraseña se han ingresado
             if (email && password) {
+                // Obtener lista de correos permitidos
                 isAllowedUser(email).then(function(allowed) {
                     if (allowed) {
+                        // Guardar las credenciales localmente
                         localStorage.setItem('lastRegisteredEmail', email);
                         localStorage.setItem('lastRegisteredPassword', password);
 
+                        // Crear usuario con correo y contraseña
                         firebase.auth().createUserWithEmailAndPassword(email, password)
                             .then(function(result) {
                                 alert('¡Te has registrado correctamente!');
@@ -57,33 +113,39 @@
                 alert('Registro cancelado. Debes ingresar un correo y una contraseña válidos.');
             }
         });
-
+        
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
-            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
+    var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
+    var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
-            if (lastRegisteredEmail && lastRegisteredPassword) {
-                var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
+    // Preguntar por el autocompletar solo si hay credenciales almacenadas
+    if (lastRegisteredEmail && lastRegisteredPassword) {
+        var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
-                if (shouldAutoFill) {
-                    isAllowedUser(lastRegisteredEmail).then(function(allowed) {
-                        if (allowed) {
-                            firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
-                                .then(function(result) {
-                                    alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                                })
-                                .catch(function(error) {
-                                    alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                                });
-                        } else {
-                            alert('Correo no permitido. No se pudo iniciar sesión.');
-                        }
-                    });
+        if (shouldAutoFill) {
+            // Verificar si el correo está en la lista de correos permitidos antes de iniciar sesión
+            isAllowedUser(lastRegisteredEmail).then(function (allowed) {
+                if (allowed) {
+                    // Iniciar sesión directamente con las credenciales almacenadas
+                    firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
+                        .then(function(result) {
+                            alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                        })
+                        .catch(function(error) {
+                            alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                        });
                 } else {
+                    alert('Correo no permitido. No se pudo iniciar sesión.');
+                }
+            });
+        } else {
+                    // Preguntar por el correo y contraseña manualmente en forma de alertas
                     var emailInput = prompt('Ingresa tu correo electrónico:');
                     var passwordInput = prompt('Ingresa tu contraseña:');
 
-                    if (emailInput && passwordInput) {
+                    // Verificar si se ingresaron datos manualmente
+                    if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
+                        // Iniciar sesión manualmente
                         firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
                             .then(function(result) {
                                 alert('¡Has iniciado sesión con correo y contraseña correctamente!');
@@ -96,10 +158,13 @@
                     }
                 }
             } else {
+                // Preguntar por el correo y contraseña manualmente en forma de alertas
                 var emailInput = prompt('Ingresa tu correo electrónico:');
                 var passwordInput = prompt('Ingresa tu contraseña:');
 
-                if (emailInput && passwordInput) {
+                // Verificar si se ingresaron datos manualmente
+                if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
+                    // Iniciar sesión manualmente sin credenciales almacenadas
                     firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
                         .then(function(result) {
                             alert('¡Has iniciado sesión con correo y contraseña correctamente!');
@@ -114,6 +179,7 @@
         });
 
         document.getElementById('removePasswordButton').addEventListener('click', function() {
+            // Eliminar la última contraseña guardada
             localStorage.removeItem('lastRegisteredPassword');
             alert('¡La última contraseña guardada ha sido eliminada!');
         });
