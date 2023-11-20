@@ -21,7 +21,6 @@ verificationRef.set({
 });
 
 var canSubmitNames = true;
-var isViewingResults = false; // Nueva variable para rastrear si se están viendo los resultados
 
 nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
@@ -47,7 +46,7 @@ function toggleVerificationButtonVisibility(isAuthorizedUser) {
             var verificationEnabled = snapshot.val().verificationEnabled;
 
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-            
+
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
         });
     } else {
@@ -96,12 +95,6 @@ function markUserAsSubmitted(userId) {
 
 function handleFormSubmission(e) {
     e.preventDefault();
-
-    // Verificar si se están viendo los resultados
-    if (isViewingResults) {
-        alert('No puedes enviar un nombre mientras estás viendo los resultados. Vuelve atrás para enviar nombres.');
-        return;
-    }
 
     var user = firebase.auth().currentUser;
 
@@ -198,6 +191,9 @@ function resetUserMessages() {
     var user = firebase.auth().currentUser;
 
     if (user) {
+        // Desvincular eventos relacionados con 'nameRef'
+        nameRef.off();
+        nameList.innerHTML = ''; // Limpiar la lista de nombres
         userMessagesRef.remove().then(function() {
             console.log('Todos los mensajes de usuarios han sido eliminados.');
         }).catch(function(error) {
@@ -214,6 +210,8 @@ function resetNames() {
     var user = firebase.auth().currentUser;
 
     if (user) {
+        // Desvincular eventos relacionados con 'nameRef'
+        nameRef.off();
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
         }).catch(function(error) {
@@ -231,6 +229,8 @@ function resetAllData() {
     var user = firebase.auth().currentUser;
 
     if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+        // Desvincular eventos relacionados con 'nameRef'
+        nameRef.off();
         // Elimina todos los datos en la base de datos
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
@@ -252,6 +252,11 @@ function resetAllData() {
 }
 
 function logout() {
+    // Desvincular eventos relacionados con 'nameRef'
+    nameRef.off();
+    // Limpiar la lista de nombres
+    nameList.innerHTML = '';
+    
     firebase.auth().signOut().then(function() {
         alert('Has cerrado sesión correctamente.');
     }).catch(function(error) {
@@ -337,8 +342,6 @@ function spinTheWheel() {
                 resultRef.set({
                     winner: winner
                 });
-
-                isViewingResults = true; // Marcar que se están viendo los resultados
 
                 alert('Resultado almacenado: ¡' + winner + '!');
             } else {
