@@ -57,45 +57,6 @@
     <script src="app.js"></script>
 
     <script>
-        document.getElementById('registerButton').addEventListener('click', function() {
-            var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
-            var options = '';
-
-            // Crear opciones para elegir entre correos y contraseñas almacenados
-            savedCredentials.forEach(function(credentials, index) {
-                options += `${index + 1}. ${credentials.email}\n`;
-            });
-
-            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}\n0. Ingresar manualmente`);
-
-            if (choice === null) {
-                return;  // El usuario canceló
-            }
-
-            if (choice === '0' || isNaN(choice)) {
-                // Ingresar manualmente
-                var email = prompt('Ingresa tu correo electrónico:');
-                var password = prompt('Ingresa tu contraseña:');
-            } else {
-                // Elegir entre correos y contraseñas almacenados
-                var selectedCredentials = savedCredentials[parseInt(choice) - 1];
-                var email = selectedCredentials ? selectedCredentials.email : '';
-                var password = selectedCredentials ? selectedCredentials.password : '';
-            }
-
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(function(result) {
-                    // Almacenar las credenciales recién ingresadas
-                    savedCredentials.unshift({ email: email, password: password });
-                    localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
-
-                    alert('¡Te has registrado correctamente!');
-                })
-                .catch(function(error) {
-                    alert('Error al registrarte: ' + error.message);
-                });
-        });
-
         document.getElementById('emailLoginButton').addEventListener('click', function() {
             var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
             var options = '';
@@ -117,7 +78,7 @@
                 var password = prompt('Ingresa tu contraseña:');
             } else {
                 // Elegir entre correos y contraseñas almacenados
-                var  selectedCredentials = savedCredentials[parseInt(choice) - 1];
+                var selectedCredentials = savedCredentials[parseInt(choice) - 1];
                 var email = selectedCredentials ? selectedCredentials.email : '';
                 var password = selectedCredentials ? selectedCredentials.password : '';
             }
