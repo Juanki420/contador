@@ -57,6 +57,7 @@ function toggleVerificationButtonVisibility() {
         toggleVerificationButton.style.display = 'none';
     }
 }
+
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
