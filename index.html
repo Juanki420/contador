@@ -80,40 +80,6 @@
         // Obtener referencia a la base de datos
         var database = firebase.database();
 
-        // Función para mostrar u ocultar el botón de alternar verificación según el usuario autenticado
-        function toggleVerificationButtonVisibility(user) {
-            var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-            
-            // Verificar si la verificación está habilitada y si el usuario es el permitido
-            isVerificationEnabled().then(function(verificationEnabled) {
-                if (verificationEnabled && user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-                    toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
-                } else {
-                    toggleVerificationButton.style.display = 'none'; // Ocultar el botón
-                }
-            });
-        }
-
-        // Configurar el listener de cambio de estado de autenticación
-        firebase.auth().onAuthStateChanged(function(user) {
-            toggleVerificationButtonVisibility(user);
-        });
-
-        document.getElementById('toggleVerificationButton').addEventListener('click', function() {
-            // Obtener el estado actual de verificación
-            isVerificationEnabled().then(function(verificationEnabled) {
-                // Cambiar el estado de verificación en la base de datos
-                database.ref('verificationEnabled').set(!verificationEnabled);
-
-                // Mostrar un mensaje indicando el nuevo estado
-                if (!verificationEnabled) {
-                    alert('La verificación de correos está activada.');
-                } else {
-                    alert('La verificación de correos está desactivada.');
-                }
-            });
-        });
-
         document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
             var password = prompt('Ingresa tu contraseña:');
