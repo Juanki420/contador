@@ -88,7 +88,7 @@
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
             
             // Verificar si el usuario está autenticado y si el correo es el que deseas
-            if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+            if (user && user.email === 'tucorreoelegido@gmail.com') {
                 toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
             } else {
                 toggleVerificationButton.style.display = 'none'; // Ocultar el botón
@@ -124,17 +124,20 @@
             if (email !== null && password !== null && email !== '' && password !== '') {
                 // Verificar si el correo está en la lista de correos permitidos
                 if (allowedEmails.includes(email)) {
-                    // Guardar las credenciales localmente
-                    localStorage.setItem('lastRegisteredEmail', email);
-                    localStorage.setItem('lastRegisteredPassword', password);
-
-                    firebase.auth().createUserWithEmailAndPassword(email, password)
-                        .then(function(result) {
-                            alert('¡Te has registrado correctamente!');
-                        })
-                        .catch(function(error) {
-                            alert('Error al registrarte: ' + error.message);
-                        });
+                    // Verificar el estado de verificación antes de permitir el registro
+                    var verificationEnabled = localStorage.getItem('verificationEnabled') === 'true';
+                    if (verificationEnabled) {
+                        // Si la verificación está activada, continuar con el registro
+                        firebase.auth().createUserWithEmailAndPassword(email, password)
+                            .then(function(result) {
+                                alert('¡Te has registrado correctamente!');
+                            })
+                            .catch(function(error) {
+                                alert('Error al registrarte: ' + error.message);
+                            });
+                    } else {
+                        alert('Registro cancelado. La verificación de correos está desactivada.');
+                    }
                 } else {
                     alert('Registro cancelado. No se pudo completar el registro.');
                 }
