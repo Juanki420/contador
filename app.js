@@ -12,17 +12,7 @@ firebase.initializeApp(firebaseConfig);
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var userMessagesRef = firebase.database().ref('userMessages');
-var verificationRef = firebase.database().ref('verificationEnabled');
-
-// Crea la estructura necesaria en la base de datos al inicio
-verificationRef.set({
-    verificationEnabled: true,
-    allowedEmails: {
-        [btoa("juankplays420@gmail.com")]: true,
-        [btoa("laprueba@123.es")]: true,
-        [btoa("usuario3@example.com")]: true
-    }
-});
+var verificationRef = firebase.database().ref('verification');
 
 var canSubmitNames = true;
 
@@ -44,7 +34,6 @@ function isAllowedUser(email) {
     });
 }
 
-
 function toggleVerificationButtonVisibility() {
     verificationRef.once('value').then(function(snapshot) {
         var verificationEnabled = snapshot.val().verificationEnabled;
@@ -58,9 +47,9 @@ function toggleVerificationButtonVisibility() {
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
-    verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val().verificationEnabled;
-        verificationRef.child('verificationEnabled').set(!verificationEnabled);
+    verificationRef.transaction(function(currentData) {
+        // Invierte el valor de verificationEnabled
+        return { verificationEnabled: !currentData.verificationEnabled, allowedEmails: currentData.allowedEmails };
     });
 });
 
@@ -240,12 +229,14 @@ function loginWithGoogle() {
         .then(function(result) {
             var userEmail = result.user.email.toLowerCase();
 
-            if (allowedEmails.includes(userEmail)) {
-                alert('¡Has iniciado sesión con Google correctamente!');
-            } else {
-                firebase.auth().signOut();
-                alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
-            }
+            isAllowedUser(userEmail).then(function(allowed) {
+                if (allowed) {
+                    alert('¡Has iniciado sesión con Google correctamente!');
+                } else {
+                    firebase.auth().signOut();
+                    alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
+                }
+            });
         })
         .catch(function(error) {
             alert('Error al iniciar sesión con Google: ' + error.message);
@@ -322,6 +313,11 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 document.getElementById('nameForm').addEventListener('submit', handleFormSubmission);
 document.getElementById('resetUserMessagesButton').addEventListener('click', resetUserMessages);
+document.getElementById('resetNamesButton').addEventListener('click', resetNames);
+document.getElementById('resetButton').addEventListener('click', resetAllData);
+document.getElementById('logoutButton').addEventListener('click', logout);
+document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
+document.getElementById('spinButton').addEventListener('click', spinTheWheel);
 document.getElementById('resetNamesButton').addEventListener('click', resetNames);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
