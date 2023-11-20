@@ -228,7 +228,6 @@ function loginWithGoogle() {
 function spinTheWheel() {
     var names = [];
 
-    // Obtener todos los nombres de la base de datos
     nameRef.once('value')
         .then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
@@ -236,20 +235,17 @@ function spinTheWheel() {
                 names.push(name);
             });
 
-            // Verificar si hay nombres disponibles
             if (names.length > 0) {
-                // Elegir un nombre al azar
                 var randomIndex = Math.floor(Math.random() * names.length);
                 var winner = names[randomIndex];
 
-                // Guardar el resultado en la base de datos antes de redirigir
-                saveResultToDatabase(winner).then(function() {
-                    // Redirigir a la página de resultados
-                    window.location.href = 'resultados.html';
-                }).catch(function(error) {
-                    console.error('Error al guardar el resultado:', error);
-                    alert('Error al guardar el resultado. Por favor, inténtalo de nuevo.');
+                // Almacena el resultado en la base de datos
+                var resultRef = firebase.database().ref('result');
+                resultRef.set({
+                    winner: winner
                 });
+
+                alert('Resultado almacenado: ¡' + winner + '!');
             } else {
                 alert('No hay nombres disponibles para elegir.');
             }
@@ -257,14 +253,6 @@ function spinTheWheel() {
         .catch(function(error) {
             console.error('Error al obtener nombres:', error);
         });
-}
-
-// Función para guardar el resultado en la base de datos
-function saveResultToDatabase(winner) {
-    return firebase.database().ref('result').set({
-        winner: winner,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
-    });
 }
 
 firebase.auth().onAuthStateChanged(function(user) {
