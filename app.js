@@ -227,6 +227,32 @@ function logout() {
         alert('Error al cerrar sesión: ' + error.message);
     });
 }
+function loginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            var user = result.user;
+            var userEmail = user.email.toLowerCase();
+
+            // Verificar si el correo electrónico está en la lista permitida
+            isAllowedUser(userEmail).then(function(allowed) {
+                if (allowed) {
+                    alert('¡Has iniciado sesión con Google correctamente!');
+                } else {
+                    // Si el correo electrónico no está permitido, cerrar sesión
+                    firebase.auth().signOut();
+                    alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
+                }
+            })
+            .catch(function(error) {
+                console.error('Error al verificar el correo electrónico:', error);
+            });
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión con Google: ' + error.message);
+        });
+}
 
 function displayUserInfo(user) {
     var userInfoElement = document.getElementById('userInfo');
