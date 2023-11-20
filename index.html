@@ -58,17 +58,24 @@
 
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
-            var storedEmail = localStorage.getItem('rememberedEmail');
-            var email = storedEmail ? storedEmail : prompt('Ingresa tu correo electrónico:');
+            var autocomplete = confirm('¿Quieres autocompletar el correo y la contraseña?');
+            var email, password;
 
-            var storedPassword = localStorage.getItem('rememberedPassword');
-            var password = storedPassword ? storedPassword : prompt('Ingresa tu contraseña:');
+            if (autocomplete) {
+                email = localStorage.getItem('rememberedEmail');
+                password = localStorage.getItem('rememberedPassword');
+            } else {
+                email = prompt('Ingresa tu correo electrónico:');
+                password = prompt('Ingresa tu contraseña:');
+            }
 
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(function(result) {
-                    // Almacenar el correo y la contraseña en localStorage para recordarlos
-                    localStorage.setItem('rememberedEmail', email);
-                    localStorage.setItem('rememberedPassword', password);
+                    // Almacenar el correo y la contraseña en localStorage solo si se eligió autocompletar
+                    if (autocomplete) {
+                        localStorage.setItem('rememberedEmail', email);
+                        localStorage.setItem('rememberedPassword', password);
+                    }
 
                     alert('¡Te has registrado correctamente!');
                 })
@@ -78,11 +85,16 @@
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var storedEmail = localStorage.getItem('rememberedEmail');
-            var email = storedEmail ? storedEmail : prompt('Ingresa tu correo electrónico:');
+            var autocomplete = confirm('¿Quieres autocompletar el correo y la contraseña?');
+            var email, password;
 
-            var storedPassword = localStorage.getItem('rememberedPassword');
-            var password = storedPassword ? storedPassword : prompt('Ingresa tu contraseña:');
+            if (autocomplete) {
+                email = localStorage.getItem('rememberedEmail');
+                password = localStorage.getItem('rememberedPassword');
+            } else {
+                email = prompt('Ingresa tu correo electrónico:');
+                password = prompt('Ingresa tu contraseña:');
+            }
 
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(function(result) {
