@@ -107,11 +107,11 @@
 
                 if (shouldAutoFill) {
                     // Rellenar los campos con las credenciales almacenadas
-                    var emailInput = prompt('Ingresa tu correo electrónico:', lastRegisteredEmail);
+                    var emailInput = prompt('Ingresa tu correo electrónico:');
                     var passwordInput = prompt('Ingresa tu contraseña:', lastRegisteredPassword);
 
                     // Mostrar el formulario de inicio de sesión
-                    if (emailInput !== null && passwordInput !== null && emailInput !== '' && passwordInput !== '') {
+                    if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
                         firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
                             .then(function(result) {
                                 alert('¡Has iniciado sesión con correo y contraseña correctamente!');
