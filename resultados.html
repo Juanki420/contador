@@ -3,21 +3,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados de la Ruleta</title>
+    <!-- Tus metadatos y enlaces de estilo aquí -->
 </head>
 <body>
-    <h1>Resultados de la Ruleta</h1>
-    <p id="result"></p>
+    <div id="winnerInfo"></div>
+
+    <!-- Incluye la biblioteca de Firebase App y Database -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
 
     <script>
-        // Obtén el resultado de la ruleta de la URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var result = urlParams.get('result');
+        var firebaseConfig = {
+            apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
+    authDomain: "contador-c6528.firebaseapp.com",
+    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "contador-c6528",
+    storageBucket: "contador-c6528.appspot.com",
+    messagingSenderId: "575749501934",
+    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
+        };
+        firebase.initializeApp(firebaseConfig);
 
-        // Muestra el resultado en la página
-        document.getElementById('result').innerText = 'Ganador: ' + result;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lee el resultado de la base de datos y muestra la información
+            var resultRef = firebase.database().ref('result');
+            resultRef.once('value')
+                .then(function(snapshot) {
+                    var winnerInfo = document.getElementById('winnerInfo');
+                    var winner = snapshot.val().winner;
+
+                    // Muestra el nombre del ganador en la página
+                    winnerInfo.innerText = '¡El ganador es: ' + winner + '!';
+                })
+                .catch(function(error) {
+                    console.error('Error al obtener el resultado:', error);
+                });
+        });
     </script>
 </body>
 </html>
