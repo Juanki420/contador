@@ -87,12 +87,14 @@
         function toggleVerificationButtonVisibility(user) {
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
             
-            // Verificar si el usuario está autenticado y si el correo es el que deseas
-            if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-                toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
-            } else {
-                toggleVerificationButton.style.display = 'none'; // Ocultar el botón
-            }
+            // Verificar si la verificación está habilitada y si el usuario es el permitido
+            isVerificationEnabled().then(function(verificationEnabled) {
+                if (verificationEnabled && user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+                    toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
+                } else {
+                    toggleVerificationButton.style.display = 'none'; // Ocultar el botón
+                }
+            });
         }
 
         // Configurar el listener de cambio de estado de autenticación
@@ -102,18 +104,17 @@
 
         document.getElementById('toggleVerificationButton').addEventListener('click', function() {
             // Obtener el estado actual de verificación
-            var verificationEnabled = localStorage.getItem('verificationEnabled') === 'true';
+            isVerificationEnabled().then(function(verificationEnabled) {
+                // Cambiar el estado de verificación en la base de datos
+                database.ref('verificationEnabled').set(!verificationEnabled);
 
-            // Cambiar el estado de verificación
-            verificationEnabled = !verificationEnabled;
-            localStorage.setItem('verificationEnabled', verificationEnabled);
-
-            // Mostrar un mensaje indicando el nuevo estado
-            if (verificationEnabled) {
-                alert('La verificación de correos está activada.');
-            } else {
-                alert('La verificación de correos está desactivada.');
-            }
+                // Mostrar un mensaje indicando el nuevo estado
+                if (!verificationEnabled) {
+                    alert('La verificación de correos está activada.');
+                } else {
+                    alert('La verificación de correos está desactivada.');
+                }
+            });
         });
 
         document.getElementById('registerButton').addEventListener('click', function() {
