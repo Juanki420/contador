@@ -106,13 +106,18 @@
                 var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
                 if (shouldAutoFill) {
-                    firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
-                        .then(function(result) {
-                            alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                        })
-                        .catch(function(error) {
-                            alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                        });
+                    var manualInput = confirm('¿Quieres introducir manualmente el correo y la contraseña?\nCancelar para autocompletar automáticamente.');
+
+                    if (!manualInput) {
+                        // Rellenar los campos con las credenciales almacenadas
+                        var emailInput = document.getElementById('emailInput');
+                        var passwordInput = document.getElementById('passwordInput');
+                        emailInput.value = lastRegisteredEmail;
+                        passwordInput.value = lastRegisteredPassword;
+
+                        // Mostrar el formulario de inicio de sesión
+                        document.getElementById('loginForm').style.display = 'block';
+                    }
                 }
             } else {
                 alert('No hay credenciales almacenadas. Regístrate primero.');
@@ -120,10 +125,10 @@
         });
 
         document.getElementById('removePasswordButton').addEventListener('click', function() {
-                // Eliminar la última contraseña guardada
-        localStorage.removeItem('lastRegisteredPassword');
-        alert('¡La última contraseña guardada ha sido eliminada!');
-    });
-</script>
+            // Eliminar la última contraseña guardada
+            localStorage.removeItem('lastRegisteredPassword');
+            alert('¡La última contraseña guardada ha sido eliminada!');
+        });
+    </script>
 </body>
 </html>
