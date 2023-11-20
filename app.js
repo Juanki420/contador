@@ -286,6 +286,34 @@ function loginWithGoogle() {
         });
 }
 
+function loginWithEmail() {
+    var email = prompt('Introduce tu correo electrónico:');
+    var password = prompt('Introduce tu contraseña:');
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(function(userCredential) {
+            // Handle successful login
+            alert('Has iniciado sesión correctamente con correo electrónico y contraseña.');
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión con correo electrónico y contraseña: ' + error.message);
+        });
+}
+
+function registerWithEmail() {
+    var email = prompt('Introduce tu correo electrónico:');
+    var password = prompt('Introduce tu contraseña:');
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(function(userCredential) {
+            // Handle successful registration
+            alert('Te has registrado correctamente con correo electrónico y contraseña.');
+        })
+        .catch(function(error) {
+            alert('Error al registrarse con correo electrónico y contraseña: ' + error.message);
+        });
+}
+
 function toggleManualEmailButtonVisibility() {
     var user = firebase.auth().currentUser;
 
@@ -313,7 +341,7 @@ toggleManualEmailButtonVisibility();
 document.getElementById('manualEmailButton').addEventListener('click', function() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'TuUIDAutorizado') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         // Lógica para enviar correos manualmente
         // ...
     } else {
@@ -398,4 +426,6 @@ document.getElementById('resetNamesButton').addEventListener('click', resetNames
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
+document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
+document.getElementById('registerButton').addEventListener('click', registerWithEmail);
 document.getElementById('spinButton').addEventListener('click', spinTheWheel);
