@@ -1,374 +1,176 @@
-var firebaseConfig = {
-    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
-    authDomain: "contador-c6528.firebaseapp.com",
-    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "contador-c6528",
-    storageBucket: "contador-c6528.appspot.com",
-    messagingSenderId: "575749501934",
-    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
-};
-firebase.initializeApp(firebaseConfig);
-
-var nameList = document.getElementById('nameList');
-var nameRef = firebase.database().ref('names');
-var userMessagesRef = firebase.database().ref('userMessages');
-var verificationRef = firebase.database().ref('verification');
-
-// Crea la estructura necesaria en la base de datos al inicio
-verificationRef.set({
-    allowedEmails: {},
-    verificationEnabled: true
-});
-
-var canSubmitNames = true;
-
-nameRef.on('child_added', handleNameChange);
-nameRef.on('child_changed', handleNameChange);
-
-function isAllowedUser(email) {
-    return verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val().verificationEnabled;
-
-        if (!verificationEnabled) {
-            return true;
-        } else {
-            var normalizedEmail = normalizeEmail(email);
-            return verificationRef.child('allowedEmails').child(normalizedEmail).once('value').then(function(emailSnapshot) {
-                return emailSnapshot.exists();
-            });
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de nombres</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="web1.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="web1.ico" type="image/x-icon">
+    <style>
+        #redirectButton {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-    });
-}
 
-function toggleVerificationButtonVisibility() {
-    verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val().verificationEnabled;
+        #redirectButton:hover {
+            background-color: #45a049;
+        }
 
-        var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-        
-        toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
-    });
-}
+        #removePasswordButton {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #ff6666;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-verificationRef.on('value', toggleVerificationButtonVisibility);
+        #removePasswordButton:hover {
+            background-color: #ff3333;
+        }
 
-document.getElementById('toggleVerificationButton').addEventListener('click', function() {
-    verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val().verificationEnabled;
-        verificationRef.child('verificationEnabled').set(!verificationEnabled);
-    });
-});
+        #toggleVerificationButton {
+            display: none; /* Inicialmente oculto */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Registra aquí tu nombre</h1>
+        <div id="userInfo"></div>
+        <button type="button" id="loginButton">Iniciar Sesión con Google</button>
+        <button type="button" id="emailLoginButton">Iniciar Sesión con Correo y Contraseña</button>
+        <button type="button" id="registerButton">Registrarse</button>
+        <button type="button" id="toggleVerificationButton">Alternar Verificación</button>
+        <button type="button" id="logoutButton" style="display: none;">Cerrar Sesión</button>
+        <button onclick="addEmailManually()">Añadir Correo Manualmente</button>
 
-function handleNameChange(data) {
-    var message = data.val();
-    console.log('Nombre:', message.name);
-    console.log('ID de Usuario:', message.userId);
-    console.log('Nombre de Usuario:', message.userName);
-    console.log('Correo Electrónico del Usuario:', message.userEmail);
+    </header>
+    <main>
+        <form id="nameForm">
+            <label for="nameInput">Escribe tu nombre:</label>
+            <input type="text" id="nameInput" placeholder="Tu nombre">
+            <button type="submit" id="submitButton">Enviar</button>
+            <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
+            <a href="resultados.html" id="redirectButton">Ver Resultados de la Ruleta</a>
+        </form>
+        <ul id="nameList"></ul>
+        <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
+        <button type="button" id="resetNamesButton">Borrar Nombres</button>
+        <button type="button" id="resetButton">Restablecer Todo</button>
+        <button type="button" id="removePasswordButton">Eliminar Última Contraseña</button>
+    </main>
+    <!-- Asegúrate de incluir la biblioteca de Firebase App, Authentication y Database -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Obtener referencia a la base de datos
+        var database = firebase.database();
 
-    var li = document.createElement('li');
-    li.innerText = message.name;
-    nameList.appendChild(li);
-}
+        document.getElementById('registerButton').addEventListener('click', function() {
+            var email = prompt('Ingresa tu correo electrónico:');
+            var password = prompt('Ingresa tu contraseña:');
 
-function hasUserSubmittedMessage(userId) {
-    return userMessagesRef.child(userId).once('value').then(function(snapshot) {
-        return snapshot.exists();
-    });
-}
+            // Verificar si el correo electrónico y la contraseña se han ingresado
+            if (email !== null && password !== null && email !== '' && password !== '') {
+                // Verificar si el correo está en la lista de correos permitidos
+                if (allowedEmails.includes(email)) {
+                    // Guardar las credenciales localmente
+                    localStorage.setItem('lastRegisteredEmail', email);
+                    localStorage.setItem('lastRegisteredPassword', password);
 
-function markUserAsSubmitted(userId) {
-    userMessagesRef.child(userId).push(true);
-}
-
-function handleFormSubmission(e) {
-    e.preventDefault();
-
-    var user = firebase.auth().currentUser;
-
-    if (!user) {
-        alert('Debes iniciar sesión antes de enviar un nombre.');
-        return;
-    }
-
-    hasUserSubmittedMessage(user.uid).then(function(hasSubmitted) {
-        if (hasSubmitted) {
-            alert('Ya has enviado un mensaje. No puedes enviar otro.');
-        } else {
-            if (!canSubmitNames) {
-                alert('Recargue la página y envíe de nuevo.');
-                return;
-            }
-
-            var nameInput = document.getElementById('nameInput');
-            var name = nameInput.value.trim();
-
-            if (name.length === 0 || name.length > 30) {
-                alert('Por favor, ingresa un nombre válido (máximo 30 caracteres).');
-                return;
-            }
-
-            canSubmitNames = false;
-
-            isNameAlreadySubmitted(name).then(function(alreadySubmitted) {
-                if (alreadySubmitted) {
-                    alert('Este nombre ya ha sido enviado. Elige otro.');
-                    canSubmitNames = true;
+                    firebase.auth().createUserWithEmailAndPassword(email, password)
+                        .then(function(result) {
+                            alert('¡Te has registrado correctamente!');
+                        })
+                        .catch(function(error) {
+                            alert('Error al registrarte: ' + error.message);
+                        });
                 } else {
-                    var messageObject = {
-                        name: name,
-                        userId: user.uid,
-                        userName: user.displayName,
-                        userEmail: user.email,
-                    };
-
-                    isAllowedUser(user.email).then(function(allowed) {
-                        if (allowed) {
-                            // Guarda el correo electrónico en la lista de correos permitidos
-                            addAllowedEmail(user.email).then(function() {
-                                // Guarda el mensaje en 'names'
-                                var newMessageRef = nameRef.push(messageObject);
-
-                                // Guarda el correo electrónico en 'userMessages'
-                                userMessagesRef.child(user.uid).set({
-                                    userEmail: user.email,
-                                });
-
-                                markUserAsSubmitted(user.uid);
-
-                                nameInput.value = '';
-                                alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
-                            }).catch(function(error) {
-                                console.error('Error al agregar el correo:', error);
-                                alert('Hubo un error al agregar el correo. Por favor, revisa la consola para más detalles.');
-                                canSubmitNames = true;
-                            });
-                        } else {
-                            alert('Este correo no está permitido.');
-                            canSubmitNames = true;
-                        }
-                    });
+                    alert('Registro cancelado. No se pudo completar el registro.');
                 }
-            });
-        }
-    });
-}
-
-// Función para verificar si el nombre ya ha sido enviado
-function isNameAlreadySubmitted(name) {
-    return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
-        return snapshot.exists();
-    });
-}
-
-// Función para normalizar el correo electrónico
-function normalizeEmail(email) {
-    return email.replace('.', '_').replace('@', '_');
-}
-
-// Función para agregar un correo a la lista de correos permitidos
-function addAllowedEmail(email) {
-    var normalizedEmail = normalizeEmail(email);
-    return verificationRef.child('allowedEmails').child(normalizedEmail).set(true);
-}
-
-function resetUserMessages() {
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-        userMessagesRef.remove().then(function() {
-            console.log('Todos los mensajes de usuarios han sido eliminados.');
-        }).catch(function(error) {
-            console.error('Error al eliminar los mensajes de usuarios:', error);
-        });
-
-        alert('Se ha restablecido la información de los mensajes de usuarios.');
-    } else {
-        alert('No tienes permisos para restablecer los mensajes de usuarios o no has iniciado sesión.');
-    }
-}
-
-function resetNames() {
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-        nameRef.remove().then(function() {
-            console.log('Todos los nombres han sido eliminados.');
-        }).catch(function(error) {
-            console.error('Error al eliminar los nombres:', error);
-        });
-
-        canSubmitNames = true;
-        alert('Se han restablecido todos los envíos de nombres.');
-    } else {
-        alert('No tienes permisos para restablecer los envíos de nombres o no has iniciado sesión.');
-    }
-}
-
-function resetAllData() {
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-        nameRef.remove().then(function() {
-            console.log('Todos los nombres han sido eliminados.');
-        }).catch(function(error) {
-            console.error('Error al eliminar los nombres:', error);
-        });
-
-        userMessagesRef.remove().then(function() {
-            console.log('Todos los mensajes de usuarios han sido eliminados.');
-        }).catch(function(error) {
-            console.error('Error al eliminar los mensajes de usuarios:', error);
-        });
-
-        canSubmitNames = true;
-        alert('Se han restablecido todos los envíos y mensajes de usuarios.');
-    } else {
-        alert('No tienes permisos para restablecer los envíos o no has iniciado sesión.');
-    }
-}
-
-function logout() {
-    firebase.auth().signOut().then(function() {
-        alert('Has cerrado sesión correctamente.');
-    }).catch(function(error) {
-        alert('Error al cerrar sesión: ' + error.message);
-    });
-}
-
-function displayUserInfo(user) {
-    var userInfoElement = document.getElementById('userInfo');
-    var spinButton = document.getElementById('spinButton');
-
-    if (userInfoElement) {
-        userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
-
-        var isAllowed = user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
-
-        spinButton.style.display = isAllowed ? 'block' : 'none';
-    }
-}
-
-function loginWithGoogle() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-
-    firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-            var userEmail = result.user.email.toLowerCase();
-
-            isAllowedUser(userEmail).then(function(allowed) {
-                if (allowed) {
-                    alert('¡Has iniciado sesión con Google correctamente!');
-                } else {
-                    firebase.auth().signOut();
-                    alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
-                }
-            });
-        })
-        .catch(function(error) {
-            alert('Error al iniciar sesión con Google: ' + error.message);
-        });
-}
-
-function addEmailManually() {
-    var user = firebase.auth().currentUser;
-
-    // Verificar si el usuario actual es el permitido
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
-
-        if (emailToAdd && emailToAdd.trim() !== "") {
-            var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
-
-            verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
-                .then(function() {
-                    alert('Correo añadido correctamente.');
-                })
-                .catch(function(error) {
-                    console.error('Error al añadir el correo:', error);
-                    alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
-                });
-        } else {
-            alert('Debes ingresar un correo válido.');
-        }
-    } else {
-        alert('No tienes permisos para añadir correos manualmente o no has iniciado sesión.');
-    }
-}
-
-
-function spinTheWheel() {
-    var names = [];
-
-    nameRef.once('value')
-        .then(function(snapshot) {
-            snapshot.forEach(function(childSnapshot) {
-                var name = childSnapshot.val().name;
-                names.push(name);
-            });
-
-            if (names.length > 0) {
-                var randomIndex = Math.floor(Math.random() * names.length);
-                var winner = names[randomIndex];
-
-                var resultRef = firebase.database().ref('result');
-                resultRef.set({
-                    winner: winner
-                });
-
-                alert('Resultado almacenado: ¡' + winner + '!');
             } else {
-                alert('No hay nombres disponibles para elegir.');
+                alert('Registro cancelado. No se pudo completar el registro.');
             }
-        })
-        .catch(function(error) {
-            console.error('Error al obtener nombres:', error);
         });
-}
 
-firebase.auth().onAuthStateChanged(function(user) {
-    displayUserInfo(user);
+        document.getElementById('emailLoginButton').addEventListener('click', function() {
+            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
+            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
-    var allowedUserUid = "EcjgireoyRNjZ7Fo3W3eMZT05jp1";
+            // Preguntar por el autocompletar solo si hay credenciales almacenadas
+            if (lastRegisteredEmail && lastRegisteredPassword) {
+                var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
-    var loginButton = document.getElementById('loginButton');
-    var emailLoginButton = document.getElementById('emailLoginButton');
-    var registerButton = document.getElementById('registerButton');
-    var logoutButton = document.getElementById('logoutButton');
-    var resetUserMessagesButton = document.getElementById('resetUserMessagesButton');
-    var resetNamesButton = document.getElementById('resetNamesButton');
-    var resetButton = document.getElementById('resetButton');
+                if (shouldAutoFill) {
+                    // Iniciar sesión directamente con las credenciales almacenadas
+                    firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
+                        .then(function(result) {
+                            alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                        })
+                        .catch(function(error) {
+                            alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                        });
+                } else {
+                    // Preguntar por el correo y contraseña manualmente en forma de alertas
+                    var emailInput = prompt('Ingresa tu correo electrónico:');
+                    var passwordInput = prompt('Ingresa tu contraseña:');
 
-    if (user) {
-        loginButton.style.display = 'none';
-        emailLoginButton.style.display = 'none';
-        registerButton.style.display = 'none';
-        logoutButton.style.display = 'block';
+                    // Verificar si se ingresaron datos manualmente
+                    if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
+                        // Iniciar sesión manualmente
+                        firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
+                            .then(function(result) {
+                                alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                            })
+                            .catch(function(error) {
+                                alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                            });
+                    } else {
+                        alert('Inicio de sesión cancelado.');
+                    }
+                }
+            } else {
+                // Preguntar por el correo y contraseña manualmente en forma de alertas
+                var emailInput = prompt('Ingresa tu correo electrónico:');
+                var passwordInput = prompt('Ingresa tu contraseña:');
 
-        if (user.uid === allowedUserUid) {
-            resetUserMessagesButton.style.display = 'block';
-            resetNamesButton.style.display = 'block';
-            resetButton.style.display = 'block';
-        } else {
-            resetUserMessagesButton.style.display = 'none';
-            resetNamesButton.style.display = 'none';
-            resetButton.style.display = 'none';
-        }
-    } else {
-        loginButton.style.display = 'block';
-        emailLoginButton.style.display = 'block';
-        registerButton.style.display = 'block';
-        logoutButton.style.display = 'none';
-        resetUserMessagesButton.style.display = 'none';
-        resetNamesButton.style.display = 'none';
-        resetButton.style.display = 'none';
-    }
-});
+                // Verificar si se ingresaron datos manualmente
+                if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
+                    // Iniciar sesión manualmente sin credenciales almacenadas
+                    firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
+                        .then(function(result) {
+                            alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                        })
+                        .catch(function(error) {
+                            alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                        });
+                } else {
+                    alert('Inicio de sesión cancelado.');
+                }
+            }
+        });
 
-document.getElementById('nameForm').addEventListener('submit', handleFormSubmission);
-document.getElementById('resetUserMessagesButton').addEventListener('click', resetUserMessages);
-document.getElementById('resetNamesButton').addEventListener('click', resetNames);
-document.getElementById('resetButton').addEventListener('click', resetAllData);
-document.getElementById('logoutButton').addEventListener('click', logout);
-document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
-document.getElementById('spinButton').addEventListener('click', spinTheWheel);
+        document.getElementById('removePasswordButton').addEventListener('click', function() {
+            // Eliminar la última contraseña guardada
+            localStorage.removeItem('lastRegisteredPassword');
+            alert('¡La última contraseña guardada ha sido eliminada!');
+        });
+    </script>
+</body>
+</html>
