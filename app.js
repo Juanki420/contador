@@ -7,7 +7,7 @@ var firebaseConfig = {
     messagingSenderId: "575749501934",
     appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
-var allowedEmails = ["juankplays420@gmail.com", "albatttovar18@gmail.com", "usuario3@example.com"];
+var allowedEmails = ["juankplays420@gmail.com", "usuario2@example.com", "usuario3@example.com"];
 
 firebase.initializeApp(firebaseConfig);
 
@@ -33,7 +33,7 @@ function handleNameChange(data) {
 
 function isAllowedUser() {
     var user = firebase.auth().currentUser;
-    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'Cl1QgQiy5sgwAmCbPImFbD3AEYF3';
+    return user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 }
 
 function hasUserSubmittedMessage(userId) {
@@ -198,7 +198,7 @@ function displayUserInfo(user) {
         userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
 
         // Verifica si el usuario actual es el permitido
-        var isAllowed = user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
+        var isAllowed = user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'Cl1QgQiy5sgwAmCbPImFbD3AEYF3';
 
         // Muestra u oculta el botón de la ruleta según el resultado de la verificación
         spinButton.style.display = isAllowed ? 'block' : 'none';
@@ -258,7 +258,7 @@ function spinTheWheel() {
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
-    var allowedUserUid = "EcjgireoyRNjZ7Fo3W3eMZT05jp1";  // Reemplaza con el identificador único de la cuenta permitida
+    var allowedUserUid = "Cl1QgQiy5sgwAmCbPImFbD3AEYF3";  // Reemplaza con el identificador único de la cuenta permitida
 
     var loginButton = document.getElementById('loginButton');
     var emailLoginButton = document.getElementById('emailLoginButton');
