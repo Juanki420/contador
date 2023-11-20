@@ -56,7 +56,9 @@
         <button type="button" id="registerButton">Registrarse</button>
         <button type="button" id="toggleVerificationButton">Alternar Verificación</button>
         <button type="button" id="logoutButton" style="display: none;">Cerrar Sesión</button>
-        <button type="button" id="manualEmailButton">Enviar Correo Manualmente</button>
+        <button id="manualEmailButton">Enviar Correo Manualmente</button>
+
+
     </header>
     <main>
         <form id="nameForm">
@@ -72,36 +74,12 @@
         <button type="button" id="resetButton">Restablecer Todo</button>
         <button type="button" id="removePasswordButton">Eliminar Última Contraseña</button>
     </main>
+    <!-- Asegúrate de incluir la biblioteca de Firebase App, Authentication y Database -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
     <script src="app.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var database = firebase.database();
-
-            var registerButton = document.getElementById('registerButton');
-            if (registerButton) {
-                registerButton.addEventListener('click', function() {
-                    var email = prompt('Ingresa tu correo electrónico:');
-                    var password = prompt('Ingresa tu contraseña:');
-
-                    if (email !== null && password !== null && email !== '' && password !== '') {
-                        // ... (tu código de registro existente) ...
-                    } else {
-                        alert('Registro cancelado. No se pudo completar el registro.');
-                    }
-                });
-            }
-
-            var toggleVerificationButtonVisibility = document.getElementById('toggleVerificationButtonVisibility');
-            if (toggleVerificationButtonVisibility) {
-                toggleVerificationButtonVisibility.addEventListener('click', function() {
-                    // ... (tu código de visibilidad existente) ...
-                });
-            }
-        });
-            }
         // Obtener referencia a la base de datos
         var database = firebase.database();
 
