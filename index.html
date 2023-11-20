@@ -102,12 +102,12 @@
             var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
             // Verificar si hay credenciales almacenadas
-            if (lastRegisteredEmail && lastRegisteredPassword) {
+            if (lastRegisteredEmail &&  lastRegisteredPassword) {
                 var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
                 if (shouldAutoFill) {
                     // Rellenar los campos con las credenciales almacenadas
-                    var emailInput = prompt('Ingresa tu correo electrónico:');
+                    var emailInput = prompt('Ingresa tu correo electrónico:', lastRegisteredEmail);
                     var passwordInput = prompt('Ingresa tu contraseña:', lastRegisteredPassword);
 
                     // Mostrar el formulario de inicio de sesión
