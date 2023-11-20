@@ -284,6 +284,12 @@ function toggleManualEmailButtonVisibility() {
     if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         var manualEmailButton = document.getElementById('manualEmailButton');
         manualEmailButton.style.display = 'inline-block';
+
+        // Mueve el código del evento click aquí
+        manualEmailButton.addEventListener('click', function() {
+            // Lógica para enviar correos manualmente
+            // ...
+        });
     } else {
         // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
         var manualEmailButton = document.getElementById('manualEmailButton');
@@ -356,6 +362,9 @@ firebase.auth().onAuthStateChanged(function(user) {
             resetUserMessagesButton.style.display = 'block';
             resetNamesButton.style.display = 'block';
             resetButton.style.display = 'block';
+
+            // Llamamos a la función para gestionar la visibilidad del botón de enviar correos manualmente
+            toggleManualEmailButtonVisibility();
         } else {
             resetUserMessagesButton.style.display = 'none';
             resetNamesButton.style.display = 'none';
