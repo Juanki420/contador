@@ -16,11 +16,7 @@ var verificationRef = firebase.database().ref('verification');
 
 // Crea la estructura necesaria en la base de datos al inicio
 verificationRef.set({
-    allowedEmails: {
-        'juankplays420@gmail_com': true,
-        'laprueba@123_es': true,
-        'usuario3@example_com': true
-    },
+    allowedEmails: {},
     verificationEnabled: true
 });
 
@@ -36,21 +32,31 @@ function isAllowedUser(email) {
         if (!verificationEnabled) {
             return true;
         } else {
-            var allowedEmails = snapshot.val().allowedEmails || {};
-            return allowedEmails.hasOwnProperty(email.replace('.', '_').replace('@', '_'));
+            var normalizedEmail = normalizeEmail(email);
+            return verificationRef.child('allowedEmails').child(normalizedEmail).once('value').then(function(emailSnapshot) {
+                return emailSnapshot.exists();
+            });
         }
     });
 }
 
 function toggleVerificationButtonVisibility() {
-    verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val().verificationEnabled;
-        var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-        
-        toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
-    });
-}
+    var user = firebase.auth().currentUser;
 
+    if (user && user.uid === 'TuUIDAutorizado') {
+        verificationRef.once('value').then(function(snapshot) {
+            var verificationEnabled = snapshot.val().verificationEnabled;
+
+            var toggleVerificationButton = document.getElementById('toggleVerificationButton');
+            
+            toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
+        });
+    } else {
+        // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
+        var toggleVerificationButton = document.getElementById('toggleVerificationButton');
+        toggleVerificationButton.style.display = 'none';
+    }
+}
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
@@ -125,20 +131,29 @@ function handleFormSubmission(e) {
 
                     isAllowedUser(user.email).then(function(allowed) {
                         if (allowed) {
-                            var newMessageRef = nameRef.push(messageObject);
-                            userMessagesRef.child(user.uid).set({
-                                userEmail: user.email,
+                            // Guarda el correo electrónico en la lista de correos permitidos
+                            addAllowedEmail(user.email).then(function() {
+                                // Guarda el mensaje en 'names'
+                                var newMessageRef = nameRef.push(messageObject);
+
+                                // Guarda el correo electrónico en 'userMessages'
+                                userMessagesRef.child(user.uid).set({
+                                    userEmail: user.email,
+                                });
+
+                                markUserAsSubmitted(user.uid);
+
+                                nameInput.value = '';
+                                alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
+                            }).catch(function(error) {
+                                console.error('Error al agregar el correo:', error);
+                                alert('Hubo un error al agregar el correo. Por favor, revisa la consola para más detalles.');
+                                canSubmitNames = true;
                             });
-
-                            markUserAsSubmitted(user.uid);
-
-                            nameInput.value = '';
-                            alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
                         } else {
                             alert('Este correo no está permitido.');
+                            canSubmitNames = true;
                         }
-
-                        canSubmitNames = true;
                     });
                 }
             });
@@ -146,10 +161,22 @@ function handleFormSubmission(e) {
     });
 }
 
+// Función para verificar si el nombre ya ha sido enviado
 function isNameAlreadySubmitted(name) {
     return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
         return snapshot.exists();
     });
+}
+
+// Función para normalizar el correo electrónico
+function normalizeEmail(email) {
+    return email.replace('.', '_').replace('@', '_');
+}
+
+// Función para agregar un correo a la lista de correos permitidos
+function addAllowedEmail(email) {
+    var normalizedEmail = normalizeEmail(email);
+    return verificationRef.child('allowedEmails').child(normalizedEmail).set(true);
 }
 
 function resetUserMessages() {
