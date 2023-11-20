@@ -3,7 +3,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Tus metadatos y enlaces de estilo aquí -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado del Sorteo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #winnerInfo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
     <div id="winnerInfo"></div>
@@ -15,12 +33,12 @@
     <script>
         var firebaseConfig = {
             apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
-    authDomain: "contador-c6528.firebaseapp.com",
-    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "contador-c6528",
-    storageBucket: "contador-c6528.appspot.com",
-    messagingSenderId: "575749501934",
-    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
+            authDomain: "contador-c6528.firebaseapp.com",
+            databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "contador-c6528",
+            storageBucket: "contador-c6528.appspot.com",
+            messagingSenderId: "575749501934",
+            appId: "1:575749501934:web:4b48ebab36b25e925914ff"
         };
         firebase.initializeApp(firebaseConfig);
 
@@ -33,7 +51,7 @@
                     var winner = snapshot.val().winner;
 
                     // Muestra el nombre del ganador en la página
-                    winnerInfo.innerText = '¡El ganador es: ' + winner + '!';
+                    winnerInfo.innerText = '¡El ganador del sorteo es: ' + winner + '!';
                 })
                 .catch(function(error) {
                     console.error('Error al obtener el resultado:', error);
