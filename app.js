@@ -37,6 +37,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     toggleVerificationButtonVisibility(user);
 });
 
+var database = firebase.database();
+
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
     // Obtener el estado actual de verificación
     var verificationEnabled = localStorage.getItem('verificationEnabled') === 'true';
@@ -45,6 +47,9 @@ document.getElementById('toggleVerificationButton').addEventListener('click', fu
     verificationEnabled = !verificationEnabled;
     localStorage.setItem('verificationEnabled', verificationEnabled);
 
+    // Enviar el nuevo estado a la Firebase Realtime Database
+    database.ref('verificationEnabled').set(verificationEnabled);
+
     // Mostrar un mensaje indicando el nuevo estado
     if (verificationEnabled) {
         alert('La verificación de correos está activada.');
@@ -52,7 +57,6 @@ document.getElementById('toggleVerificationButton').addEventListener('click', fu
         alert('La verificación de correos está desactivada.');
     }
 });
-
 
 function handleNameChange(data) {
     var message = data.val();
