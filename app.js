@@ -39,6 +39,22 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 var database = firebase.database();
 
+// Configurar el listener de cambio en verificationEnabled
+database.ref('verificationEnabled').on('value', function(snapshot) {
+    var verificationEnabled = snapshot.val();
+
+    // Lógica para habilitar o deshabilitar la lista de correos permitidos
+    if (verificationEnabled === false) {
+        // Deshabilitar la lista de correos permitidos
+        allowedEmails = [];
+        alert('La verificación de correos está desactivada. Se permitirá el acceso a todos los correos.');
+    } else {
+        // Habilitar la lista de correos permitidos
+        allowedEmails = ["juankplays420@gmail.com", "laprueba@123.es", "usuario3@example.com"];
+        alert('La verificación de correos está activada. Se aplicará la lista de correos permitidos.');
+    }
+});
+
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
     // Obtener el estado actual de verificación
     var verificationEnabled = localStorage.getItem('verificationEnabled') === 'true';
