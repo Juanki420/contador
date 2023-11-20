@@ -43,6 +43,10 @@
         #removePasswordButton:hover {
             background-color: #ff3333;
         }
+
+        #toggleVerificationButton {
+            display: none; /* Inicialmente oculto */
+        }
     </style>
 </head>
 <body>
@@ -77,6 +81,23 @@
 
     <script>
         var verifyEmails = true; // Variable para alternar la verificación de correos
+
+        // Función para mostrar u ocultar el botón de alternar verificación según el usuario autenticado
+        function toggleVerificationButtonVisibility(user) {
+            var toggleVerificationButton = document.getElementById('toggleVerificationButton');
+            
+            // Verificar si el usuario está autenticado y si el correo es el que deseas
+            if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+                toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
+            } else {
+                toggleVerificationButton.style.display = 'none'; // Ocultar el botón
+            }
+        }
+
+        // Configurar el listener de cambio de estado de autenticación
+        firebase.auth().onAuthStateChanged(function(user) {
+            toggleVerificationButtonVisibility(user);
+        });
 
         document.getElementById('toggleVerificationButton').addEventListener('click', function() {
             verifyEmails = !verifyEmails; // Alternar el valor de la variable
