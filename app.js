@@ -219,7 +219,7 @@ function resetNames() {
 function resetAllData() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'TuUIDAutorizado') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         // Elimina todos los datos en la base de datos
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
