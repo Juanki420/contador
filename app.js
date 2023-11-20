@@ -45,7 +45,7 @@ window.addEventListener('popstate', function (event) {
 function resetData() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'cachimbaelectrica') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         // Elimina todos los datos en la base de datos
         nameRef.remove().then(function () {
             console.log('Todos los nombres han sido eliminados.');
@@ -287,7 +287,7 @@ function resetNames() {
 function resetAllData() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'cachimbaepitica') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         // Desvincular eventos relacionados con 'nameRef'
         nameRef.off();
         // Elimina todos los datos en la base de datos
