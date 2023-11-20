@@ -251,21 +251,28 @@ function loginWithGoogle() {
 }
 
 function addEmailManually() {
-    var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
+    var user = firebase.auth().currentUser;
 
-    if (emailToAdd && emailToAdd.trim() !== "") {
-        var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
-        
-        verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
-            .then(function() {
-                alert('Correo añadido correctamente.');
-            })
-            .catch(function(error) {
-                console.error('Error al añadir el correo:', error);
-                alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
-            });
+    // Verificar si el usuario actual es el permitido
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+        var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
+
+        if (emailToAdd && emailToAdd.trim() !== "") {
+            var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
+
+            verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
+                .then(function() {
+                    alert('Correo añadido correctamente.');
+                })
+                .catch(function(error) {
+                    console.error('Error al añadir el correo:', error);
+                    alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
+                });
+        } else {
+            alert('Debes ingresar un correo válido.');
+        }
     } else {
-        alert('Debes ingresar un correo válido.');
+        alert('No tienes permisos para añadir correos manualmente o no has iniciado sesión.');
     }
 }
 
