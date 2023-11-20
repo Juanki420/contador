@@ -26,10 +26,9 @@ function isAllowedUser(email) {
         if (!verificationEnabled) {
             return true;
         } else {
-            var encodedEmail = btoa(email);
-            return verificationRef.child('allowedEmails').child(encodedEmail).once('value').then(function(emailSnapshot) {
-                return emailSnapshot.exists();
-            });
+            var allowedEmails = snapshot.val().allowedEmails || {};
+            var encodedEmail = btoa(email.toLowerCase()); // Convertir a minúsculas antes de codificar
+            return allowedEmails[encodedEmail] === true;
         }
     });
 }
@@ -222,56 +221,6 @@ function displayUserInfo(user) {
     }
 }
 
-function loginWithGoogle() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-
-    firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-            var userEmail = result.user.email.toLowerCase();
-
-            isAllowedUser(userEmail).then(function(allowed) {
-                if (allowed) {
-                    alert('¡Has iniciado sesión con Google correctamente!');
-                } else {
-                    firebase.auth().signOut();
-                    alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
-                }
-            });
-        })
-        .catch(function(error) {
-            alert('Error al iniciar sesión con Google: ' + error.message);
-        });
-}
-
-function spinTheWheel() {
-    var names = [];
-
-    nameRef.once('value')
-        .then(function(snapshot) {
-            snapshot.forEach(function(childSnapshot) {
-                var name = childSnapshot.val().name;
-                names.push(name);
-            });
-
-            if (names.length > 0) {
-                var randomIndex = Math.floor(Math.random() * names.length);
-                var winner = names[randomIndex];
-
-                var resultRef = firebase.database().ref('result');
-                resultRef.set({
-                    winner: winner
-                });
-
-                alert('Resultado almacenado: ¡' + winner + '!');
-            } else {
-                alert('No hay nombres disponibles para elegir.');
-            }
-        })
-        .catch(function(error) {
-            console.error('Error al obtener nombres:', error);
-        });
-}
-
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
@@ -313,11 +262,6 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 document.getElementById('nameForm').addEventListener('submit', handleFormSubmission);
 document.getElementById('resetUserMessagesButton').addEventListener('click', resetUserMessages);
-document.getElementById('resetNamesButton').addEventListener('click', resetNames);
-document.getElementById('resetButton').addEventListener('click', resetAllData);
-document.getElementById('logoutButton').addEventListener('click', logout);
-document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
-document.getElementById('spinButton').addEventListener('click', spinTheWheel);
 document.getElementById('resetNamesButton').addEventListener('click', resetNames);
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
