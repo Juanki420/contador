@@ -45,6 +45,13 @@
             <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
             <a href="resultados.html" id="redirectButton">Ver Resultados de la Ruleta</a>
         </form>
+        <form id="loginForm">
+            <label for="emailInput">Correo electrónico:</label>
+            <input type="email" id="emailInput" name="email" placeholder="Tu correo electrónico">
+            <label for="passwordInput">Contraseña:</label>
+            <input type="password" id="passwordInput" name="password" placeholder="Tu contraseña">
+            <button type="button" id="loginButton" onclick="loginWithStoredCredentials()">Iniciar Sesión</button>
+        </form>
         <ul id="nameList"></ul>
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
         <button type="button" id="resetNamesButton">Borrar Nombres</button>
@@ -110,6 +117,41 @@
                 alert('Correo electrónico no válido. No se pudo iniciar sesión.');
             }
         });
+
+        function loginWithStoredCredentials() {
+            var storedCredentials = getStoredCredentials();
+
+            if (storedCredentials) {
+                var emailInput = document.getElementById('emailInput');
+                var passwordInput = document.getElementById('passwordInput');
+
+                // Rellena los campos con las credenciales almacenadas
+                emailInput.value = storedCredentials.email;
+                passwordInput.value = storedCredentials.password;
+
+                // Llama a la función de inicio de sesión existente
+                login();
+            } else {
+                // Si no hay credenciales almacenadas, simplemente llama a la función de inicio de sesión
+                login();
+            }
+        }
+
+        function getStoredCredentials() {
+            // Recupera las credenciales almacenadas desde donde las hayas guardado
+            // En este ejemplo, estoy usando localStorage
+            var storedEmail = localStorage.getItem('storedEmail');
+            var storedPassword = localStorage.getItem('storedPassword');
+
+            if (storedEmail && storedPassword) {
+                return {
+                    email: storedEmail,
+                    password: storedPassword
+                };
+            }
+
+            return null;
+        }
     </script>
 </body>
 </html>
