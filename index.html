@@ -1,3 +1,4 @@
+
 <!-- index.html -->
 
 <!DOCTYPE html>
@@ -45,13 +46,6 @@
             <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
             <a href="resultados.html" id="redirectButton">Ver Resultados de la Ruleta</a>
         </form>
-        <form id="loginForm">
-            <label for="emailInput">Correo electrónico:</label>
-            <input type="email" id="emailInput" name="email" placeholder="Tu correo electrónico">
-            <label for="passwordInput">Contraseña:</label>
-            <input type="password" id="passwordInput" name="password" placeholder="Tu contraseña">
-            <button type="button" id="loginButton" onclick="loginWithLastCredentials()">Iniciar Sesión</button>
-        </form>
         <ul id="nameList"></ul>
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
         <button type="button" id="resetNamesButton">Borrar Nombres</button>
@@ -70,10 +64,6 @@
 
             // Verificar si el correo electrónico y la contraseña se han ingresado
             if (email && password) {
-                // Guardar las credenciales localmente
-                localStorage.setItem('lastRegisteredEmail', email);
-                localStorage.setItem('lastRegisteredPassword', password);
-
                 firebase.auth().createUserWithEmailAndPassword(email, password)
                     .then(function(result) {
                         alert('¡Te has registrado correctamente!');
@@ -86,23 +76,41 @@
             }
         });
 
-        function loginWithLastCredentials() {
-            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
-            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
+        document.getElementById('emailLoginButton').addEventListener('click', function() {
+            var email = prompt('Ingresa tu correo electrónico:');
+            var savedPasswords = ['password1', 'password2', 'password3'];  // Coloca las contraseñas guardadas aquí
 
-            // Verificar si hay credenciales almacenadas
-            if (lastRegisteredEmail && lastRegisteredPassword) {
-                // Rellenar los campos con las credenciales almacenadas
-                document.getElementById('emailInput').value = lastRegisteredEmail;
-                document.getElementById('passwordInput').value = lastRegisteredPassword;
+            // Verificar si el correo electrónico se ha ingresado
+            if (email) {
+                var selectedPassword = prompt('Selecciona tu contraseña:\n1. ' + savedPasswords[0] +
+                    '\n2. ' + savedPasswords[1] + '\n3. ' + savedPasswords[2]);
 
-                // Llamar a la función de inicio de sesión existente
-                login();
+                switch (selectedPassword) {
+                    case '1':
+                        var password = savedPasswords[0];
+                        break;
+                    case '2':
+                        var password = savedPasswords[1];
+                        break;
+                    case '3':
+                        var password = savedPasswords[2];
+                        break;
+                    default:
+                        alert('Opción no válida. Inicia sesión nuevamente.');
+                        return;
+                }
+
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                    });
             } else {
-                // Si no hay credenciales almacenadas, simplemente llamar a la función de inicio de sesión
-                login();
+                alert('Correo electrónico no válido. No se pudo iniciar sesión.');
             }
-        }
+        });
     </script>
 </body>
 </html>
