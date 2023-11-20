@@ -8,6 +8,26 @@ var firebaseConfig = {
     appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
 firebase.initializeApp(firebaseConfig);
+var verificationRef = firebase.database().ref('contador-c6528/verification');
+
+// Estructura para añadir a la base de datos
+var structureToAdd = {
+    allowedEmails: {
+        [btoa("juankplays420@gmail.com")]: true,
+        [btoa("laprueba@123.es")]: true,
+        [btoa("usuario3@example.com")]: true
+    },
+    verificationEnabled: true
+};
+
+// Añadir la estructura a la base de datos
+verificationRef.set(structureToAdd)
+    .then(function() {
+        console.log('Estructura añadida correctamente a la base de datos.');
+    })
+    .catch(function(error) {
+        console.error('Error al añadir la estructura a la base de datos:', error);
+    });
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
