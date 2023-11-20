@@ -17,9 +17,9 @@ var verificationRef = firebase.database().ref('verification');
 // Crea la estructura necesaria en la base de datos al inicio
 verificationRef.set({
     allowedEmails: {
-        'juankplays420@gmail.com': true,
-        'laprueba@123.es': true,
-        'usuario3@example.com': true
+        'juankplays420@gmail_com': true,
+        'laprueba@123_es': true,
+        'usuario3@example_com': true
     },
     verificationEnabled: true
 });
@@ -37,7 +37,7 @@ function isAllowedUser(email) {
             return true;
         } else {
             var allowedEmails = snapshot.val().allowedEmails || {};
-            return allowedEmails.hasOwnProperty(email);
+            return allowedEmails.hasOwnProperty(email.replace('.', '_').replace('@', '_'));
         }
     });
 }
@@ -227,6 +227,56 @@ function displayUserInfo(user) {
 
         spinButton.style.display = isAllowed ? 'block' : 'none';
     }
+}
+
+function loginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            var userEmail = result.user.email.toLowerCase();
+
+            isAllowedUser(userEmail).then(function(allowed) {
+                if (allowed) {
+                    alert('¡Has iniciado sesión con Google correctamente!');
+                } else {
+                    firebase.auth().signOut();
+                    alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
+                }
+            });
+        })
+        .catch(function(error) {
+            alert('Error al iniciar sesión con Google: ' + error.message);
+        });
+}
+
+function spinTheWheel() {
+    var names = [];
+
+    nameRef.once('value')
+        .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var name = childSnapshot.val().name;
+                names.push(name);
+            });
+
+            if (names.length > 0) {
+                var randomIndex = Math.floor(Math.random() * names.length);
+                var winner = names[randomIndex];
+
+                var resultRef = firebase.database().ref('result');
+                resultRef.set({
+                    winner: winner
+                });
+
+                alert('Resultado almacenado: ¡' + winner + '!');
+            } else {
+                alert('No hay nombres disponibles para elegir.');
+            }
+        })
+        .catch(function(error) {
+            console.error('Error al obtener nombres:', error);
+        });
 }
 
 firebase.auth().onAuthStateChanged(function(user) {
