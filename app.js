@@ -295,7 +295,7 @@ function toggleManualEmailButtonVisibility() {
 document.getElementById('manualEmailButton').addEventListener('click', function() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'TuUIDAutorizado') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         // Lógica para enviar correos manualmente
         // ...
     } else {
