@@ -8,31 +8,21 @@ var firebaseConfig = {
     appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
 firebase.initializeApp(firebaseConfig);
-var verificationRef = firebase.database().ref('contador-c6528/verification');
-
-// Estructura para añadir a la base de datos
-var structureToAdd = {
-    allowedEmails: {
-        [btoa("juankplays420@gmail.com")]: true,
-        [btoa("laprueba@123.es")]: true,
-        [btoa("usuario3@example.com")]: true
-    },
-    verificationEnabled: true
-};
-
-// Añadir la estructura a la base de datos
-verificationRef.set(structureToAdd)
-    .then(function() {
-        console.log('Estructura añadida correctamente a la base de datos.');
-    })
-    .catch(function(error) {
-        console.error('Error al añadir la estructura a la base de datos:', error);
-    });
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var userMessagesRef = firebase.database().ref('userMessages');
 var verificationRef = firebase.database().ref('verification');
+
+// Crea la estructura necesaria en la base de datos al inicio
+verificationRef.set({
+    allowedEmails: {
+        'juankplays420@gmail.com': true,
+        'laprueba@123.es': true,
+        'usuario3@example.com': true
+    },
+    verificationEnabled: true
+});
 
 var canSubmitNames = true;
 
@@ -47,8 +37,7 @@ function isAllowedUser(email) {
             return true;
         } else {
             var allowedEmails = snapshot.val().allowedEmails || {};
-            var encodedEmail = btoa(email.toLowerCase()); // Convertir a minúsculas antes de codificar
-            return allowedEmails[encodedEmail] === true;
+            return allowedEmails.hasOwnProperty(email);
         }
     });
 }
@@ -56,7 +45,6 @@ function isAllowedUser(email) {
 function toggleVerificationButtonVisibility() {
     verificationRef.once('value').then(function(snapshot) {
         var verificationEnabled = snapshot.val().verificationEnabled;
-
         var toggleVerificationButton = document.getElementById('toggleVerificationButton');
         
         toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
@@ -66,9 +54,9 @@ function toggleVerificationButtonVisibility() {
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
-    verificationRef.transaction(function(currentData) {
-        // Invierte el valor de verificationEnabled
-        return { verificationEnabled: !currentData.verificationEnabled, allowedEmails: currentData.allowedEmails };
+    verificationRef.once('value').then(function(snapshot) {
+        var verificationEnabled = snapshot.val().verificationEnabled;
+        verificationRef.child('verificationEnabled').set(!verificationEnabled);
     });
 });
 
@@ -226,32 +214,6 @@ function logout() {
     }).catch(function(error) {
         alert('Error al cerrar sesión: ' + error.message);
     });
-}
-function loginWithGoogle() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-
-    firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-            var user = result.user;
-            var userEmail = user.email.toLowerCase();
-
-            // Verificar si el correo electrónico está en la lista permitida
-            isAllowedUser(userEmail).then(function(allowed) {
-                if (allowed) {
-                    alert('¡Has iniciado sesión con Google correctamente!');
-                } else {
-                    // Si el correo electrónico no está permitido, cerrar sesión
-                    firebase.auth().signOut();
-                    alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
-                }
-            })
-            .catch(function(error) {
-                console.error('Error al verificar el correo electrónico:', error);
-            });
-        })
-        .catch(function(error) {
-            alert('Error al iniciar sesión con Google: ' + error.message);
-        });
 }
 
 function displayUserInfo(user) {
