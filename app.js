@@ -18,9 +18,9 @@ var verificationRef = firebase.database().ref('verificationEnabled');
 verificationRef.set({
     verificationEnabled: true,
     allowedEmails: {
-        "juankplays420@gmail.com": true,
-        "laprueba@123.es": true,
-        "usuario3@example.com": true
+        [btoa("juankplays420@gmail.com")]: true,
+        [btoa("laprueba@123.es")]: true,
+        [btoa("usuario3@example.com")]: true
     }
 });
 
@@ -36,12 +36,14 @@ function isAllowedUser(email) {
         if (!verificationEnabled) {
             return true;
         } else {
-            return verificationRef.child('allowedEmails').child(email).once('value').then(function(emailSnapshot) {
+            var encodedEmail = btoa(email);
+            return verificationRef.child('allowedEmails').child(encodedEmail).once('value').then(function(emailSnapshot) {
                 return emailSnapshot.exists();
             });
         }
     });
 }
+
 
 function toggleVerificationButtonVisibility() {
     verificationRef.once('value').then(function(snapshot) {
