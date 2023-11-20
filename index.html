@@ -10,7 +10,22 @@
     <link rel="icon" href="web1.ico" type="image/x-icon">
     <link rel="shortcut icon" href="web1.ico" type="image/x-icon">
     <style>
-        /* Agrega tus estilos CSS aquí si es necesario */
+        #redirectButton {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #redirectButton:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -42,35 +57,6 @@
     <script src="app.js"></script>
 
     <script>
-        // Función para guardar el correo y la contraseña en el almacenamiento local
-        function saveCredentials(email, password) {
-            localStorage.setItem('savedEmail', email);
-            localStorage.setItem('savedPassword', password);
-        }
-
-        // Función para obtener el correo y la contraseña desde el almacenamiento local
-        function getSavedCredentials() {
-            const savedEmail = localStorage.getItem('savedEmail');
-            const savedPassword = localStorage.getItem('savedPassword');
-            return { email: savedEmail, password: savedPassword };
-        }
-
-        // Función para llenar automáticamente el formulario con las credenciales guardadas
-        function fillFormWithSavedCredentials() {
-            const savedCredentials = getSavedCredentials();
-            if (savedCredentials.email && savedCredentials.password) {
-                document.getElementById('emailLoginButton').click();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Llenar automáticamente el formulario si hay credenciales guardadas
-            fillFormWithSavedCredentials();
-
-            // Resto de tu código
-            // ...
-        });
-
         document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
 
@@ -81,8 +67,6 @@
                 firebase.auth().createUserWithEmailAndPassword(email, password)
                     .then(function(result) {
                         alert('¡Te has registrado correctamente!');
-                        // Guardar las credenciales
-                        saveCredentials(email, password);
                     })
                     .catch(function(error) {
                         alert('Error al registrarte: ' + error.message);
@@ -93,12 +77,11 @@
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var savedCredentials = getSavedCredentials();
-            var email = savedCredentials.email || prompt('Ingresa tu correo electrónico:');
+            var email = prompt('Ingresa tu correo electrónico:');
 
             // Verificar si el correo electrónico está en la lista permitida
             if (allowedEmails.includes(email)) {
-                var password = savedCredentials.password || prompt('Ingresa tu contraseña:');
+                var password = prompt('Ingresa tu contraseña:');
 
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then(function(result) {
