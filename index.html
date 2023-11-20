@@ -66,6 +66,7 @@
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
         <button type="button" id="resetNamesButton">Borrar Nombres</button>
         <button type="button" id="resetButton">Restablecer Todo</button>
+        <button type="button" id="removePasswordButton">Eliminar Última Contraseña</button>
     </main>
     <!-- Asegúrate de incluir la biblioteca de Firebase App y Authentication -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
@@ -103,15 +104,19 @@
             // Verificar si hay credenciales almacenadas
             if (lastRegisteredEmail && lastRegisteredPassword) {
                 // Rellenar los campos con las credenciales almacenadas
-                document.getElementById('emailInput').value = lastRegisteredEmail;
-                document.getElementById('passwordInput').value = lastRegisteredPassword;
-            }
+                var emailInput = document.getElementById('emailInput');
+                var passwordInput = document.getElementById('passwordInput');
+                emailInput.value = lastRegisteredEmail;
+                passwordInput.value = lastRegisteredPassword;
 
-            // Mostrar el formulario de inicio de sesión
-            document.getElementById('loginForm').style.display = 'block';
+                // Mostrar el formulario de inicio de sesión
+                document.getElementById('loginForm').style.display = 'block';
+            } else {
+                alert('No hay credenciales almacenadas. Regístrate primero.');
+            }
         });
 
-        document.getElementById('removePasswordButton').addEventListener('click', function () {
+        document.getElementById('removePasswordButton').addEventListener('click', function() {
             // Eliminar la última contraseña guardada
             localStorage.removeItem('lastRegisteredPassword');
             alert('¡La última contraseña guardada ha sido eliminada!');
