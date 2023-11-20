@@ -40,15 +40,13 @@ function isAllowedUser(email) {
     });
 }
 
-function toggleVerificationButtonVisibility() {
-    var user = firebase.auth().currentUser;
-
-    if (user && user.uid === 'TuUIDAutorizado') {
+function toggleVerificationButtonVisibility(isAuthorizedUser) {
+    if (isAuthorizedUser) {
         verificationRef.once('value').then(function(snapshot) {
             var verificationEnabled = snapshot.val().verificationEnabled;
 
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-            
+
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
         });
     } else {
@@ -57,6 +55,13 @@ function toggleVerificationButtonVisibility() {
         toggleVerificationButton.style.display = 'none';
     }
 }
+
+function handleVerificationChange(snapshot) {
+    toggleVerificationButtonVisibility(snapshot.val().verificationEnabled);
+}
+
+verificationRef.on('value', handleVerificationChange);
+
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
@@ -176,13 +181,19 @@ function normalizeEmail(email) {
 // Función para agregar un correo a la lista de correos permitidos
 function addAllowedEmail(email) {
     var normalizedEmail = normalizeEmail(email);
-    return verificationRef.child('allowedEmails').child(normalizedEmail).set(true);
+
+    return verificationRef.child('allowedEmails').update({
+        [normalizedEmail]: true
+    });
 }
 
 function resetUserMessages() {
     var user = firebase.auth().currentUser;
 
     if (user) {
+        // Desvincular eventos relacionados con 'nameRef'
+        nameRef.off();
+        nameList.innerHTML = ''; // Limpiar la lista de nombres
         userMessagesRef.remove().then(function() {
             console.log('Todos los mensajes de usuarios han sido eliminados.');
         }).catch(function(error) {
@@ -199,6 +210,8 @@ function resetNames() {
     var user = firebase.auth().currentUser;
 
     if (user) {
+        // Desvincular eventos relacionados con 'nameRef'
+        nameRef.off();
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
         }).catch(function(error) {
@@ -215,7 +228,10 @@ function resetNames() {
 function resetAllData() {
     var user = firebase.auth().currentUser;
 
-    if (user) {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+        // Desvincular eventos relacionados con 'nameRef'
+        nameRef.off();
+        // Elimina todos los datos en la base de datos
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
         }).catch(function(error) {
@@ -236,6 +252,11 @@ function resetAllData() {
 }
 
 function logout() {
+    // Desvincular eventos relacionados con 'nameRef'
+    nameRef.off();
+    // Limpiar la lista de nombres
+    nameList.innerHTML = '';
+    
     firebase.auth().signOut().then(function() {
         alert('Has cerrado sesión correctamente.');
     }).catch(function(error) {
@@ -303,7 +324,6 @@ function addEmailManually() {
     }
 }
 
-
 function spinTheWheel() {
     var names = [];
 
@@ -345,6 +365,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     var resetUserMessagesButton = document.getElementById('resetUserMessagesButton');
     var resetNamesButton = document.getElementById('resetNamesButton');
     var resetButton = document.getElementById('resetButton');
+    var toggleVerificationButton = document.getElementById('toggleVerificationButton');
 
     if (user) {
         loginButton.style.display = 'none';
@@ -361,6 +382,9 @@ firebase.auth().onAuthStateChanged(function(user) {
             resetNamesButton.style.display = 'none';
             resetButton.style.display = 'none';
         }
+
+        // Verificar si el usuario es el autorizado al cambiar la autenticación
+        toggleVerificationButtonVisibility(user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1');
     } else {
         loginButton.style.display = 'block';
         emailLoginButton.style.display = 'block';
@@ -369,6 +393,9 @@ firebase.auth().onAuthStateChanged(function(user) {
         resetUserMessagesButton.style.display = 'none';
         resetNamesButton.style.display = 'none';
         resetButton.style.display = 'none';
+
+        // Ocultar el botón de verificación si el usuario no está autenticado
+        toggleVerificationButton.style.display = 'none';
     }
 });
 
