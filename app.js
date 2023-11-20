@@ -305,6 +305,9 @@ function toggleManualEmailButtonVisibility() {
     }
 }
 
+// Llamamos a la función para gestionar la visibilidad del botón de enviar correos manualmente
+toggleManualEmailButtonVisibility();
+
 // Resto del código...
 
 document.getElementById('manualEmailButton').addEventListener('click', function() {
