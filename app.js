@@ -41,15 +41,22 @@ function isAllowedUser(email) {
 }
 
 function toggleVerificationButtonVisibility() {
-    verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val().verificationEnabled;
+    var user = firebase.auth().currentUser;
 
+    if (user && user.uid === 'TuUIDAutorizado') {
+        verificationRef.once('value').then(function(snapshot) {
+            var verificationEnabled = snapshot.val().verificationEnabled;
+
+            var toggleVerificationButton = document.getElementById('toggleVerificationButton');
+            
+            toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
+        });
+    } else {
+        // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
         var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-        
-        toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
-    });
+        toggleVerificationButton.style.display = 'none';
+    }
 }
-
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
