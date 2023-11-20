@@ -60,7 +60,9 @@
         document.getElementById('registerButton').addEventListener('click', function() {
             var storedEmail = localStorage.getItem('rememberedEmail');
             var email = storedEmail ? storedEmail : prompt('Ingresa tu correo electrónico:');
-            var password = prompt('Ingresa tu contraseña:');
+
+            var storedPassword = localStorage.getItem('rememberedPassword');
+            var password = storedPassword ? storedPassword : prompt('Ingresa tu contraseña:');
 
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(function(result) {
@@ -78,7 +80,9 @@
         document.getElementById('emailLoginButton').addEventListener('click', function() {
             var storedEmail = localStorage.getItem('rememberedEmail');
             var email = storedEmail ? storedEmail : prompt('Ingresa tu correo electrónico:');
-            var password = prompt('Ingresa tu contraseña:');
+
+            var storedPassword = localStorage.getItem('rememberedPassword');
+            var password = storedPassword ? storedPassword : prompt('Ingresa tu contraseña:');
 
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(function(result) {
