@@ -58,24 +58,36 @@
 
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
-            var autocomplete = confirm('¿Quieres autocompletar el correo y la contraseña?');
-            var email, password;
+            var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
+            var options = '';
 
-            if (autocomplete) {
-                email = localStorage.getItem('rememberedEmail');
-                password = localStorage.getItem('rememberedPassword');
+            // Crear opciones para elegir entre correos y contraseñas almacenados
+            savedCredentials.forEach(function(credentials, index) {
+                options += `${index + 1}. ${credentials.email}\n`;
+            });
+
+            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}\n0. Ingresar manualmente`);
+
+            if (choice === null) {
+                return;  // El usuario canceló
+            }
+
+            if (choice === '0' || isNaN(choice)) {
+                // Ingresar manualmente
+                var email = prompt('Ingresa tu correo electrónico:');
+                var password = prompt('Ingresa tu contraseña:');
             } else {
-                email = prompt('Ingresa tu correo electrónico:');
-                password = prompt('Ingresa tu contraseña:');
+                // Elegir entre correos y contraseñas almacenados
+                var selectedCredentials = savedCredentials[parseInt(choice) - 1];
+                var email = selectedCredentials ? selectedCredentials.email : '';
+                var password = selectedCredentials ? selectedCredentials.password : '';
             }
 
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(function(result) {
-                    // Almacenar el correo y la contraseña en localStorage solo si se eligió autocompletar
-                    if (autocomplete) {
-                        localStorage.setItem('rememberedEmail', email);
-                        localStorage.setItem('rememberedPassword', password);
-                    }
+                    // Almacenar las credenciales recién ingresadas
+                    savedCredentials.unshift({ email: email, password: password });
+                    localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
 
                     alert('¡Te has registrado correctamente!');
                 })
@@ -85,15 +97,29 @@
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var autocomplete = confirm('¿Quieres autocompletar el correo y la contraseña?');
-            var email, password;
+            var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
+            var options = '';
 
-            if (autocomplete) {
-                email = localStorage.getItem('rememberedEmail');
-                password = localStorage.getItem('rememberedPassword');
+            // Crear opciones para elegir entre correos y contraseñas almacenados
+            savedCredentials.forEach(function(credentials, index) {
+                options += `${index + 1}. ${credentials.email}\n`;
+            });
+
+            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}\n0. Ingresar manualmente`);
+
+            if (choice === null) {
+                return;  // El usuario canceló
+            }
+
+            if (choice === '0' || isNaN(choice)) {
+                // Ingresar manualmente
+                var email = prompt('Ingresa tu correo electrónico:');
+                var password = prompt('Ingresa tu contraseña:');
             } else {
-                email = prompt('Ingresa tu correo electrónico:');
-                password = prompt('Ingresa tu contraseña:');
+                // Elegir entre correos y contraseñas almacenados
+                var  selectedCredentials = savedCredentials[parseInt(choice) - 1];
+                var email = selectedCredentials ? selectedCredentials.email : '';
+                var password = selectedCredentials ? selectedCredentials.password : '';
             }
 
             firebase.auth().signInWithEmailAndPassword(email, password)
