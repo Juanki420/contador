@@ -124,20 +124,17 @@
             if (email !== null && password !== null && email !== '' && password !== '') {
                 // Verificar si el correo está en la lista de correos permitidos
                 if (allowedEmails.includes(email)) {
-                    // Verificar el estado de verificación antes de permitir el registro
-                    var verificationEnabled = localStorage.getItem('verificationEnabled') === 'true';
-                    if (verificationEnabled) {
-                        // Si la verificación está activada, continuar con el registro
-                        firebase.auth().createUserWithEmailAndPassword(email, password)
-                            .then(function(result) {
-                                alert('¡Te has registrado correctamente!');
-                            })
-                            .catch(function(error) {
-                                alert('Error al registrarte: ' + error.message);
-                            });
-                    } else {
-                        alert('Registro cancelado. La verificación de correos está desactivada.');
-                    }
+                    // Guardar las credenciales localmente
+                    localStorage.setItem('lastRegisteredEmail', email);
+                    localStorage.setItem('lastRegisteredPassword', password);
+
+                    firebase.auth().createUserWithEmailAndPassword(email, password)
+                        .then(function(result) {
+                            alert('¡Te has registrado correctamente!');
+                        })
+                        .catch(function(error) {
+                            alert('Error al registrarte: ' + error.message);
+                        });
                 } else {
                     alert('Registro cancelado. No se pudo completar el registro.');
                 }
