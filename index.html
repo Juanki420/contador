@@ -75,69 +75,46 @@
     <script src="app.js"></script>
     <script>
     document.getElementById('registerButton').addEventListener('click', function() {
-        var email = prompt('Ingresa tu correo electrónico:');
-        var password = prompt('Ingresa tu contraseña:');
+    var email = prompt('Ingresa tu correo electrónico:');
+    var password = prompt('Ingresa tu contraseña:');
 
-        // Verificar si el correo electrónico y la contraseña se han ingresado
-        if (email !== null && password !== null && email !== '' && password !== '') {
-                // Guardar las credenciales localmente
-                localStorage.setItem('lastRegisteredEmail', email);
-                localStorage.setItem('lastRegisteredPassword', password);
+    // Verificar si el correo electrónico y la contraseña se han ingresado
+    if (email !== null && password !== null && email !== '' && password !== '') {
+        // Guardar las credenciales localmente
+        localStorage.setItem('lastRegisteredEmail', email);
+        localStorage.setItem('lastRegisteredPassword', password);
 
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then(function(result) {
-                        alert('¡Te has registrado correctamente!');
-                    })
-                    .catch(function(error) {
-                        alert('Error al registrarte: ' + error.message);
-                    });
-            } else {
-                alert('Correo no permitido. Regístrate con un correo válido.');
-            }
-        } else {
-            alert('Registro cancelado. No se pudo completar el registro.');
-        }
-    });
+        // No realizar la verificación en la lista de correos
+
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(function(result) {
+                alert('¡Te has registrado correctamente!');
+            })
+            .catch(function(error) {
+                alert('Error al registrarte: ' + error.message);
+            });
+    } else {
+        alert('Correo no permitido. Regístrate con un correo válido.');
+    }
+});
 
     document.getElementById('emailLoginButton').addEventListener('click', function() {
-        var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
-        var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
+    var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
+    var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
-        // Preguntar por el autocompletar solo si hay credenciales almacenadas
-        if (lastRegisteredEmail && lastRegisteredPassword) {
-            var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
+    // Preguntar por el autocompletar solo si hay credenciales almacenadas
+    if (lastRegisteredEmail && lastRegisteredPassword) {
+        var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
-            if (shouldAutoFill) {
-                // Iniciar sesión directamente con las credenciales almacenadas
-                firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
-                    .then(function(result) {
-                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                    })
-                    .catch(function(error) {
-                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                    });
-            } else {
-                // Preguntar por el correo y contraseña manualmente en forma de alertas
-                var emailInput = prompt('Ingresa tu correo electrónico:');
-                var passwordInput = prompt('Ingresa tu contraseña:');
-
-                // Verificar si se ingresaron datos manualmente
-                if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
-                        // Iniciar sesión manualmente
-                        firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
-                            .then(function(result) {
-                                alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                            })
-                            .catch(function(error) {
-                                alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                            });
-                    } else {
-                        alert('Correo no permitido. Ingresa con un correo válido.');
-                    }
-                } else {
-                    alert('Inicio de sesión cancelado. Ingresa tus credenciales manualmente.');
-                }
-            }
+        if (shouldAutoFill) {
+            // Iniciar sesión directamente con las credenciales almacenadas
+            firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
+                .then(function(result) {
+                    alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                })
+                .catch(function(error) {
+                    alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                });
         } else {
             // Preguntar por el correo y contraseña manualmente en forma de alertas
             var emailInput = prompt('Ingresa tu correo electrónico:');
@@ -145,22 +122,38 @@
 
             // Verificar si se ingresaron datos manualmente
             if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
-                    // Iniciar sesión manualmente sin credenciales almacenadas
-                    firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
-                        .then(function(result) {
-                            alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                        })
-                        .catch(function(error) {
-                            alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                        });
-                } else {
-                    alert('Correo no permitido. Ingresa con un correo válido.');
-                }
+                // Iniciar sesión manualmente
+                firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
+                    .then(function(result) {
+                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                    });
             } else {
                 alert('Inicio de sesión cancelado. Ingresa tus credenciales manualmente.');
             }
         }
-    });
+    } else {
+        // Preguntar por el correo y contraseña manualmente en forma de alertas
+        var emailInput = prompt('Ingresa tu correo electrónico:');
+        var passwordInput = prompt('Ingresa tu contraseña:');
+
+        // Verificar si se ingresaron datos manualmente
+        if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
+            // Iniciar sesión manualmente sin credenciales almacenadas
+            firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
+                .then(function(result) {
+                    alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                })
+                .catch(function(error) {
+                    alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                });
+        } else {
+            alert('Inicio de sesión cancelado. Ingresa tus credenciales manualmente.');
+        }
+    }
+});
 
     document.getElementById('removePasswordButton').addEventListener('click', function() {
         // Eliminar la última contraseña guardada
