@@ -58,14 +58,20 @@
 
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
-            var email = prompt('Ingresa tu correo electrónico:');
+            var storedEmail = localStorage.getItem('rememberedEmail');
+            var email = storedEmail ? storedEmail : prompt('Ingresa tu correo electrónico:');
 
             // Verificar si el correo electrónico está en la lista permitida
             if (allowedEmails.includes(email)) {
-                var password = prompt('Ingresa tu contraseña:');
+                var storedPassword = localStorage.getItem('rememberedPassword');
+                var password = storedPassword ? storedPassword : prompt('Ingresa tu contraseña:');
 
                 firebase.auth().createUserWithEmailAndPassword(email, password)
                     .then(function(result) {
+                        // Almacenar el correo y la contraseña en localStorage para recordarlos
+                        localStorage.setItem('rememberedEmail', email);
+                        localStorage.setItem('rememberedPassword', password);
+
                         alert('¡Te has registrado correctamente!');
                     })
                     .catch(function(error) {
@@ -77,11 +83,13 @@
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var email = prompt('Ingresa tu correo electrónico:');
+            var storedEmail = localStorage.getItem('rememberedEmail');
+            var email = storedEmail ? storedEmail : prompt('Ingresa tu correo electrónico:');
 
             // Verificar si el correo electrónico está en la lista permitida
             if (allowedEmails.includes(email)) {
-                var password = prompt('Ingresa tu contraseña:');
+                var storedPassword = localStorage.getItem('rememberedPassword');
+                var password = storedPassword ? storedPassword : prompt('Ingresa tu contraseña:');
 
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then(function(result) {
