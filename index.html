@@ -80,8 +80,6 @@
 
         // Verificar si el correo electrónico y la contraseña se han ingresado
         if (email !== null && password !== null && email !== '' && password !== '') {
-            // Verificar si el correo está en la lista de correos permitidos
-            if (allowedEmails.includes(email)) {
                 // Guardar las credenciales localmente
                 localStorage.setItem('lastRegisteredEmail', email);
                 localStorage.setItem('lastRegisteredPassword', password);
@@ -125,8 +123,6 @@
 
                 // Verificar si se ingresaron datos manualmente
                 if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
-                    // Verificar si el correo está en la lista de correos permitidos
-                    if (allowedEmails.includes(emailInput)) {
                         // Iniciar sesión manualmente
                         firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
                             .then(function(result) {
@@ -149,8 +145,6 @@
 
             // Verificar si se ingresaron datos manualmente
             if (emailInput !== null && emailInput !== '' && passwordInput !== null && passwordInput !== '') {
-                // Verificar si el correo está en la lista de correos permitidos
-                if (allowedEmails.includes(emailInput)) {
                     // Iniciar sesión manualmente sin credenciales almacenadas
                     firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput)
                         .then(function(result) {
