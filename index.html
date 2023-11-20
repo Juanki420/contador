@@ -49,7 +49,6 @@
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
         <button type="button" id="resetNamesButton">Borrar Nombres</button>
         <button type="button" id="resetButton">Restablecer Todo</button>
-        <button type="button" id="removeLastCredentialsButton">Eliminar Última Contraseña Guardada</button>
     </main>
     <!-- Asegúrate de incluir la biblioteca de Firebase App y Authentication -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
@@ -80,12 +79,7 @@
                 options += `${index + 1}. ${credentials.email}\n`;
             });
 
-            // Permitir hasta tres conjuntos de credenciales
-            if (savedCredentials.length < 3) {
-                options += '0. Ingresar manualmente';
-            }
-
-            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}`);
+            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}\n0. Ingresar manualmente`);
 
             if (choice === null) {
                 return;  // El usuario canceló
@@ -95,18 +89,8 @@
                 // Ingresar manualmente
                 var email = prompt('Ingresa tu correo electrónico:');
                 var password = prompt('Ingresa tu contraseña:');
-
-                // Guardar nuevas credenciales
-                savedCredentials.push({ email: email, password: password });
-                localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
             } else {
-                // Eliminar la última  contraseña guardada si el usuario elige una existente
-                if (choice > 0 && choice <= savedCredentials.length) {
-                    savedCredentials.pop();
-                    localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
-                }
-
-                // Elegir entre las credenciales almacenadas
+                // Elegir entre correos y contraseñas almacenados
                 var selectedCredentials = savedCredentials[parseInt(choice) - 1];
                 var email = selectedCredentials ? selectedCredentials.email : '';
                 var password = selectedCredentials ? selectedCredentials.password : '';
@@ -119,18 +103,6 @@
                 .catch(function(error) {
                     alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
                 });
-        });
-
-        document.getElementById('removeLastCredentialsButton').addEventListener('click', function() {
-            var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
-
-            if (savedCredentials.length > 0) {
-                savedCredentials.pop();
-                localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
-                alert('Última contraseña guardada eliminada correctamente.');
-            } else {
-                alert('No hay contraseñas guardadas para eliminar.');
-            }
         });
     </script>
 </body>
