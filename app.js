@@ -7,69 +7,59 @@ var firebaseConfig = {
     messagingSenderId: "575749501934",
     appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
-var allowedEmails = ["juankplays420@gmail.com", "laprueba@123.es", "usuario3@example.com"];
-
 firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
 var nameRef = firebase.database().ref('names');
 var userMessagesRef = firebase.database().ref('userMessages');
 var verificationRef = firebase.database().ref('verificationEnabled');
+
+// Crea la estructura necesaria en la base de datos al inicio
+verificationRef.set({
+    verificationEnabled: true,
+    allowedEmails: {
+        "juankplays420@gmail.com": true,
+        "laprueba@123.es": true,
+        "usuario3@example.com": true
+    }
+});
+
 var canSubmitNames = true;
 
 nameRef.on('child_added', handleNameChange);
 nameRef.on('child_changed', handleNameChange);
 
-// Función para mostrar u ocultar el botón de alternar verificación según el usuario autenticado
-function toggleVerificationButtonVisibility(user) {
-    var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-    
-    // Verificar si el usuario está autenticado y si el correo es el que deseas
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
-    } else {
-        toggleVerificationButton.style.display = 'none'; // Ocultar el botón
-    }
+function isAllowedUser(email) {
+    return verificationRef.once('value').then(function(snapshot) {
+        var verificationEnabled = snapshot.val().verificationEnabled;
+
+        if (!verificationEnabled) {
+            return true;
+        } else {
+            return verificationRef.child('allowedEmails').child(email).once('value').then(function(emailSnapshot) {
+                return emailSnapshot.exists();
+            });
+        }
+    });
 }
 
-// Configurar el listener de cambio de estado de autenticación
-firebase.auth().onAuthStateChanged(function(user) {
-    toggleVerificationButtonVisibility(user);
-});
+function toggleVerificationButtonVisibility() {
+    verificationRef.once('value').then(function(snapshot) {
+        var verificationEnabled = snapshot.val().verificationEnabled;
 
-var database = firebase.database();
+        var toggleVerificationButton = document.getElementById('toggleVerificationButton');
+        
+        toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
+    });
+}
 
-// Configurar el listener de cambio en verificationEnabled
-verificationRef.on('value', function(snapshot) {
-    var verificationEnabled = snapshot.val();
-
-    // Lógica para habilitar o deshabilitar la lista de correos permitidos
-    if (verificationEnabled === false) {
-        // Deshabilitar la lista de correos permitidos
-        alert('La verificación de correos está desactivada. Se permitirá el acceso a todos los correos.');
-    } else {
-        // Habilitar la lista de correos permitidos
-        alert('La verificación de correos está activada. Se aplicará la lista de correos permitidos.');
-    }
-});
+verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
-    // Obtener el estado actual de verificación
-    var verificationEnabled = localStorage.getItem('verificationEnabled') === 'true';
-
-    // Cambiar el estado de verificación
-    verificationEnabled = !verificationEnabled;
-    localStorage.setItem('verificationEnabled', verificationEnabled);
-
-    // Enviar el nuevo estado a la Firebase Realtime Database
-    verificationRef.set(verificationEnabled);
-
-    // Mostrar un mensaje indicando el nuevo estado
-    if (verificationEnabled) {
-        alert('La verificación de correos está activada.');
-    } else {
-        alert('La verificación de correos está desactivada.');
-    }
+    verificationRef.once('value').then(function(snapshot) {
+        var verificationEnabled = snapshot.val().verificationEnabled;
+        verificationRef.child('verificationEnabled').set(!verificationEnabled);
+    });
 });
 
 function handleNameChange(data) {
@@ -82,21 +72,6 @@ function handleNameChange(data) {
     var li = document.createElement('li');
     li.innerText = message.name;
     nameList.appendChild(li);
-}
-
-function isAllowedUser(email) {
-    // Obtener el estado actual de verificación
-    return verificationRef.once('value').then(function(snapshot) {
-        var verificationEnabled = snapshot.val();
-
-        if (!verificationEnabled) {
-            // Si la verificación está desactivada, permitir cualquier correo
-            return true;
-        } else {
-            // Verificar si el correo está en la lista permitida
-            return allowedEmails.includes(email);
-        }
-    });
 }
 
 function hasUserSubmittedMessage(userId) {
@@ -138,13 +113,11 @@ function handleFormSubmission(e) {
 
             canSubmitNames = false;
 
-            // Verificar si el nombre ya ha sido enviado
             isNameAlreadySubmitted(name).then(function(alreadySubmitted) {
                 if (alreadySubmitted) {
                     alert('Este nombre ya ha sido enviado. Elige otro.');
-                    canSubmitNames = true;  // Restablecer el estado de envío
+                    canSubmitNames = true;
                 } else {
-                    // Agrega el correo electrónico al objeto messageObject
                     var messageObject = {
                         name: name,
                         userId: user.uid,
@@ -152,13 +125,9 @@ function handleFormSubmission(e) {
                         userEmail: user.email,
                     };
 
-                    // Verificar si el usuario está permitido
                     isAllowedUser(user.email).then(function(allowed) {
                         if (allowed) {
-                            // Guarda el mensaje en 'names'
                             var newMessageRef = nameRef.push(messageObject);
-
-                            // Guarda el correo electrónico en 'userMessages'
                             userMessagesRef.child(user.uid).set({
                                 userEmail: user.email,
                             });
@@ -171,7 +140,7 @@ function handleFormSubmission(e) {
                             alert('Este correo no está permitido.');
                         }
 
-                        canSubmitNames = true;  // Restablecer el estado de envío
+                        canSubmitNames = true;
                     });
                 }
             });
@@ -179,7 +148,6 @@ function handleFormSubmission(e) {
     });
 }
 
-// Función para verificar si el nombre ya ha sido enviado
 function isNameAlreadySubmitted(name) {
     return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
         return snapshot.exists();
@@ -189,15 +157,12 @@ function isNameAlreadySubmitted(name) {
 function resetUserMessages() {
     var user = firebase.auth().currentUser;
 
-    if (user && isAllowedUser()) {
-        // Eliminar todos los 'userMessages'
-        userMessagesRef.remove()
-            .then(function() {
-                console.log('Todos los mensajes de usuarios han sido eliminados.');
-            })
-            .catch(function(error) {
-                console.error('Error al eliminar los mensajes de usuarios:', error);
-            });
+    if (user) {
+        userMessagesRef.remove().then(function() {
+            console.log('Todos los mensajes de usuarios han sido eliminados.');
+        }).catch(function(error) {
+            console.error('Error al eliminar los mensajes de usuarios:', error);
+        });
 
         alert('Se ha restablecido la información de los mensajes de usuarios.');
     } else {
@@ -208,15 +173,12 @@ function resetUserMessages() {
 function resetNames() {
     var user = firebase.auth().currentUser;
 
-    if (user && isAllowedUser()) {
-        // Eliminar todos los nombres en 'names'
-        nameRef.remove()
-            .then(function() {
-                console.log('Todos los nombres han sido eliminados.');
-            })
-            .catch(function(error) {
-                console.error('Error al eliminar los nombres:', error);
-            });
+    if (user) {
+        nameRef.remove().then(function() {
+            console.log('Todos los nombres han sido eliminados.');
+        }).catch(function(error) {
+            console.error('Error al eliminar los nombres:', error);
+        });
 
         canSubmitNames = true;
         alert('Se han restablecido todos los envíos de nombres.');
@@ -228,24 +190,18 @@ function resetNames() {
 function resetAllData() {
     var user = firebase.auth().currentUser;
 
-    if (user && isAllowedUser()) {
-        // Eliminar todos los nombres en 'names'
-        nameRef.remove()
-            .then(function() {
-                console.log('Todos los nombres han sido eliminados.');
-            })
-            .catch(function(error) {
-                console.error('Error al eliminar los nombres:', error);
-            });
+    if (user) {
+        nameRef.remove().then(function() {
+            console.log('Todos los nombres han sido eliminados.');
+        }).catch(function(error) {
+            console.error('Error al eliminar los nombres:', error);
+        });
 
-        // Eliminar todos los 'userMessages'
-        userMessagesRef.remove()
-            .then(function() {
-                console.log('Todos los mensajes de usuarios han sido eliminados.');
-            })
-            .catch(function(error) {
-                console.error('Error al eliminar los mensajes de usuarios:', error);
-            });
+        userMessagesRef.remove().then(function() {
+            console.log('Todos los mensajes de usuarios han sido eliminados.');
+        }).catch(function(error) {
+            console.error('Error al eliminar los mensajes de usuarios:', error);
+        });
 
         canSubmitNames = true;
         alert('Se han restablecido todos los envíos y mensajes de usuarios.');
@@ -269,10 +225,8 @@ function displayUserInfo(user) {
     if (userInfoElement) {
         userInfoElement.innerHTML = user ? `Usuario actual: ${user.displayName} (${user.email})` : '';
 
-        // Verifica si el usuario actual es el permitido
         var isAllowed = user && user.providerData[0]?.providerId === 'google.com' && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1';
 
-        // Muestra u oculta el botón de la ruleta según el resultado de la verificación
         spinButton.style.display = isAllowed ? 'block' : 'none';
     }
 }
@@ -282,12 +236,11 @@ function loginWithGoogle() {
 
     firebase.auth().signInWithPopup(provider)
         .then(function(result) {
-            // Verificar si el correo electrónico está en la lista permitida
-            var userEmail = result.user.email.toLowerCase(); // Convertir a minúsculas para comparación sin distinción entre mayúsculas y minúsculas
+            var userEmail = result.user.email.toLowerCase();
+
             if (allowedEmails.includes(userEmail)) {
                 alert('¡Has iniciado sesión con Google correctamente!');
             } else {
-                // Si el correo electrónico no está permitido, cerrar sesión
                 firebase.auth().signOut();
                 alert('Correo electrónico no permitido. No se pudo iniciar sesión.');
             }
@@ -311,7 +264,6 @@ function spinTheWheel() {
                 var randomIndex = Math.floor(Math.random() * names.length);
                 var winner = names[randomIndex];
 
-                // Almacena el resultado en la base de datos
                 var resultRef = firebase.database().ref('result');
                 resultRef.set({
                     winner: winner
@@ -330,7 +282,7 @@ function spinTheWheel() {
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
 
-    var allowedUserUid = "EcjgireoyRNjZ7Fo3W3eMZT05jp1";  // Reemplaza con el identificador único de la cuenta permitida
+    var allowedUserUid = "EcjgireoyRNjZ7Fo3W3eMZT05jp1";
 
     var loginButton = document.getElementById('loginButton');
     var emailLoginButton = document.getElementById('emailLoginButton');
@@ -347,12 +299,10 @@ firebase.auth().onAuthStateChanged(function(user) {
         logoutButton.style.display = 'block';
 
         if (user.uid === allowedUserUid) {
-            // Mostrar botones solo para la cuenta permitida
             resetUserMessagesButton.style.display = 'block';
             resetNamesButton.style.display = 'block';
             resetButton.style.display = 'block';
         } else {
-            // Ocultar botones para otras cuentas
             resetUserMessagesButton.style.display = 'none';
             resetNamesButton.style.display = 'none';
             resetButton.style.display = 'none';
