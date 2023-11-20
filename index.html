@@ -79,7 +79,12 @@
                 options += `${index + 1}. ${credentials.email}\n`;
             });
 
-            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}\n0. Ingresar manualmente`);
+            // Permitir hasta tres conjuntos de credenciales
+            if (savedCredentials.length < 3) {
+                options += '0. Ingresar manualmente';
+            }
+
+            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}`);
 
             if (choice === null) {
                 return;  // El usuario canceló
@@ -89,10 +94,14 @@
                 // Ingresar manualmente
                 var email = prompt('Ingresa tu correo electrónico:');
                 var password = prompt('Ingresa tu contraseña:');
+
+                // Guardar nuevas credenciales
+                savedCredentials.push({ email: email, password: password });
+                localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
             } else {
                 // Elegir entre correos y contraseñas almacenados
                 var selectedCredentials = savedCredentials[parseInt(choice) - 1];
-                var email = selectedCredentials ? selectedCredentials.email : '';
+                var  email = selectedCredentials ? selectedCredentials.email : '';
                 var password = selectedCredentials ? selectedCredentials.password : '';
             }
 
