@@ -86,7 +86,7 @@ function handleNameChange(data) {
 
 function isAllowedUser(email) {
     // Obtener el estado actual de verificación
-    verificationRef.once('value').then(function(snapshot) {
+    return verificationRef.once('value').then(function(snapshot) {
         var verificationEnabled = snapshot.val();
 
         if (!verificationEnabled) {
