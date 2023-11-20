@@ -49,7 +49,6 @@
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
         <button type="button" id="resetNamesButton">Borrar Nombres</button>
         <button type="button" id="resetButton">Restablecer Todo</button>
-        <button type="button" id="removeLastCredentialsButton">Eliminar Última Contraseña Guardada</button>
     </main>
     <!-- Asegúrate de incluir la biblioteca de Firebase App y Authentication -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
@@ -60,76 +59,59 @@
     <script>
         document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
-            var password = prompt('Ingresa tu contraseña:');
 
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(function(result) {
-                    alert('¡Te has registrado correctamente!');
-                })
-                .catch(function(error) {
-                    alert('Error al registrarte: ' + error.message);
-                });
+            var password1 = prompt('Ingresa tu primera contraseña:');
+            var password2 = prompt('Ingresa tu segunda contraseña:');
+            var password3 = prompt('Ingresa tu tercera contraseña:');
+
+            // Verificar si el correo electrónico está en la lista permitida
+            // y guardar las contraseñas
+            if (email) {
+                firebase.auth().createUserWithEmailAndPassword(email, password1)
+                    .then(function(result) {
+                        alert('¡Te has registrado correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al registrarte: ' + error.message);
+                    });
+            } else {
+                alert('Registro cancelado. No se pudo completar el registro.');
+            }
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
-            var options = '';
+            var email = prompt('Ingresa tu correo electrónico:');
+            var savedPasswords = ['password1', 'password2', 'password3'];  // Coloca las contraseñas guardadas aquí
 
-            // Crear opciones para elegir entre correos y contraseñas almacenados
-            savedCredentials.forEach(function(credentials, index) {
-                options += `${index + 1}. ${credentials.email}\n`;
-            });
+            // Verificar si el correo electrónico está en la lista permitida
+            if (email) {
+                var selectedPassword = prompt('Selecciona tu contraseña:\n1. ' + savedPasswords[0] +
+                    '\n2. ' + savedPasswords[1] + '\n3. ' + savedPasswords[2]);
 
-            // Permitir hasta tres conjuntos de credenciales
-            if (savedCredentials.length < 3) {
-                options += '0. Ingresar manualmente';
-            }
-
-            var choice = prompt(`Elige el número correspondiente a tus credenciales:\n${options}`);
-
-            if (choice === null) {
-                return;  // El usuario canceló
-            }
-
-            if (choice === '0' || isNaN(choice)) {
-                // Ingresar manualmente
-                var email = prompt('Ingresa tu correo electrónico:');
-                var password = prompt('Ingresa tu contraseña:');
-
-                // Guardar nuevas credenciales
-                savedCredentials.push({ email: email, password: password });
-                localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
-            } else {
-                // Eliminar la última  contraseña guardada si el usuario elige una existente
-                if (choice > 0 && choice <= savedCredentials.length) {
-                    savedCredentials.pop();
-                    localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
+                switch (selectedPassword) {
+                    case '1':
+                        var password = savedPasswords[0];
+                        break;
+                    case '2':
+                        var password = savedPasswords[1];
+                        break;
+                    case '3':
+                        var password = savedPasswords[2];
+                        break;
+                    default:
+                        alert('Opción no válida. Inicia sesión nuevamente.');
+                        return;
                 }
 
-                // Elegir entre las credenciales almacenadas
-                var selectedCredentials = savedCredentials[parseInt(choice) - 1];
-                var email = selectedCredentials ? selectedCredentials.email : '';
-                var password = selectedCredentials ? selectedCredentials.password : '';
-            }
-
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(function(result) {
-                    alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                })
-                .catch(function(error) {
-                    alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                });
-        });
-
-        document.getElementById('removeLastCredentialsButton').addEventListener('click', function() {
-            var savedCredentials = JSON.parse(localStorage.getItem('rememberedCredentials')) || [];
-
-            if (savedCredentials.length > 0) {
-                savedCredentials.pop();
-                localStorage.setItem('rememberedCredentials', JSON.stringify(savedCredentials));
-                alert('Última contraseña guardada eliminada correctamente.');
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(function(result) {
+                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
+                    })
+                    .catch(function(error) {
+                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
+                    });
             } else {
-                alert('No hay contraseñas guardadas para eliminar.');
+                alert('Correo electrónico no válido. No se pudo iniciar sesión.');
             }
         });
     </script>
