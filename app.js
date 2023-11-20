@@ -280,7 +280,7 @@ function loginWithGoogle() {
 function toggleManualEmailButtonVisibility() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'TuUIDAutorizado') {
+    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         var manualEmailButton = document.getElementById('manualEmailButton');
         manualEmailButton.style.display = 'inline-block';
     } else {
