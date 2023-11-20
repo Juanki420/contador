@@ -114,14 +114,17 @@
         });
         
         document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
-            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
+    var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
+    var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
-            // Preguntar por el autocompletar solo si hay credenciales almacenadas
-            if (lastRegisteredEmail && lastRegisteredPassword) {
-                var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
+    // Preguntar por el autocompletar solo si hay credenciales almacenadas
+    if (lastRegisteredEmail && lastRegisteredPassword) {
+        var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
-                if (shouldAutoFill) {
+        if (shouldAutoFill) {
+            // Verificar si el correo está en la lista de correos permitidos antes de iniciar sesión
+            isAllowedUser(lastRegisteredEmail).then(function (allowed) {
+                if (allowed) {
                     // Iniciar sesión directamente con las credenciales almacenadas
                     firebase.auth().signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword)
                         .then(function(result) {
@@ -131,6 +134,10 @@
                             alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
                         });
                 } else {
+                    alert('Correo no permitido. No se pudo iniciar sesión.');
+                }
+            });
+        } else {
                     // Preguntar por el correo y contraseña manualmente en forma de alertas
                     var emailInput = prompt('Ingresa tu correo electrónico:');
                     var passwordInput = prompt('Ingresa tu contraseña:');
