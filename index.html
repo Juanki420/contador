@@ -50,7 +50,7 @@
             <input type="email" id="emailInput" name="email" placeholder="Tu correo electrónico">
             <label for="passwordInput">Contraseña:</label>
             <input type="password" id="passwordInput" name="password" placeholder="Tu contraseña">
-            <button type="button" id="loginButton" onclick="loginWithStoredCredentials()">Iniciar Sesión</button>
+            <button type="button" id="loginButton" onclick="loginWithLastCredentials()">Iniciar Sesión</button>
         </form>
         <ul id="nameList"></ul>
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
@@ -70,6 +70,10 @@
 
             // Verificar si el correo electrónico y la contraseña se han ingresado
             if (email && password) {
+                // Guardar las credenciales localmente
+                localStorage.setItem('lastRegisteredEmail', email);
+                localStorage.setItem('lastRegisteredPassword', password);
+
                 firebase.auth().createUserWithEmailAndPassword(email, password)
                     .then(function(result) {
                         alert('¡Te has registrado correctamente!');
@@ -82,75 +86,22 @@
             }
         });
 
-        document.getElementById('emailLoginButton').addEventListener('click', function() {
-            var email = prompt('Ingresa tu correo electrónico:');
-            var savedPasswords = ['password1', 'password2', 'password3'];  // Coloca las contraseñas guardadas aquí
+        function loginWithLastCredentials() {
+            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
+            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
-            // Verificar si el correo electrónico se ha ingresado
-            if (email) {
-                var selectedPassword = prompt('Selecciona tu contraseña:\n1. ' + savedPasswords[0] +
-                    '\n2. ' + savedPasswords[1] + '\n3. ' + savedPasswords[2]);
+            // Verificar si hay credenciales almacenadas
+            if (lastRegisteredEmail && lastRegisteredPassword) {
+                // Rellenar los campos con las credenciales almacenadas
+                document.getElementById('emailInput').value = lastRegisteredEmail;
+                document.getElementById('passwordInput').value = lastRegisteredPassword;
 
-                switch (selectedPassword) {
-                    case '1':
-                        var password = savedPasswords[0];
-                        break;
-                    case '2':
-                        var password = savedPasswords[1];
-                        break;
-                    case '3':
-                        var password = savedPasswords[2];
-                        break;
-                    default:
-                        alert('Opción no válida. Inicia sesión nuevamente.');
-                        return;
-                }
-
-                firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then(function(result) {
-                        alert('¡Has iniciado sesión con correo y contraseña correctamente!');
-                    })
-                    .catch(function(error) {
-                        alert('Error al iniciar sesión con correo y contraseña: ' + error.message);
-                    });
-            } else {
-                alert('Correo electrónico no válido. No se pudo iniciar sesión.');
-            }
-        });
-
-        function loginWithStoredCredentials() {
-            var storedCredentials = getStoredCredentials();
-
-            if (storedCredentials) {
-                var emailInput = document.getElementById('emailInput');
-                var passwordInput = document.getElementById('passwordInput');
-
-                // Rellena los campos con las credenciales almacenadas
-                emailInput.value = storedCredentials.email;
-                passwordInput.value = storedCredentials.password;
-
-                // Llama a la función de inicio de sesión existente
+                // Llamar a la función de inicio de sesión existente
                 login();
             } else {
-                // Si no hay credenciales almacenadas, simplemente llama a la función de inicio de sesión
+                // Si no hay credenciales almacenadas, simplemente llamar a la función de inicio de sesión
                 login();
             }
-        }
-
-        function getStoredCredentials() {
-            // Recupera las credenciales almacenadas desde donde las hayas guardado
-            // En este ejemplo, estoy usando localStorage
-            var storedEmail = localStorage.getItem('storedEmail');
-            var storedPassword = localStorage.getItem('storedPassword');
-
-            if (storedEmail && storedPassword) {
-                return {
-                    email: storedEmail,
-                    password: storedPassword
-                };
-            }
-
-            return null;
         }
     </script>
 </body>
