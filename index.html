@@ -75,29 +75,25 @@
     <script src="app.js"></script>
 
     <script>
-        document.getElementById('registerButton').addEventListener('click', function() {
-            var email = prompt('Ingresa tu correo electrónico:');
-            var password = prompt('Ingresa tu contraseña:');
+        document.getElementById('emailLoginButton').addEventListener('click', function() {
+            var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
+            var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
-            // Verificar si el correo electrónico y la contraseña se han ingresado
-            if (email && password) {
-                // Guardar las credenciales localmente
-                localStorage.setItem('lastRegisteredEmail', email);
-                localStorage.setItem('lastRegisteredPassword', password);
+            // Verificar si hay credenciales almacenadas
+            if (lastRegisteredEmail && lastRegisteredPassword) {
+                var shouldAutoFill = confirm('¿Quieres autocompletar con la última contraseña guardada?');
 
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then(function(result) {
-                        alert('¡Te has registrado correctamente!');
-                    })
-                    .catch(function(error) {
-                        alert('Error al registrarte: ' + error.message);
-                    });
-            } else {
-                alert('Registro cancelado. No se pudo completar el registro.');
+                if (shouldAutoFill) {
+                    // Rellenar los campos con las credenciales almacenadas
+                    var emailInput = document.getElementById('emailInput');
+                    var passwordInput = document.getElementById('passwordInput');
+                    emailInput.value = lastRegisteredEmail;
+                    passwordInput.value = lastRegisteredPassword;
+                }
             }
         });
 
-        document.getElementById('emailLoginButton').addEventListener('click', function() {
+        document.getElementById('loginButton').addEventListener('click', function() {
             var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
             var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
 
@@ -114,13 +110,8 @@
                         var passwordInput = document.getElementById('passwordInput');
                         emailInput.value = lastRegisteredEmail;
                         passwordInput.value = lastRegisteredPassword;
-
-                        // Mostrar el formulario de inicio de sesión
-                        document.getElementById('loginForm').style.display = 'block';
                     }
                 }
-            } else {
-                alert('No hay credenciales almacenadas. Regístrate primero.');
             }
         });
 
