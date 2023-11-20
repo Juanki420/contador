@@ -50,6 +50,14 @@ function toggleVerificationButtonVisibility() {
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
             
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
+
+            // Mueve el código del evento click aquí
+            toggleVerificationButton.addEventListener('click', function() {
+                verificationRef.once('value').then(function(snapshot) {
+                    var verificationEnabled = snapshot.val().verificationEnabled;
+                    verificationRef.child('verificationEnabled').set(!verificationEnabled);
+                });
+            });
         });
     } else {
         // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
