@@ -122,6 +122,9 @@
                     } else {
                         alert('Inicio de sesión cancelado. Ingresa tus credenciales manualmente.');
                     }
+                } else {
+                    // Mostrar el formulario de inicio de sesión
+                    document.getElementById('loginForm').style.display = 'block';
                 }
             } else {
                 alert('No hay credenciales almacenadas. Regístrate primero.');
