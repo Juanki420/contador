@@ -1,12 +1,3 @@
-var firebaseConfig = {
-    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
-    authDomain: "contador-c6528.firebaseapp.com",
-    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "contador-c6528",
-    storageBucket: "contador-c6528.appspot.com",
-    messagingSenderId: "575749501934",
-    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
-};
 firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
@@ -50,14 +41,6 @@ function toggleVerificationButtonVisibility() {
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
             
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
-
-            // Mueve el código del evento click aquí
-            toggleVerificationButton.addEventListener('click', function() {
-                verificationRef.once('value').then(function(snapshot) {
-                    var verificationEnabled = snapshot.val().verificationEnabled;
-                    verificationRef.child('verificationEnabled').set(!verificationEnabled);
-                });
-            });
         });
     } else {
         // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
@@ -286,46 +269,12 @@ function loginWithGoogle() {
         });
 }
 
-function loginWithEmail() {
-    var email = prompt('Introduce tu correo electrónico:');
-    var password = prompt('Introduce tu contraseña:');
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(function(userCredential) {
-            // Handle successful login
-            alert('Has iniciado sesión correctamente con correo electrónico y contraseña.');
-        })
-        .catch(function(error) {
-            alert('Error al iniciar sesión con correo electrónico y contraseña: ' + error.message);
-        });
-}
-
-function registerWithEmail() {
-    var email = prompt('Introduce tu correo electrónico:');
-    var password = prompt('Introduce tu contraseña:');
-
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(function(userCredential) {
-            // Handle successful registration
-            alert('Te has registrado correctamente con correo electrónico y contraseña.');
-        })
-        .catch(function(error) {
-            alert('Error al registrarse con correo electrónico y contraseña: ' + error.message);
-        });
-}
-
 function toggleManualEmailButtonVisibility() {
     var user = firebase.auth().currentUser;
 
     if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         var manualEmailButton = document.getElementById('manualEmailButton');
         manualEmailButton.style.display = 'inline-block';
-
-        // Mueve el código del evento click aquí
-        manualEmailButton.addEventListener('click', function() {
-            // Lógica para enviar correos manualmente
-            // ...
-        });
     } else {
         // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
         var manualEmailButton = document.getElementById('manualEmailButton');
@@ -333,15 +282,12 @@ function toggleManualEmailButtonVisibility() {
     }
 }
 
-// Llamamos a la función para gestionar la visibilidad del botón de enviar correos manualmente
-toggleManualEmailButtonVisibility();
-
 // Resto del código...
 
 document.getElementById('manualEmailButton').addEventListener('click', function() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+    if (user && user.uid === 'TuUIDAutorizado') {
         // Lógica para enviar correos manualmente
         // ...
     } else {
@@ -401,9 +347,6 @@ firebase.auth().onAuthStateChanged(function(user) {
             resetUserMessagesButton.style.display = 'block';
             resetNamesButton.style.display = 'block';
             resetButton.style.display = 'block';
-
-            // Llamamos a la función para gestionar la visibilidad del botón de enviar correos manualmente
-            toggleManualEmailButtonVisibility();
         } else {
             resetUserMessagesButton.style.display = 'none';
             resetNamesButton.style.display = 'none';
@@ -426,6 +369,4 @@ document.getElementById('resetNamesButton').addEventListener('click', resetNames
 document.getElementById('resetButton').addEventListener('click', resetAllData);
 document.getElementById('logoutButton').addEventListener('click', logout);
 document.getElementById('loginButton').addEventListener('click', loginWithGoogle);
-document.getElementById('emailLoginButton').addEventListener('click', loginWithEmail);
-document.getElementById('registerButton').addEventListener('click', registerWithEmail);
 document.getElementById('spinButton').addEventListener('click', spinTheWheel);
