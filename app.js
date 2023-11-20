@@ -7,7 +7,7 @@ var firebaseConfig = {
     messagingSenderId: "575749501934",
     appId: "1:575749501934:web:4b48ebab36b25e925914ff"
 };
-var allowedEmails = ["juankplays420@gmail.com", "laprueba123.es", "usuario3@example.com"];
+var allowedEmails = ["juankplays420@gmail.com", "laprueba@123.es", "usuario3@example.com"];
 
 firebase.initializeApp(firebaseConfig);
 
