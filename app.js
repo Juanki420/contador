@@ -61,7 +61,7 @@ function handleFormSubmission(e) {
             alert('Ya has enviado un mensaje. No puedes enviar otro.');
         } else {
             if (!canSubmitNames) {
-                alert('Recargue la pagina y envíe de nuevo.');
+                alert('Recargue la página y envíe de nuevo.');
                 return;
             }
 
@@ -75,26 +75,34 @@ function handleFormSubmission(e) {
 
             canSubmitNames = false;
 
-            // Agrega el correo electrónico al objeto messageObject
-            var messageObject = {
-                name: name,
-                userId: user.uid,
-                userName: user.displayName,
-                userEmail: user.email,
-            };
+            // Verificar si el nombre ya ha sido enviado
+            isNameAlreadySubmitted(name).then(function(alreadySubmitted) {
+                if (alreadySubmitted) {
+                    alert('Este nombre ya ha sido enviado. Elige otro.');
+                    canSubmitNames = true;  // Restablecer el estado de envío
+                } else {
+                    // Agrega el correo electrónico al objeto messageObject
+                    var messageObject = {
+                        name: name,
+                        userId: user.uid,
+                        userName: user.displayName,
+                        userEmail: user.email,
+                    };
 
-            // Guarda el mensaje en 'names'
-            var newMessageRef = nameRef.push(messageObject);
+                    // Guarda el mensaje en 'names'
+                    var newMessageRef = nameRef.push(messageObject);
 
-            // Guarda el correo electrónico en 'userMessages'
-            userMessagesRef.child(user.uid).set({
-                userEmail: user.email,
+                    // Guarda el correo electrónico en 'userMessages'
+                    userMessagesRef.child(user.uid).set({
+                        userEmail: user.email,
+                    });
+
+                    markUserAsSubmitted(user.uid);
+
+                    nameInput.value = '';
+                    alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
+                }
             });
-
-            markUserAsSubmitted(user.uid);
-
-            nameInput.value = '';
-            alert('Su nombre ha sido enviado. Si no lo ve, por favor, recargue la página.');
         }
     });
 }
@@ -218,7 +226,7 @@ function loginWithGoogle() {
 }
 
 function spinTheWheel() {
-    var names = [];  
+    var names = [];  // Array para almacenar todos los nombres
 
     // Obtener todos los nombres de la base de datos
     nameRef.once('value')
@@ -228,7 +236,9 @@ function spinTheWheel() {
                 names.push(name);
             });
 
+            // Verificar si hay nombres disponibles
             if (names.length > 0) {
+                // Elegir un nombre al azar
                 var randomIndex = Math.floor(Math.random() * names.length);
                 var winner = names[randomIndex];
 
@@ -242,7 +252,6 @@ function spinTheWheel() {
             console.error('Error al obtener nombres:', error);
         });
 }
-
 
 firebase.auth().onAuthStateChanged(function(user) {
     displayUserInfo(user);
