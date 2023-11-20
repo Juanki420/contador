@@ -180,10 +180,7 @@ function normalizeEmail(email) {
 // Función para agregar un correo a la lista de correos permitidos
 function addAllowedEmail(email) {
     var normalizedEmail = normalizeEmail(email);
-
-    return verificationRef.child('allowedEmails').update({
-        [normalizedEmail]: true
-    });
+    return verificationRef.child('allowedEmails').child(normalizedEmail).set(true);
 }
 
 function resetUserMessages() {
