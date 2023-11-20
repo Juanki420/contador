@@ -83,11 +83,15 @@
         var verifyEmails = true; // Variable para alternar la verificación de correos
 
         // Función para mostrar u ocultar el botón de alternar verificación según el usuario autenticado
+        // Obtener referencia a la base de datos
+        var database = firebase.database();
+
+        // Función para mostrar u ocultar el botón de alternar verificación según el usuario autenticado
         function toggleVerificationButtonVisibility(user) {
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
             
             // Verificar si el usuario está autenticado y si el correo es el que deseas
-            if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+            if (user && user.email === 'tucorreoelegido@gmail.com') {
                 toggleVerificationButton.style.display = 'inline-block'; // Mostrar el botón
             } else {
                 toggleVerificationButton.style.display = 'none'; // Ocultar el botón
@@ -100,36 +104,17 @@
         });
 
         document.getElementById('toggleVerificationButton').addEventListener('click', function() {
-            verifyEmails = !verifyEmails; // Alternar el valor de la variable
+            // Alternar el valor de la variable global y guardarlo en la base de datos
+            verifyEmails = !verifyEmails;
+            database.ref('config/verifyEmails').set(verifyEmails);
+
             var verificationStatus = verifyEmails ? 'Activada' : 'Desactivada';
             alert('Verificación de correos ' + verificationStatus);
         });
 
-        document.getElementById('registerButton').addEventListener('click', function() {
-            var email = prompt('Ingresa tu correo electrónico:');
-            var password = prompt('Ingresa tu contraseña:');
-
-            // Verificar si el correo electrónico y la contraseña se han ingresado
-            if (email !== null && password !== null && email !== '' && password !== '') {
-                // Verificar si la verificación de correos está activada y si el correo está en la lista de correos permitidos
-                if (!verifyEmails || (verifyEmails && allowedEmails.includes(email))) {
-                    // Guardar las credenciales localmente
-                    localStorage.setItem('lastRegisteredEmail', email);
-                    localStorage.setItem('lastRegisteredPassword', password);
-
-                    firebase.auth().createUserWithEmailAndPassword(email, password)
-                        .then(function(result) {
-                            alert('¡Te has registrado correctamente!');
-                        })
-                        .catch(function(error) {
-                            alert('Error al registrarte: ' + error.message);
-                        });
-                } else {
-                    alert('Registro cancelado. No se pudo completar el registro.');
-                }
-            } else {
-                alert('Registro cancelado. No se pudo completar el registro.');
-            }
+        // Listener para cambios en la configuración de verificación de correos
+        database.ref('config/verifyEmails').on('value', function(snapshot) {
+            verifyEmails = snapshot.val();
         });
 
         document.getElementById('emailLoginButton').addEventListener('click', function() {
