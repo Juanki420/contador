@@ -9,10 +9,28 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="web1.ico" type="image/x-icon">
     <link rel="shortcut icon" href="web1.ico" type="image/x-icon">
+    <style>
+        #redirectButton {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #redirectButton:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Registra aqui tu nombre</h1>
+        <h1>Registra aquí tu nombre</h1>
         <div id="userInfo"></div>
         <button type="button" id="loginButton">Iniciar Sesión con Google</button>
         <button type="button" id="emailLoginButton">Iniciar Sesión con Correo y Contraseña</button>
@@ -25,7 +43,7 @@
             <input type="text" id="nameInput" placeholder="Tu nombre">
             <button type="submit" id="submitButton">Enviar</button>
             <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
-    <a href="resultados.html" id="redirectButton">Ver Resultados de la ruleta</a>
+            <a href="resultados.html" id="redirectButton">Ver Resultados de la Ruleta</a>
         </form>
         <ul id="nameList"></ul>
         <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
