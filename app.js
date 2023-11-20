@@ -1,12 +1,13 @@
 var firebaseConfig = {
-    apiKey: "AIzaSyC5FR4fLXV1zjAzZ4WFIwBG97Aes3FtPWo",
-    authDomain: "contador-c6528.firebaseapp.com",
-    databaseURL: "https://contador-c6528-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "contador-c6528",
-    storageBucket: "contador-c6528.appspot.com",
-    messagingSenderId: "575749501934",
-    appId: "1:575749501934:web:4b48ebab36b25e925914ff"
+    apiKey: "TuApiKey",
+    authDomain: "TuDominio.firebaseapp.com",
+    databaseURL: "https://TuDominio-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "TuProyectoId",
+    storageBucket: "TuProyectoId.appspot.com",
+    messagingSenderId: "TuMessagingSenderId",
+    appId: "TuAppId"
 };
+
 firebase.initializeApp(firebaseConfig);
 
 var nameList = document.getElementById('nameList');
