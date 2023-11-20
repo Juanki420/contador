@@ -290,6 +290,25 @@ function toggleManualEmailButtonVisibility() {
     }
 }
 
+function addEmailManually() {
+    var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
+
+    if (emailToAdd && emailToAdd.trim() !== "") {
+        var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
+        
+        verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
+            .then(function() {
+                alert('Correo añadido correctamente.');
+            })
+            .catch(function(error) {
+                console.error('Error al añadir el correo:', error);
+                alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
+            });
+    } else {
+        alert('Debes ingresar un correo válido.');
+    }
+}
+
 // Resto del código...
 
 document.getElementById('manualEmailButton').addEventListener('click', function() {
