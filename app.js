@@ -384,7 +384,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         }
 
         // Verificar si el usuario es el autorizado al cambiar la autenticación
-        toggleVerificationButtonVisibility(user.uid === 'TuUIDAutorizado');
+        toggleVerificationButtonVisibility(user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1');
     } else {
         loginButton.style.display = 'block';
         emailLoginButton.style.display = 'block';
