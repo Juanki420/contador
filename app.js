@@ -50,14 +50,6 @@ function toggleVerificationButtonVisibility() {
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
             
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
-
-            // Mueve el código del evento click aquí
-            toggleVerificationButton.addEventListener('click', function() {
-                verificationRef.once('value').then(function(snapshot) {
-                    var verificationEnabled = snapshot.val().verificationEnabled;
-                    verificationRef.child('verificationEnabled').set(!verificationEnabled);
-                });
-            });
         });
     } else {
         // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
@@ -65,7 +57,6 @@ function toggleVerificationButtonVisibility() {
         toggleVerificationButton.style.display = 'none';
     }
 }
-
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
@@ -292,12 +283,6 @@ function toggleManualEmailButtonVisibility() {
     if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
         var manualEmailButton = document.getElementById('manualEmailButton');
         manualEmailButton.style.display = 'inline-block';
-
-        // Mueve el código del evento click aquí
-        manualEmailButton.addEventListener('click', function() {
-            // Lógica para enviar correos manualmente
-            // ...
-        });
     } else {
         // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
         var manualEmailButton = document.getElementById('manualEmailButton');
@@ -305,15 +290,12 @@ function toggleManualEmailButtonVisibility() {
     }
 }
 
-// Llamamos a la función para gestionar la visibilidad del botón de enviar correos manualmente
-toggleManualEmailButtonVisibility();
-
 // Resto del código...
 
 document.getElementById('manualEmailButton').addEventListener('click', function() {
     var user = firebase.auth().currentUser;
 
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
+    if (user && user.uid === 'TuUIDAutorizado') {
         // Lógica para enviar correos manualmente
         // ...
     } else {
@@ -373,9 +355,6 @@ firebase.auth().onAuthStateChanged(function(user) {
             resetUserMessagesButton.style.display = 'block';
             resetNamesButton.style.display = 'block';
             resetButton.style.display = 'block';
-
-            // Llamamos a la función para gestionar la visibilidad del botón de enviar correos manualmente
-            toggleManualEmailButtonVisibility();
         } else {
             resetUserMessagesButton.style.display = 'none';
             resetNamesButton.style.display = 'none';
