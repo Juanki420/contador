@@ -46,7 +46,7 @@ function toggleVerificationButtonVisibility(isAuthorizedUser) {
             var verificationEnabled = snapshot.val().verificationEnabled;
 
             var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-
+            
             toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
         });
     } else {
@@ -55,7 +55,6 @@ function toggleVerificationButtonVisibility(isAuthorizedUser) {
         toggleVerificationButton.style.display = 'none';
     }
 }
-
 function handleVerificationChange(snapshot) {
     toggleVerificationButtonVisibility(snapshot.val().verificationEnabled);
 }
@@ -191,9 +190,6 @@ function resetUserMessages() {
     var user = firebase.auth().currentUser;
 
     if (user) {
-        // Desvincular eventos relacionados con 'nameRef'
-        nameRef.off();
-        nameList.innerHTML = ''; // Limpiar la lista de nombres
         userMessagesRef.remove().then(function() {
             console.log('Todos los mensajes de usuarios han sido eliminados.');
         }).catch(function(error) {
@@ -210,8 +206,6 @@ function resetNames() {
     var user = firebase.auth().currentUser;
 
     if (user) {
-        // Desvincular eventos relacionados con 'nameRef'
-        nameRef.off();
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
         }).catch(function(error) {
@@ -229,8 +223,6 @@ function resetAllData() {
     var user = firebase.auth().currentUser;
 
     if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Desvincular eventos relacionados con 'nameRef'
-        nameRef.off();
         // Elimina todos los datos en la base de datos
         nameRef.remove().then(function() {
             console.log('Todos los nombres han sido eliminados.');
@@ -252,11 +244,6 @@ function resetAllData() {
 }
 
 function logout() {
-    // Desvincular eventos relacionados con 'nameRef'
-    nameRef.off();
-    // Limpiar la lista de nombres
-    nameList.innerHTML = '';
-    
     firebase.auth().signOut().then(function() {
         alert('Has cerrado sesión correctamente.');
     }).catch(function(error) {
@@ -324,6 +311,7 @@ function addEmailManually() {
     }
 }
 
+
 function spinTheWheel() {
     var names = [];
 
@@ -384,7 +372,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         }
 
         // Verificar si el usuario es el autorizado al cambiar la autenticación
-        toggleVerificationButtonVisibility(user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1');
+        toggleVerificationButtonVisibility(user.uid === 'TuUIDAutorizado');
     } else {
         loginButton.style.display = 'block';
         emailLoginButton.style.display = 'block';
