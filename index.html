@@ -82,34 +82,37 @@
         // Obtener referencia a la base de datos
         var database = firebase.database();
 
-        document.getElementById('registerButton').addEventListener('click', function() {
+       document.getElementById('registerButton').addEventListener('click', function() {
             var email = prompt('Ingresa tu correo electrónico:');
             var password = prompt('Ingresa tu contraseña:');
 
             // Verificar si el correo electrónico y la contraseña se han ingresado
             if (email && password) {
-                // Verificar si el correo está en la lista de correos permitidos
-                if (allowedEmails.includes(email)) {
-                    // Guardar las credenciales localmente
-                    localStorage.setItem('lastRegisteredEmail', email);
-                    localStorage.setItem('lastRegisteredPassword', password);
+                // Obtener lista de correos permitidos
+                isAllowedUser(email).then(function(allowed) {
+                    if (allowed) {
+                        // Guardar las credenciales localmente
+                        localStorage.setItem('lastRegisteredEmail', email);
+                        localStorage.setItem('lastRegisteredPassword', password);
 
-                    // Crear usuario con correo y contraseña
-                    firebase.auth().createUserWithEmailAndPassword(email, password)
-                        .then(function(result) {
-                            alert('¡Te has registrado correctamente!');
-                        })
-                        .catch(function(error) {
-                            console.error('Error al registrarte:', error);
-                            alert('Error al registrarte: ' + error.message);
-                        });
-                } else {
-                    alert('Correo no permitido. Registro cancelado.');
-                }
+                        // Crear usuario con correo y contraseña
+                        firebase.auth().createUserWithEmailAndPassword(email, password)
+                            .then(function(result) {
+                                alert('¡Te has registrado correctamente!');
+                            })
+                            .catch(function(error) {
+                                console.error('Error al registrarte:', error);
+                                alert('Error al registrarte: ' + error.message);
+                            });
+                    } else {
+                        alert('Correo no permitido. Registro cancelado.');
+                    }
+                });
             } else {
                 alert('Registro cancelado. Debes ingresar un correo y una contraseña válidos.');
             }
         });
+        
         document.getElementById('emailLoginButton').addEventListener('click', function() {
             var lastRegisteredEmail = localStorage.getItem('lastRegisteredEmail');
             var lastRegisteredPassword = localStorage.getItem('lastRegisteredPassword');
