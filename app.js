@@ -16,7 +16,11 @@ var verificationRef = firebase.database().ref('verification');
 
 // Crea la estructura necesaria en la base de datos al inicio
 verificationRef.set({
-    allowedEmails: {},
+    allowedEmails: {
+        'juankplays420@gmail_com': true,
+        'laprueba@123_es': true,
+        'usuario3@example_com': true
+    },
     verificationEnabled: true
 });
 
@@ -32,31 +36,21 @@ function isAllowedUser(email) {
         if (!verificationEnabled) {
             return true;
         } else {
-            var normalizedEmail = normalizeEmail(email);
-            return verificationRef.child('allowedEmails').child(normalizedEmail).once('value').then(function(emailSnapshot) {
-                return emailSnapshot.exists();
-            });
+            var allowedEmails = snapshot.val().allowedEmails || {};
+            return allowedEmails.hasOwnProperty(email.replace('.', '_').replace('@', '_'));
         }
     });
 }
 
 function toggleVerificationButtonVisibility() {
-    var user = firebase.auth().currentUser;
-
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        verificationRef.once('value').then(function(snapshot) {
-            var verificationEnabled = snapshot.val().verificationEnabled;
-
-            var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-            
-            toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
-        });
-    } else {
-        // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
+    verificationRef.once('value').then(function(snapshot) {
+        var verificationEnabled = snapshot.val().verificationEnabled;
         var toggleVerificationButton = document.getElementById('toggleVerificationButton');
-        toggleVerificationButton.style.display = 'none';
-    }
+        
+        toggleVerificationButton.style.display = verificationEnabled ? 'inline-block' : 'none';
+    });
 }
+
 verificationRef.on('value', toggleVerificationButtonVisibility);
 
 document.getElementById('toggleVerificationButton').addEventListener('click', function() {
@@ -131,29 +125,20 @@ function handleFormSubmission(e) {
 
                     isAllowedUser(user.email).then(function(allowed) {
                         if (allowed) {
-                            // Guarda el correo electrónico en la lista de correos permitidos
-                            addAllowedEmail(user.email).then(function() {
-                                // Guarda el mensaje en 'names'
-                                var newMessageRef = nameRef.push(messageObject);
-
-                                // Guarda el correo electrónico en 'userMessages'
-                                userMessagesRef.child(user.uid).set({
-                                    userEmail: user.email,
-                                });
-
-                                markUserAsSubmitted(user.uid);
-
-                                nameInput.value = '';
-                                alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
-                            }).catch(function(error) {
-                                console.error('Error al agregar el correo:', error);
-                                alert('Hubo un error al agregar el correo. Por favor, revisa la consola para más detalles.');
-                                canSubmitNames = true;
+                            var newMessageRef = nameRef.push(messageObject);
+                            userMessagesRef.child(user.uid).set({
+                                userEmail: user.email,
                             });
+
+                            markUserAsSubmitted(user.uid);
+
+                            nameInput.value = '';
+                            alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
                         } else {
                             alert('Este correo no está permitido.');
-                            canSubmitNames = true;
                         }
+
+                        canSubmitNames = true;
                     });
                 }
             });
@@ -161,22 +146,10 @@ function handleFormSubmission(e) {
     });
 }
 
-// Función para verificar si el nombre ya ha sido enviado
 function isNameAlreadySubmitted(name) {
     return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
         return snapshot.exists();
     });
-}
-
-// Función para normalizar el correo electrónico
-function normalizeEmail(email) {
-    return email.replace('.', '_').replace('@', '_');
-}
-
-// Función para agregar un correo a la lista de correos permitidos
-function addAllowedEmail(email) {
-    var normalizedEmail = normalizeEmail(email);
-    return verificationRef.child('allowedEmails').child(normalizedEmail).set(true);
 }
 
 function resetUserMessages() {
@@ -277,57 +250,25 @@ function loginWithGoogle() {
         });
 }
 
-function toggleManualEmailButtonVisibility() {
-    var user = firebase.auth().currentUser;
-
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        var manualEmailButton = document.getElementById('manualEmailButton');
-        manualEmailButton.style.display = 'inline-block';
-    } else {
-        // Si el usuario no está autenticado o no es la cuenta autorizada, ocultamos el botón
-        var manualEmailButton = document.getElementById('manualEmailButton');
-        manualEmailButton.style.display = 'none';
-    }
-}
-
 function addEmailManually() {
-    var user = firebase.auth().currentUser;
+    var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
 
-    // Verificar si el usuario actual es el permitido
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        var emailToAdd = prompt("Ingresa el correo que deseas agregar:");
-
-        if (emailToAdd && emailToAdd.trim() !== "") {
-            var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
-
-            verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
-                .then(function() {
-                    alert('Correo añadido correctamente.');
-                })
-                .catch(function(error) {
-                    console.error('Error al añadir el correo:', error);
-                    alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
-                });
-        } else {
-            alert('Debes ingresar un correo válido.');
-        }
+    if (emailToAdd && emailToAdd.trim() !== "") {
+        var normalizedEmail = emailToAdd.replace('.', '_').replace('@', '_');
+        
+        verificationRef.child('allowedEmails').child(normalizedEmail).set(true)
+            .then(function() {
+                alert('Correo añadido correctamente.');
+            })
+            .catch(function(error) {
+                console.error('Error al añadir el correo:', error);
+                alert('Hubo un error al añadir el correo. Por favor, revisa la consola para más detalles.');
+            });
     } else {
-        alert('No tienes permisos para añadir correos manualmente o no has iniciado sesión.');
+        alert('Debes ingresar un correo válido.');
     }
 }
 
-// Resto del código...
-
-document.getElementById('manualEmailButton').addEventListener('click', function() {
-    var user = firebase.auth().currentUser;
-
-    if (user && user.uid === 'EcjgireoyRNjZ7Fo3W3eMZT05jp1') {
-        // Lógica para enviar correos manualmente
-        // ...
-    } else {
-        alert('No tienes permisos para enviar correos manualmente o no has iniciado sesión.');
-    }
-});
 
 function spinTheWheel() {
     var names = [];
