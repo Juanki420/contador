@@ -11,33 +11,81 @@
         /* Estilo para el widget de Discord */
         #discordWidgetContainer {
             position: fixed;
-            left: 10px; /* Ajusta según el margen izquierdo deseado */
-            top: 10px; /* Ajusta según el margen superior deseado */
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
             z-index: 999;
-        }
-
-        #discordWidget {
-            width: 200px; /* Ajusta el ancho del widget según tus preferencias */
-            height: 400px; /* Ajusta la altura del widget según tus preferencias */
         }
 
         /* Estilo para el resto del contenido */
         body {
-            margin-left: 130px; /* Ajusta según el ancho del widget y el margen izquierdo deseado */
+            margin-left: 150px; /* Ajusta según el ancho del widget */
         }
 
-        /* Resto del código CSS ... */
+        #redirectButton {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #redirectButton:hover {
+            background-color: #45a049;
+        }
+
+        #removePasswordButton {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #ff6666;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #removePasswordButton:hover {
+            background-color: #ff3333;
+        }
+
+        #toggleVerificationButton {
+            display: none; /* Inicialmente oculto */
+        }
     </style>
 </head>
 <body>
-    <div id="discordWidgetContainer">
-        <iframe id="discordWidget" src="https://discord.com/widget?id=1151197118007083048&theme=dark" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-    </div>
+    <iframe src="https://discord.com/widget?id=1151197118007083048&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
     <header>
-        <!-- Resto del código HTML ... -->
+        <h1>Registra aquí tu nombre</h1>
+        <div id="userInfo"></div>
+        <button type="button" id="loginButton">Iniciar Sesión con Google</button>
+        <button type="button" id="emailLoginButton">Iniciar Sesión con Correo y Contraseña</button>
+        <button type="button" id="registerButton">Registrarse</button>
+        <button type="button" id="toggleVerificationButton">Alternar Verificación</button>
+        <button type="button" id="logoutButton" style="display: none;">Cerrar Sesión</button>
+        <button onclick="addEmailManually()">Añadir Correo Manualmente</button>
     </header>
     <main>
-        <!-- Resto del código HTML ... -->
+        <form id="nameForm">
+            <label for="nameInput">Escribe tu nombre:</label>
+            <input type="text" id="nameInput" placeholder="Tu nombre">
+            <button type="submit" id="submitButton">Enviar</button>
+            <button type="button" id="spinButton" onclick="spinTheWheel()">¡Girar la Ruleta!</button>
+            <a href="resultados.html" id="redirectButton">Ver Resultados de la Ruleta</a>
+        </form>
+        <ul id="nameList"></ul>
+        <button type="button" id="resetUserMessagesButton">Borrar Usuarios</button>
+        <button type="button" id="resetNamesButton">Borrar Nombres</button>
+        <button type="button" id="resetButton">Restablecer Todo</button>
+        <button type="button" id="removePasswordButton">Eliminar Última Contraseña</button>
     </main>
     <!-- Asegúrate de incluir la biblioteca de Firebase App, Authentication y Database -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
