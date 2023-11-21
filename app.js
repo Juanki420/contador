@@ -143,25 +143,18 @@ function handleFormSubmission(e) {
 
                     isAllowedUser(user.email).then(function(allowed) {
                         if (allowed) {
-                            // Guarda el correo electrónico en la lista de correos permitidos
-                            addAllowedEmail(user.email).then(function() {
-                                // Guarda el mensaje en 'names'
-                                var newMessageRef = nameRef.push(messageObject);
+                            // Guarda el mensaje en 'names'
+                            var newMessageRef = nameRef.push(messageObject);
 
-                                // Guarda el correo electrónico en 'userMessages'
-                                userMessagesRef.child(user.uid).set({
-                                    userEmail: user.email,
-                                });
-
-                                markUserAsSubmitted(user.uid);
-
-                                nameInput.value = '';
-                                alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
-                            }).catch(function(error) {
-                                console.error('Error al agregar el correo:', error);
-                                alert('Hubo un error al agregar el correo. Por favor, revisa la consola para más detalles.');
-                                canSubmitNames = true;
+                            // Guarda el correo electrónico en 'userMessages' solo si es permitido
+                            userMessagesRef.child(user.uid).set({
+                                userEmail: user.email,
                             });
+
+                            markUserAsSubmitted(user.uid);
+
+                            nameInput.value = '';
+                            alert('Tu nombre ha sido enviado. Si no lo ves, por favor, recarga la página.');
                         } else {
                             alert('Este correo no está permitido.');
                             canSubmitNames = true;
@@ -172,7 +165,6 @@ function handleFormSubmission(e) {
         }
     });
 }
-
 // Función para verificar si el nombre ya ha sido enviado
 function isNameAlreadySubmitted(name) {
     return nameRef.orderByChild('name').equalTo(name).once('value').then(function(snapshot) {
