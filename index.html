@@ -17,9 +17,14 @@
             z-index: 999;
         }
 
+        #discordWidget {
+            width: 200px;
+            height: 400px;
+        }
+
         /* Estilo para el resto del contenido */
         body {
-            margin-left: 150px; /* Ajusta según el ancho del widget */
+            margin-left: 220px;
         }
 
         #redirectButton {
@@ -62,7 +67,9 @@
     </style>
 </head>
 <body>
-    <iframe src="https://discord.com/widget?id=1151197118007083048&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+    <div id="discordWidgetContainer">
+        <iframe id="discordWidget" src="https://discord.com/widget?id=1151197118007083048&theme=dark" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+    </div>
     <header>
         <h1>Registra aquí tu nombre</h1>
         <div id="userInfo"></div>
